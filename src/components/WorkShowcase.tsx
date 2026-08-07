@@ -268,39 +268,56 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
 
       {/* Detail & Video/Live Web Preview Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fadeIn">
-          <div className="glass-card max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border border-[#00daf3]/50 relative shadow-2xl">
-            <button
-              onClick={() => setSelectedProject(null)}
-              className="absolute top-6 right-6 text-[#c7c6ca] hover:text-[#00daf3] p-2 rounded-full border border-white/10 bg-[#111415]/80 z-20"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-xl animate-fadeIn overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedProject(null);
+          }}
+        >
+          <div className="glass-card max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border border-[#00daf3]/50 relative shadow-[0_0_35px_rgba(0,227,253,0.2)]">
+            
+            {/* Top Sticky Close Button Header */}
+            <div className="sticky top-0 z-30 flex items-center justify-between bg-[#111415]/95 backdrop-blur-md p-3 -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b border-white/10 rounded-t-2xl">
+              <div className="font-mono-code text-xs text-[#00daf3] font-bold uppercase flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                <span>PROJECT DETAILS</span>
+              </div>
+              <button
+                onClick={() => setSelectedProject(null)}
+                className="px-3 py-1.5 rounded-xl border border-[#00daf3]/60 bg-[#00daf3]/20 text-[#00daf3] hover:bg-[#00daf3] hover:text-[#001f24] transition-all font-mono-code text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,227,253,0.3)] cursor-pointer"
+                title="Close"
+              >
+                <span>CLOSE</span>
+                <span className="material-symbols-outlined text-base font-bold">close</span>
+              </button>
+            </div>
 
             {/* Video or Image Header in Modal */}
             {(() => {
               const modalVideoInfo = getVideoSourceInfo(selectedProject.videoUrl);
-              const isModalVideo = modalVideoInfo.type !== 'none' || selectedProject.category === 'ai-videos';
+              const isModalVideo = modalVideoInfo.type !== 'none' || selectedProject.category === 'ai-videos' || selectedProject.mediaType === 'video';
+              const fallbackModalUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
 
               if (isModalVideo) {
                 return (
-                  <div className="mb-6 rounded-xl overflow-hidden border border-[#00daf3]/40 bg-black min-h-[260px] max-h-[460px] flex items-center justify-center relative shadow-2xl">
-                    {modalVideoInfo.type === 'youtube' || modalVideoInfo.type === 'vimeo' ? (
+                  <div className="mb-6 rounded-xl overflow-hidden border border-[#00daf3]/50 bg-black min-h-[260px] max-h-[480px] flex items-center justify-center relative shadow-[0_0_25px_rgba(0,227,253,0.15)]">
+                    {modalVideoInfo.type === 'youtube' || modalVideoInfo.type === 'vimeo' || modalVideoInfo.type === 'gdrive' ? (
                       <iframe
                         src={modalVideoInfo.embedUrl}
                         title={selectedProject.title}
-                        className="w-full h-[360px] border-0 rounded-xl"
+                        className="w-full h-[320px] sm:h-[400px] border-0 rounded-xl"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                       />
                     ) : (
                       <video
-                        src={modalVideoInfo.embedUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
+                        src={modalVideoInfo.embedUrl || fallbackModalUrl}
                         poster={selectedProject.image}
                         controls
                         autoPlay
                         playsInline
-                        className="w-full max-h-[420px] object-contain rounded-xl"
+                        preload="auto"
+                        className="w-full max-h-[440px] object-contain rounded-xl"
                       />
                     )}
                   </div>
@@ -312,7 +329,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   <img
                     src={selectedProject.image}
                     alt={selectedProject.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-xl"
                   />
                 </div>
               );
@@ -376,9 +393,10 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                 )}
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="px-6 py-2.5 font-mono-code text-xs border border-white/10 text-[#c7c6ca] hover:text-white rounded-xl"
+                  className="px-6 py-2.5 font-mono-code text-xs font-bold border border-[#00daf3]/60 bg-[#00daf3]/10 text-[#00daf3] hover:bg-[#00daf3] hover:text-[#001f24] transition-all rounded-xl flex items-center gap-2 shadow-[0_0_12px_rgba(0,227,253,0.2)] cursor-pointer"
                 >
-                  CLOSE
+                  <span>CLOSE</span>
+                  <span className="material-symbols-outlined text-sm font-bold">close</span>
                 </button>
               </div>
             </div>
@@ -388,4 +406,6 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
     </section>
   );
 };
+
+export default WorkShowcase;
 
