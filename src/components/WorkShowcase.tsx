@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Project } from '../types';
 import { PROJECTS_DATA } from '../data/portfolioData';
+import { getVideoSourceInfo } from '../utils/videoUtils';
 
-const LOCAL_STORAGE_KEY = 'mohamed_soliman_portfolio_projects_v2';
+const LOCAL_STORAGE_KEY = 'mohamed_soliman_projects_v2';
 
 interface WorkShowcaseProps {
   projects?: Project[];
@@ -42,6 +43,13 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
 
   const filteredProjects = projects.filter((project) => {
     if (activeCategory === 'all') return true;
+    if (activeCategory === 'ai-videos') {
+      return (
+        project.category === 'ai-videos' ||
+        project.mediaType === 'video' ||
+        Boolean(project.videoUrl && project.videoUrl.trim())
+      );
+    }
     return project.category === activeCategory;
   });
 
@@ -91,156 +99,170 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
             No projects found in this category. Click "ADMIN PANEL" to add projects.
           </div>
         ) : (
-          filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              className="glass-card glass-card-hover rounded-2xl overflow-hidden border border-white/10 group flex flex-col justify-between transition-all duration-300"
-            >
-              {/* Media Preview (Video or Image) */}
-              <div className={`relative overflow-hidden bg-[#0c0f10] flex items-center justify-center ${
-                project.category === 'ai-videos' || project.aspectRatio === 'reel' 
-                  ? 'h-[440px] md:h-[500px]' 
-                  : 'h-64 md:h-80'
-              }`}>
-                {project.videoUrl || project.category === 'ai-videos' ? (
-                  <div className={`w-full h-full relative group/video flex items-center justify-center bg-[#07090a] ${
-                    project.aspectRatio === 'reel' || project.category === 'ai-videos' ? 'py-3' : ''
-                  }`}>
-                    {/* If Reel aspect ratio, wrap in stylized 9:16 vertical frame */}
-                    <div className={`relative overflow-hidden shadow-2xl rounded-xl border border-[#00daf3]/30 ${
-                      project.aspectRatio === 'reel' || project.category === 'ai-videos'
-                        ? 'h-full aspect-[9/16] bg-black max-w-[280px] sm:max-w-[320px]'
-                        : 'w-full h-full'
+          filteredProjects.map((project) => {
+            const videoInfo = getVideoSourceInfo(project.videoUrl);
+            const isVideo = videoInfo.type !== 'none' || project.category === 'ai-videos' || project.mediaType === 'video';
+            const isReelFormat = project.aspectRatio === 'reel' || project.category === 'ai-videos';
+
+            return (
+              <div
+                key={project.id}
+                className="glass-card glass-card-hover rounded-2xl overflow-hidden border border-white/10 group flex flex-col justify-between transition-all duration-300"
+              >
+                {/* Media Preview (Video or Image) */}
+                <div className={`relative overflow-hidden bg-[#0c0f10] flex items-center justify-center ${
+                  isReelFormat ? 'h-[440px] md:h-[500px]' : 'h-64 md:h-80'
+                }`}>
+                  {isVideo ? (
+                    <div className={`w-full h-full relative group/video flex items-center justify-center bg-[#07090a] ${
+                      isReelFormat ? 'py-3' : ''
                     }`}>
-                      <video
-                        src={project.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
-                        poster={project.image}
-                        controls
-                        playsInline
-                        preload="metadata"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-mono-code text-[#00daf3] border border-[#00daf3]/40 flex items-center gap-1.5 pointer-events-none">
-                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                        <span>{project.category === 'ai-videos' ? 'AI REEL 9:16' : 'AI VIDEO'}</span>
+                      {/* Frame Container */}
+                      <div className={`relative overflow-hidden shadow-2xl rounded-xl border border-[#00daf3]/30 ${
+                        isReelFormat
+                          ? 'h-full aspect-[9/16] bg-black max-w-[280px] sm:max-w-[320px]'
+                          : 'w-full h-full'
+                      }`}>
+                        {videoInfo.type === 'youtube' || videoInfo.type === 'vimeo' ? (
+                          <iframe
+                            src={videoInfo.embedUrl}
+                            title={project.title}
+                            className="w-full h-full border-0 rounded-xl"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                          />
+                        ) : (
+                          <video
+                            src={videoInfo.embedUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
+                            poster={project.image}
+                            controls
+                            playsInline
+                            preload="metadata"
+                            className="w-full h-full object-cover rounded-xl"
+                          />
+                        )}
+                        <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-mono-code text-[#00daf3] border border-[#00daf3]/40 flex items-center gap-1.5 pointer-events-none z-10">
+                          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                          <span>{isReelFormat ? 'AI REEL 9:16' : 'AI VIDEO'}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <>
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#111415] via-[#111415]/20 to-transparent" />
-                  </>
-                )}
-
-                {/* Category Badge */}
-                <div className="absolute top-4 left-4 flex gap-2 pointer-events-none z-10">
-                  <span className="font-mono-code text-[11px] px-3 py-1 rounded-lg bg-[#111415]/90 backdrop-blur-md border border-[#00daf3]/40 text-[#00daf3] font-bold uppercase shadow-lg">
-                    {project.category === 'web-app'
-                      ? 'WEB APPLICATION'
-                      : project.category === 'brand-media'
-                      ? 'BRAND & MEDIA'
-                      : 'AI REEL / VIDEO'}
-                  </span>
-                  {project.featured && (
-                    <span className="font-mono-code text-[11px] px-3 py-1 rounded-lg bg-[#00daf3] text-[#001f24] font-bold shadow-lg">
-                      FEATURED
-                    </span>
+                  ) : (
+                    <>
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#111415] via-[#111415]/20 to-transparent" />
+                    </>
                   )}
-                </div>
-              </div>
 
-              {/* Card Body */}
-              <div className="p-8 flex-1 flex flex-col justify-between gap-6">
-                <div>
-                  <h3 className="font-space text-2xl font-bold text-[#e1e3e4] group-hover:text-[#00daf3] transition-colors mb-1">
-                    {project.title}
-                  </h3>
-                  <div className="font-mono-code text-xs text-[#00daf3] mb-4">
-                    {project.subtitle}
+                  {/* Category Badge */}
+                  <div className="absolute top-4 left-4 flex gap-2 pointer-events-none z-10">
+                    <span className="font-mono-code text-[11px] px-3 py-1 rounded-lg bg-[#111415]/90 backdrop-blur-md border border-[#00daf3]/40 text-[#00daf3] font-bold uppercase shadow-lg">
+                      {project.category === 'web-app'
+                        ? 'WEB APPLICATION'
+                        : project.category === 'brand-media'
+                        ? 'BRAND & MEDIA'
+                        : 'AI REEL / VIDEO'}
+                    </span>
+                    {project.featured && (
+                      <span className="font-mono-code text-[11px] px-3 py-1 rounded-lg bg-[#00daf3] text-[#001f24] font-bold shadow-lg">
+                        FEATURED
+                      </span>
+                    )}
                   </div>
-                  <p className="font-body text-sm text-[#c7c6ca] leading-relaxed">
-                    {project.description}
-                  </p>
                 </div>
 
-                {/* Metrics if present */}
-                {project.metrics && (
-                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-white/5 font-mono-code text-xs">
-                    {project.metrics.map((m, idx) => (
-                      <div key={idx}>
-                        <div className="text-[#79797e] text-[10px] uppercase">{m.label}</div>
-                        <div className="text-[#e1e3e4] font-semibold">{m.value}</div>
-                      </div>
+                {/* Card Body */}
+                <div className="p-8 flex-1 flex flex-col justify-between gap-6">
+                  <div>
+                    <h3 className="font-space text-2xl font-bold text-[#e1e3e4] group-hover:text-[#00daf3] transition-colors mb-1">
+                      {project.title}
+                    </h3>
+                    <div className="font-mono-code text-xs text-[#00daf3] mb-4">
+                      {project.subtitle}
+                    </div>
+                    <p className="font-body text-sm text-[#c7c6ca] leading-relaxed">
+                      {project.description}
+                    </p>
+                  </div>
+
+                  {/* Metrics if present */}
+                  {project.metrics && (
+                    <div className="grid grid-cols-3 gap-2 py-3 border-y border-white/5 font-mono-code text-xs">
+                      {project.metrics.map((m, idx) => (
+                        <div key={idx}>
+                          <div className="text-[#79797e] text-[10px] uppercase">{m.label}</div>
+                          <div className="text-[#e1e3e4] font-semibold">{m.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Tech Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono-code text-[11px] px-2.5 py-1 rounded-lg bg-[#1d2021] text-[#919094] border border-white/5"
+                      >
+                        #{tag}
+                      </span>
                     ))}
                   </div>
-                )}
 
-                {/* Tech Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono-code text-[11px] px-2.5 py-1 rounded-lg bg-[#1d2021] text-[#919094] border border-white/5"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-2 flex items-center gap-3">
-                  <button
-                    onClick={() => setSelectedProject(project)}
-                    className="px-4 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca] hover:text-white hover:border-[#00daf3]/50 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <span>DETAILS</span>
-                    <span className="material-symbols-outlined text-sm">info</span>
-                  </button>
-
-                  {project.category === 'web-app' && project.liveUrl && (
-                    <button
-                      onClick={() => {
-                        if (project.liveUrl?.startsWith('http')) {
-                          window.open(project.liveUrl, '_blank');
-                        } else {
-                          setSelectedProject(project);
-                        }
-                      }}
-                      className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
-                    >
-                      <span>LAUNCH WEB APP</span>
-                      <span className="material-symbols-outlined text-sm">open_in_new</span>
-                    </button>
-                  )}
-
-                  {project.category === 'ai-videos' && (
+                  {/* Action Buttons */}
+                  <div className="pt-2 flex items-center gap-3">
                     <button
                       onClick={() => setSelectedProject(project)}
-                      className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                      className="px-4 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca] hover:text-white hover:border-[#00daf3]/50 transition-colors flex items-center justify-center gap-2"
                     >
-                      <span>PLAY FULL VIDEO</span>
-                      <span className="material-symbols-outlined text-sm">play_arrow</span>
+                      <span>DETAILS</span>
+                      <span className="material-symbols-outlined text-sm">info</span>
                     </button>
-                  )}
 
-                  {project.category === 'brand-media' && (
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
-                    >
-                      <span>VIEW MEDIA KIT</span>
-                      <span className="material-symbols-outlined text-sm">visibility</span>
-                    </button>
-                  )}
+                    {project.category === 'web-app' && project.liveUrl && (
+                      <button
+                        onClick={() => {
+                          if (project.liveUrl?.startsWith('http')) {
+                            window.open(project.liveUrl, '_blank');
+                          } else {
+                            setSelectedProject(project);
+                          }
+                        }}
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                      >
+                        <span>LAUNCH WEB APP</span>
+                        <span className="material-symbols-outlined text-sm">open_in_new</span>
+                      </button>
+                    )}
+
+                    {(project.category === 'ai-videos' || isVideo) && (
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                      >
+                        <span>PLAY FULL VIDEO</span>
+                        <span className="material-symbols-outlined text-sm">play_arrow</span>
+                      </button>
+                    )}
+
+                    {project.category === 'brand-media' && !isVideo && (
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                      >
+                        <span>VIEW MEDIA KIT</span>
+                        <span className="material-symbols-outlined text-sm">visibility</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -250,30 +272,51 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
           <div className="glass-card max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border border-[#00daf3]/50 relative shadow-2xl">
             <button
               onClick={() => setSelectedProject(null)}
-              className="absolute top-6 right-6 text-[#c7c6ca] hover:text-[#00daf3] p-2 rounded-full border border-white/10 bg-[#111415]/80"
+              className="absolute top-6 right-6 text-[#c7c6ca] hover:text-[#00daf3] p-2 rounded-full border border-white/10 bg-[#111415]/80 z-20"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
 
             {/* Video or Image Header in Modal */}
-            {selectedProject.videoUrl || selectedProject.category === 'ai-videos' ? (
-              <div className="mb-6 rounded-xl overflow-hidden border border-white/10 bg-black">
-                <video
-                  src={selectedProject.videoUrl}
-                  controls
-                  autoPlay
-                  className="w-full max-h-[420px] object-contain"
-                />
-              </div>
-            ) : (
-              <div className="mb-6 h-64 rounded-xl overflow-hidden border border-white/10 relative">
-                <img
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+            {(() => {
+              const modalVideoInfo = getVideoSourceInfo(selectedProject.videoUrl);
+              const isModalVideo = modalVideoInfo.type !== 'none' || selectedProject.category === 'ai-videos';
+
+              if (isModalVideo) {
+                return (
+                  <div className="mb-6 rounded-xl overflow-hidden border border-[#00daf3]/40 bg-black min-h-[260px] max-h-[460px] flex items-center justify-center relative shadow-2xl">
+                    {modalVideoInfo.type === 'youtube' || modalVideoInfo.type === 'vimeo' ? (
+                      <iframe
+                        src={modalVideoInfo.embedUrl}
+                        title={selectedProject.title}
+                        className="w-full h-[360px] border-0 rounded-xl"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <video
+                        src={modalVideoInfo.embedUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
+                        poster={selectedProject.image}
+                        controls
+                        autoPlay
+                        playsInline
+                        className="w-full max-h-[420px] object-contain rounded-xl"
+                      />
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <div className="mb-6 h-64 rounded-xl overflow-hidden border border-white/10 relative">
+                  <img
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              );
+            })()}
 
             <div className="font-mono-code text-xs text-[#00daf3] mb-2 uppercase flex items-center gap-2">
               <span className="px-2 py-0.5 rounded bg-[#00daf3]/10 border border-[#00daf3]/30 font-bold">

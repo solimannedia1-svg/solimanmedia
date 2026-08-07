@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Project, SiteSettings, SocialPlatform } from '../types';
 import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS } from '../data/portfolioData';
+import { getVideoSourceInfo } from '../utils/videoUtils';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
@@ -153,19 +154,30 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   const handleVideoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setEditingProject((prev) => ({
-            ...prev,
-            videoUrl: event.target!.result as string,
-            mediaType: 'video',
-            aspectRatio: prev?.category === 'ai-videos' || prev?.aspectRatio === 'reel' ? 'reel' : 'reel',
-            category: prev?.category || 'ai-videos'
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
+      const localBlobUrl = URL.createObjectURL(file);
+      if (file.size > 800 * 1024) {
+        setEditingProject((prev) => ({
+          ...prev,
+          videoUrl: localBlobUrl,
+          mediaType: 'video',
+          aspectRatio: prev?.category === 'ai-videos' || prev?.aspectRatio === 'reel' ? 'reel' : 'reel',
+          category: prev?.category || 'ai-videos'
+        }));
+      } else {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            setEditingProject((prev) => ({
+              ...prev,
+              videoUrl: event.target!.result as string,
+              mediaType: 'video',
+              aspectRatio: prev?.category === 'ai-videos' || prev?.aspectRatio === 'reel' ? 'reel' : 'reel',
+              category: prev?.category || 'ai-videos'
+            }));
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -743,8 +755,20 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         <div className="flex items-center gap-4 w-full sm:w-auto">
                           {project.videoUrl ? (
                             <div className="w-20 h-14 rounded-lg bg-black overflow-hidden border border-white/10 shrink-0 relative flex items-center justify-center">
-                              <video src={project.videoUrl} className="w-full h-full object-cover" muted />
-                              <span className="absolute inset-0 flex items-center justify-center text-[#00daf3] bg-black/40">
+                              {(() => {
+                                const info = getVideoSourceInfo(project.videoUrl);
+                                if (info.type === 'youtube' || info.type === 'vimeo') {
+                                  return (
+                                    <iframe
+                                      src={info.embedUrl}
+                                      className="w-full h-full border-0 pointer-events-none"
+                                      title={project.title}
+                                    />
+                                  );
+                                }
+                                return <video src={info.embedUrl} className="w-full h-full object-cover" muted />;
+                              })()}
+                              <span className="absolute inset-0 flex items-center justify-center text-[#00daf3] bg-black/40 pointer-events-none">
                                 <span className="material-symbols-outlined text-sm">play_circle</span>
                               </span>
                             </div>
@@ -973,12 +997,12 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                   <div className="p-4 rounded-xl bg-[#1d2021] border border-[#00daf3]/30 space-y-4">
                     <label className="block font-mono-code text-xs text-[#00daf3] uppercase font-bold flex items-center gap-2">
                       <span className="material-symbols-outlined text-sm">movie</span>
-                      VIDEO SOURCE (FOR PLAYBACK)
+                      <span>VIDEO SOURCE (YOUTUBE, SHORTS, VIMEO, OR DIRECT MP4)</span>
                     </label>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block font-mono-code text-[11px] text-[#79797e] mb-1">
-                          Option A: Direct Video URL (.mp4)
+                          Option A: Video Link (YouTube, Shorts, Vimeo, MP4)
                         </label>
                         <input
                           type="text"
@@ -987,17 +1011,18 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                             setEditingProject((prev) => ({
                               ...prev,
                               videoUrl: e.target.value,
-                              mediaType: e.target.value ? 'video' : 'image'
+                              mediaType: e.target.value ? 'video' : 'image',
+                              category: prev?.category || 'ai-videos'
                             }))
                           }
-                          placeholder="https://.../video.mp4"
+                          placeholder="https://youtube.com/watch?v=... or https://youtu.be/... or .mp4"
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
 
                       <div>
                         <label className="block font-mono-code text-[11px] text-[#79797e] mb-1">
-                          Option B: Upload Video File
+                          Option B: Upload Local Video File
                         </label>
                         <input
                           type="file"
@@ -1007,6 +1032,45 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         />
                       </div>
                     </div>
+
+                    <p className="font-mono-code text-[11px] text-[#919094]">
+                      💡 <strong className="text-[#00daf3]">Tip:</strong> You can paste any YouTube link, YouTube Shorts link, Vimeo link, or MP4 URL. They will play seamlessly on the main website!
+                    </p>
+
+                    {/* Live Preview Box */}
+                    {editingProject?.videoUrl && editingProject.videoUrl.trim() !== '' && (
+                      <div className="p-3 bg-[#0c0f10] rounded-xl border border-[#00daf3]/40 space-y-2">
+                        <div className="font-mono-code text-[11px] text-[#00daf3] font-bold flex items-center justify-between">
+                          <span>INSTANT VIDEO LIVE PREVIEW</span>
+                          <span className="text-[10px] text-[#79797e] px-2 py-0.5 rounded bg-white/5 uppercase">
+                            {getVideoSourceInfo(editingProject.videoUrl).type}
+                          </span>
+                        </div>
+                        <div className="h-52 rounded-lg overflow-hidden bg-black flex items-center justify-center relative border border-white/10">
+                          {(() => {
+                            const info = getVideoSourceInfo(editingProject.videoUrl);
+                            if (info.type === 'youtube' || info.type === 'vimeo') {
+                              return (
+                                <iframe
+                                  src={info.embedUrl}
+                                  title="Admin Video Preview"
+                                  className="w-full h-full border-0"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                />
+                              );
+                            }
+                            return (
+                              <video
+                                src={info.embedUrl}
+                                controls
+                                className="w-full h-full object-contain"
+                              />
+                            );
+                          })()}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div>

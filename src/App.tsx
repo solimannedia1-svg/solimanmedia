@@ -107,9 +107,22 @@ export default function App() {
 
   const handleSaveProjects = async (newProjects: Project[]) => {
     setProjects(newProjects);
-    localStorage.setItem('mohamed_soliman_projects_v2', JSON.stringify(newProjects));
     try {
-      await setDoc(doc(db, 'portfolio', 'projects'), { items: newProjects });
+      localStorage.setItem('mohamed_soliman_projects_v2', JSON.stringify(newProjects));
+    } catch (e) {
+      console.warn('localStorage quota warning when saving projects:', e);
+    }
+
+    try {
+      // Clean oversized data URLs if necessary so Firestore 1MB limit is respected
+      const firestoreCleanProjects = newProjects.map((p) => {
+        if (p.videoUrl && p.videoUrl.startsWith('data:') && p.videoUrl.length > 700000) {
+          // If a base64 video is too large for single Firestore doc, keep local blob or clear for firestore
+          return { ...p, videoUrl: p.videoUrl.slice(0, 100) + '...[large video stored locally]' };
+        }
+        return p;
+      });
+      await setDoc(doc(db, 'portfolio', 'projects'), { items: firestoreCleanProjects });
     } catch (e) {
       console.error('Error writing projects to Firestore:', e);
     }
