@@ -1,0 +1,6 @@
+{
+  "name": "Mohamed Soliman - Digital Creator",
+  "description": "Digital portfolio and AI creative hub for Mohamed Soliman featuring 3D WebGL experiences, interactive AI chat, work showcases, and contact system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

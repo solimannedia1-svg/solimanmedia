@@ -1,0 +1,31 @@
+{
+  "entities": {
+    "projects": {
+      "title": "string",
+      "subtitle": "string",
+      "category": "string",
+      "description": "string",
+      "image": "string",
+      "videoUrl": "string",
+      "liveUrl": "string",
+      "tags": "array",
+      "featured": "boolean",
+      "mediaType": "string",
+      "aspectRatio": "string",
+      "codeSnippet": "string",
+      "metrics": "array"
+    },
+    "settings": {
+      "name": "string",
+      "title": "string",
+      "tagline": "string",
+      "bio": "string",
+      "portraitUrl": "string",
+      "location": "string",
+      "availability": "string",
+      "contactEmail": "string",
+      "contactPhone": "string",
+      "adminPassword": "string"
+    }
+  }
+}
