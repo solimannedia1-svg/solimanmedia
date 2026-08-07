@@ -275,24 +275,10 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
             if (e.target === e.currentTarget) setSelectedProject(null);
           }}
         >
-          {/* Floating Mobile Close Button (Always visible at top-right on mobile) */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedProject(null);
-            }}
-            className="fixed top-4 right-4 z-[130] md:hidden px-3.5 py-2 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-extrabold flex items-center gap-1 shadow-[0_0_20px_rgba(0,227,253,0.8)] cursor-pointer active:scale-95 border border-[#00daf3]"
-            title="Close"
-          >
-            <span>CLOSE</span>
-            <span className="material-symbols-outlined text-base font-bold">close</span>
-          </button>
-
           <div className="glass-card max-w-3xl w-full my-auto rounded-2xl p-4 sm:p-8 border border-[#00daf3]/60 relative shadow-[0_0_40px_rgba(0,227,253,0.25)] bg-[#0e1112] text-left">
             
             {/* Top Sticky Close Button Header */}
-            <div className="sticky top-0 z-50 flex items-center justify-between bg-[#0e1112] py-3.5 px-4 -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 mb-5 sm:mb-6 border-b border-[#00daf3]/40 rounded-t-2xl shadow-md">
+            <div className="sticky top-0 z-50 flex items-center justify-between bg-[#0e1112]/95 backdrop-blur-md py-3.5 px-4 -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 mb-5 sm:mb-6 border-b border-[#00daf3]/40 rounded-t-2xl shadow-md">
               <div className="font-mono-code text-xs text-[#00daf3] font-bold uppercase flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00daf3] animate-pulse" />
                 <span>PROJECT DETAILS</span>
@@ -303,11 +289,11 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   e.stopPropagation();
                   setSelectedProject(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] transition-all font-mono-code text-xs font-extrabold flex items-center gap-1.5 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer active:scale-95 min-h-[40px]"
+                className="px-4 py-2 rounded-xl border border-[#00daf3] bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] active:scale-95 transition-all font-mono-code text-xs font-extrabold flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,227,253,0.4)] cursor-pointer shrink-0"
                 title="Close"
               >
                 <span>CLOSE</span>
-                <span className="material-symbols-outlined text-base font-bold">close</span>
+                <span className="material-symbols-outlined text-base font-bold leading-none">close</span>
               </button>
             </div>
 
