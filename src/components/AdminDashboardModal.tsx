@@ -154,30 +154,19 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   const handleVideoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const localBlobUrl = URL.createObjectURL(file);
-      if (file.size > 800 * 1024) {
-        setEditingProject((prev) => ({
-          ...prev,
-          videoUrl: localBlobUrl,
-          mediaType: 'video',
-          aspectRatio: prev?.category === 'ai-videos' || prev?.aspectRatio === 'reel' ? 'reel' : 'reel',
-          category: prev?.category || 'ai-videos'
-        }));
-      } else {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            setEditingProject((prev) => ({
-              ...prev,
-              videoUrl: event.target!.result as string,
-              mediaType: 'video',
-              aspectRatio: prev?.category === 'ai-videos' || prev?.aspectRatio === 'reel' ? 'reel' : 'reel',
-              category: prev?.category || 'ai-videos'
-            }));
-          }
-        };
-        reader.readAsDataURL(file);
-      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setEditingProject((prev) => ({
+            ...prev,
+            videoUrl: event.target!.result as string,
+            mediaType: 'video',
+            aspectRatio: prev?.category === 'ai-videos' || prev?.aspectRatio === 'reel' ? 'reel' : 'reel',
+            category: prev?.category || 'ai-videos'
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 

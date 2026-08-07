@@ -269,22 +269,32 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
       {/* Detail & Video/Live Web Preview Modal */}
       {selectedProject && (
         <div
-          className="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-xl animate-fadeIn overflow-y-auto"
+          className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-6 pt-16 sm:pt-6 bg-black/92 backdrop-blur-2xl animate-fadeIn overflow-y-auto"
           onClick={(e) => {
             if (e.target === e.currentTarget) setSelectedProject(null);
           }}
         >
-          <div className="glass-card max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border border-[#00daf3]/50 relative shadow-[0_0_35px_rgba(0,227,253,0.2)]">
+          {/* Floating Mobile Close Button (Always visible at top-right on mobile) */}
+          <button
+            onClick={() => setSelectedProject(null)}
+            className="fixed top-4 right-4 z-[120] md:hidden px-3.5 py-2 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-extrabold flex items-center gap-1 shadow-[0_0_20px_rgba(0,227,253,0.6)] cursor-pointer active:scale-95 border border-[#00daf3]"
+            title="Close"
+          >
+            <span>CLOSE</span>
+            <span className="material-symbols-outlined text-base font-bold">close</span>
+          </button>
+
+          <div className="glass-card max-w-3xl w-full max-h-[88vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border border-[#00daf3]/60 relative shadow-[0_0_40px_rgba(0,227,253,0.25)] bg-[#0e1112]">
             
             {/* Top Sticky Close Button Header */}
-            <div className="sticky top-0 z-30 flex items-center justify-between bg-[#111415]/95 backdrop-blur-md p-3 -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b border-white/10 rounded-t-2xl">
+            <div className="sticky top-0 z-50 flex items-center justify-between bg-[#0e1112] py-3.5 px-4 -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b border-[#00daf3]/40 rounded-t-2xl shadow-md">
               <div className="font-mono-code text-xs text-[#00daf3] font-bold uppercase flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00daf3] animate-pulse" />
                 <span>PROJECT DETAILS</span>
               </div>
               <button
                 onClick={() => setSelectedProject(null)}
-                className="px-3 py-1.5 rounded-xl border border-[#00daf3]/60 bg-[#00daf3]/20 text-[#00daf3] hover:bg-[#00daf3] hover:text-[#001f24] transition-all font-mono-code text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,227,253,0.3)] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] transition-all font-mono-code text-xs font-extrabold flex items-center gap-1.5 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer active:scale-95"
                 title="Close"
               >
                 <span>CLOSE</span>

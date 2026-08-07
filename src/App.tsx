@@ -53,8 +53,30 @@ export default function App() {
       if (snapshot.exists()) {
         const data = snapshot.data();
         if (data && Array.isArray(data.items)) {
-          setProjects(data.items);
-          localStorage.setItem('mohamed_soliman_projects_v2', JSON.stringify(data.items));
+          // Retrieve local projects to preserve local base64 video files if Firestore item is truncated
+          const localStored = localStorage.getItem('mohamed_soliman_projects_v2');
+          let localProjects: Project[] = [];
+          if (localStored) {
+            try { localProjects = JSON.parse(localStored); } catch {}
+          }
+
+          const mergedProjects = data.items.map((remoteProj: Project) => {
+            const localMatch = localProjects.find((lp) => lp.id === remoteProj.id);
+            if (
+              localMatch &&
+              localMatch.videoUrl &&
+              localMatch.videoUrl.startsWith('data:video') &&
+              (!remoteProj.videoUrl || remoteProj.videoUrl.includes('...[large video'))
+            ) {
+              return { ...remoteProj, videoUrl: localMatch.videoUrl };
+            }
+            return remoteProj;
+          });
+
+          setProjects(mergedProjects);
+          try {
+            localStorage.setItem('mohamed_soliman_projects_v2', JSON.stringify(mergedProjects));
+          } catch {}
         }
       }
     }, (err) => {
