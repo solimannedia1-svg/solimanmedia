@@ -13,6 +13,11 @@ async function startServer() {
   app.use(express.json());
 
   // API routes
+  app.get("/zohoverify/verifyforzoho.html", (_req, res) => {
+    res.setHeader("Content-Type", "text/html");
+    res.send("zb10745607");
+  });
+
   app.get("/api/health", (_req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
