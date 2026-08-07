@@ -270,32 +270,40 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
       {/* Detail & Video/Live Web Preview Modal */}
       {selectedProject && (
         <div
-          className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-6 pt-16 sm:pt-6 bg-black/92 backdrop-blur-2xl animate-fadeIn overflow-y-auto"
+          className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-2xl animate-fadeIn overflow-y-auto"
           onClick={(e) => {
             if (e.target === e.currentTarget) setSelectedProject(null);
           }}
         >
           {/* Floating Mobile Close Button (Always visible at top-right on mobile) */}
           <button
-            onClick={() => setSelectedProject(null)}
-            className="fixed top-4 right-4 z-[120] md:hidden px-3.5 py-2 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-extrabold flex items-center gap-1 shadow-[0_0_20px_rgba(0,227,253,0.6)] cursor-pointer active:scale-95 border border-[#00daf3]"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedProject(null);
+            }}
+            className="fixed top-4 right-4 z-[130] md:hidden px-3.5 py-2 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-extrabold flex items-center gap-1 shadow-[0_0_20px_rgba(0,227,253,0.8)] cursor-pointer active:scale-95 border border-[#00daf3]"
             title="Close"
           >
             <span>CLOSE</span>
             <span className="material-symbols-outlined text-base font-bold">close</span>
           </button>
 
-          <div className="glass-card max-w-3xl w-full max-h-[88vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border border-[#00daf3]/60 relative shadow-[0_0_40px_rgba(0,227,253,0.25)] bg-[#0e1112]">
+          <div className="glass-card max-w-3xl w-full my-auto rounded-2xl p-4 sm:p-8 border border-[#00daf3]/60 relative shadow-[0_0_40px_rgba(0,227,253,0.25)] bg-[#0e1112] text-left">
             
             {/* Top Sticky Close Button Header */}
-            <div className="sticky top-0 z-50 flex items-center justify-between bg-[#0e1112] py-3.5 px-4 -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b border-[#00daf3]/40 rounded-t-2xl shadow-md">
+            <div className="sticky top-0 z-50 flex items-center justify-between bg-[#0e1112] py-3.5 px-4 -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 mb-5 sm:mb-6 border-b border-[#00daf3]/40 rounded-t-2xl shadow-md">
               <div className="font-mono-code text-xs text-[#00daf3] font-bold uppercase flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00daf3] animate-pulse" />
                 <span>PROJECT DETAILS</span>
               </div>
               <button
-                onClick={() => setSelectedProject(null)}
-                className="px-4 py-2 rounded-xl bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] transition-all font-mono-code text-xs font-extrabold flex items-center gap-1.5 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer active:scale-95"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedProject(null);
+                }}
+                className="px-4 py-2 rounded-xl bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] transition-all font-mono-code text-xs font-extrabold flex items-center gap-1.5 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer active:scale-95 min-h-[40px]"
                 title="Close"
               >
                 <span>CLOSE</span>
@@ -311,12 +319,12 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
 
               if (isModalVideo) {
                 return (
-                  <div className="mb-6 rounded-xl overflow-hidden border border-[#00daf3]/50 bg-black min-h-[260px] max-h-[480px] flex items-center justify-center relative shadow-[0_0_25px_rgba(0,227,253,0.15)]">
+                  <div className="mb-6 rounded-xl overflow-hidden border border-[#00daf3]/50 bg-black min-h-[220px] max-h-[440px] flex items-center justify-center relative shadow-[0_0_25px_rgba(0,227,253,0.15)]">
                     {modalVideoInfo.type === 'youtube' || modalVideoInfo.type === 'vimeo' || modalVideoInfo.type === 'gdrive' || modalVideoInfo.type === 'streamable' || modalVideoInfo.type === 'loom' ? (
                       <iframe
                         src={modalVideoInfo.embedUrl}
                         title={selectedProject.title}
-                        className="w-full h-[320px] sm:h-[400px] border-0 rounded-xl"
+                        className="w-full h-[280px] sm:h-[380px] border-0 rounded-xl"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                       />
@@ -325,11 +333,17 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         src={modalVideoInfo.embedUrl || fallbackModalUrl}
                         poster={selectedProject.image}
                         controls
-                        autoPlay
                         playsInline
                         muted
                         preload="auto"
-                        className="w-full max-h-[440px] object-contain rounded-xl"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (target.src !== fallbackModalUrl) {
+                            target.src = fallbackModalUrl;
+                            target.load();
+                          }
+                        }}
+                        className="w-full max-h-[400px] object-contain rounded-xl"
                       />
                     )}
                   </div>
@@ -337,7 +351,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
               }
 
               return (
-                <div className="mb-6 h-64 rounded-xl overflow-hidden border border-white/10 relative">
+                <div className="mb-6 h-52 sm:h-64 rounded-xl overflow-hidden border border-white/10 relative">
                   <img
                     src={selectedProject.image}
                     alt={selectedProject.title}
@@ -347,22 +361,29 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
               );
             })()}
 
-            <div className="font-mono-code text-xs text-[#00daf3] mb-2 uppercase flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-[#00daf3]/10 border border-[#00daf3]/30 font-bold">
+            {/* Subtitle & Category Badges */}
+            <div className="flex flex-wrap items-center gap-2 font-mono-code text-xs text-[#00daf3] mb-3 leading-normal">
+              <span className="px-2.5 py-1 rounded bg-[#00daf3]/10 border border-[#00daf3]/30 font-bold uppercase">
                 {selectedProject.category === 'web-app'
                   ? 'WEB APPLICATION'
                   : selectedProject.category === 'brand-media'
                   ? 'BRAND & MEDIA'
                   : 'AI VIDEO SHOWCASE'}
               </span>
-              <span>• {selectedProject.subtitle}</span>
+              {selectedProject.subtitle && (
+                <span className="text-[#c7c6ca] break-words">
+                  • {selectedProject.subtitle}
+                </span>
+              )}
             </div>
 
-            <h3 className="font-space text-3xl font-bold text-[#e1e3e4] mb-4">
+            {/* Title */}
+            <h3 className="font-space text-xl sm:text-3xl font-bold text-[#e1e3e4] mb-3 leading-tight break-words">
               {selectedProject.title}
             </h3>
 
-            <p className="font-body text-base text-[#c7c6ca] mb-6 leading-relaxed">
+            {/* Description */}
+            <p className="font-body text-sm sm:text-base text-[#c7c6ca] mb-6 leading-relaxed break-words whitespace-pre-line">
               {selectedProject.description}
             </p>
 
@@ -373,13 +394,14 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   <span>ARCHITECTURE &amp; SOURCE CODE EXCERPT</span>
                   <span className="text-[#00daf3]">SYSTEM CODE</span>
                 </div>
-                <pre className="p-4 rounded-xl bg-[#0c0f10] border border-white/10 font-mono-code text-xs text-[#00daf3] overflow-x-auto leading-relaxed">
+                <pre className="p-3.5 sm:p-4 rounded-xl bg-[#0c0f10] border border-white/10 font-mono-code text-[11px] sm:text-xs text-[#00daf3] overflow-x-auto leading-relaxed max-h-52 sm:max-h-64">
                   <code>{selectedProject.codeSnippet}</code>
                 </pre>
               </div>
             )}
 
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
+            {/* Tags and Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-5 sm:pt-6 border-t border-white/10 w-full">
               <div className="flex flex-wrap gap-2">
                 {selectedProject.tags.map((t) => (
                   <span
@@ -391,24 +413,28 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                 ))}
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 {selectedProject.liveUrl && selectedProject.liveUrl !== '#' && (
                   <a
                     href={selectedProject.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-primary px-6 py-2.5 font-mono-code text-xs font-bold rounded-xl flex items-center gap-2"
+                    className="btn-primary px-6 py-3 font-mono-code text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(0,227,253,0.3)] w-full sm:w-auto min-h-[44px]"
                   >
                     <span>OPEN LIVE APP</span>
                     <span className="material-symbols-outlined text-sm">open_in_new</span>
                   </a>
                 )}
                 <button
-                  onClick={() => setSelectedProject(null)}
-                  className="px-6 py-2.5 font-mono-code text-xs font-bold border border-[#00daf3]/60 bg-[#00daf3]/10 text-[#00daf3] hover:bg-[#00daf3] hover:text-[#001f24] transition-all rounded-xl flex items-center gap-2 shadow-[0_0_12px_rgba(0,227,253,0.2)] cursor-pointer"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedProject(null);
+                  }}
+                  className="w-full sm:w-auto px-6 py-3 font-mono-code text-xs font-extrabold border border-[#00daf3] bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] active:scale-95 transition-all rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer min-h-[44px]"
                 >
                   <span>CLOSE</span>
-                  <span className="material-symbols-outlined text-sm font-bold">close</span>
+                  <span className="material-symbols-outlined text-base font-bold">close</span>
                 </button>
               </div>
             </div>
