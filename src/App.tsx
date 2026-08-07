@@ -37,6 +37,14 @@ export default function App() {
     }
   });
 
+  // Ensure site always loads at the top on page open/refresh
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   // Subscribe to real-time Firestore updates
   useEffect(() => {
     const unsubSettings = onSnapshot(doc(db, 'portfolio', 'settings'), (snapshot) => {
