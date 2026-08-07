@@ -138,7 +138,7 @@ export default function App() {
     try {
       // Clean oversized data URLs if necessary so Firestore 1MB limit is respected
       const firestoreCleanProjects = newProjects.map((p) => {
-        if (p.videoUrl && p.videoUrl.startsWith('data:') && p.videoUrl.length > 700000) {
+        if (p.videoUrl && p.videoUrl.startsWith('data:') && p.videoUrl.length > 950000) {
           // If a base64 video is too large for single Firestore doc, keep local blob or clear for firestore
           return { ...p, videoUrl: p.videoUrl.slice(0, 100) + '...[large video stored locally]' };
         }

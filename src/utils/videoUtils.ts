@@ -1,12 +1,12 @@
 export interface VideoSourceInfo {
-  type: 'youtube' | 'vimeo' | 'gdrive' | 'direct' | 'none';
+  type: 'youtube' | 'vimeo' | 'gdrive' | 'streamable' | 'loom' | 'direct' | 'none';
   embedUrl: string;
   originalUrl: string;
 }
 
 /**
- * Parses any video URL (YouTube, YouTube Shorts, Vimeo, Google Drive, or Direct MP4/WebM/Blob/Data URL)
- * and returns embed metadata for smooth playback.
+ * Parses any video URL (YouTube, YouTube Shorts, Vimeo, Google Drive, Streamable, Loom, or Direct MP4/WebM/Blob/Data URL)
+ * and returns embed metadata for smooth playback across desktop and mobile.
  */
 export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
   if (!url || typeof url !== 'string' || !url.trim()) {
@@ -15,7 +15,7 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
 
   const trimmed = url.trim();
 
-  // Fallback for truncated large string placeholder
+  // Handle truncated base64 placeholder when video was too large for Firestore document
   if (trimmed.includes('...[large video')) {
     return {
       type: 'direct',
@@ -30,13 +30,13 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
   if (ytMatch && ytMatch[1]) {
     return {
       type: 'youtube',
-      embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0&rel=0&modestbranding=1&playsinline=1`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=0&rel=0&modestbranding=1&playsinline=1`,
       originalUrl: trimmed
     };
   }
 
   // 2. Google Drive video matcher
-  const gdriveRegex = /drive\.google\.com\/file\/d\/([\w-]+)/;
+  const gdriveRegex = /drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/;
   const gdriveMatch = trimmed.match(gdriveRegex);
   if (gdriveMatch && gdriveMatch[1]) {
     return {
@@ -57,7 +57,29 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
     };
   }
 
-  // 4. Direct MP4 / WebM / Data URL / Blob / external link
+  // 4. Streamable matcher
+  const streamableRegex = /streamable\.com\/([\w-]+)/;
+  const streamableMatch = trimmed.match(streamableRegex);
+  if (streamableMatch && streamableMatch[1]) {
+    return {
+      type: 'streamable',
+      embedUrl: `https://streamable.com/e/${streamableMatch[1]}`,
+      originalUrl: trimmed
+    };
+  }
+
+  // 5. Loom matcher
+  const loomRegex = /loom\.com\/(?:share|embed)\/([\w-]+)/;
+  const loomMatch = trimmed.match(loomRegex);
+  if (loomMatch && loomMatch[1]) {
+    return {
+      type: 'loom',
+      embedUrl: `https://www.loom.com/embed/${loomMatch[1]}`,
+      originalUrl: trimmed
+    };
+  }
+
+  // 6. Direct MP4 / WebM / Data URL / Blob / external link
   return {
     type: 'direct',
     embedUrl: trimmed,

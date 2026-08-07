@@ -1022,8 +1022,8 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                       </div>
                     </div>
 
-                    <p className="font-mono-code text-[11px] text-[#919094]">
-                      💡 <strong className="text-[#00daf3]">Tip:</strong> You can paste any YouTube link, YouTube Shorts link, Vimeo link, or MP4 URL. They will play seamlessly on the main website!
+                    <p className="font-mono-code text-[11px] text-[#919094] leading-relaxed">
+                      💡 <strong className="text-[#00daf3]">نصيحة هامة لتشغيل الفيديو على الموبايل:</strong> يمكنك إضافة رابط فيديو مباشر من (YouTube, Shorts, Google Drive, Vimeo, Streamable) أو رابط ملف MP4. استخدام الروابط يضمن تشغيل الفيديو فوراً وبسلاسة على جميع الهواتف الذكية والأجهزة المحمولة!
                     </p>
 
                     {/* Live Preview Box */}

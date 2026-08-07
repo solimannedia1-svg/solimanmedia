@@ -123,7 +123,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                           ? 'h-full aspect-[9/16] bg-black max-w-[280px] sm:max-w-[320px]'
                           : 'w-full h-full'
                       }`}>
-                        {videoInfo.type === 'youtube' || videoInfo.type === 'vimeo' ? (
+                        {videoInfo.type === 'youtube' || videoInfo.type === 'vimeo' || videoInfo.type === 'gdrive' || videoInfo.type === 'streamable' || videoInfo.type === 'loom' ? (
                           <iframe
                             src={videoInfo.embedUrl}
                             title={project.title}
@@ -137,6 +137,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                             poster={project.image}
                             controls
                             playsInline
+                            muted
                             preload="metadata"
                             className="w-full h-full object-cover rounded-xl"
                           />
@@ -311,7 +312,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
               if (isModalVideo) {
                 return (
                   <div className="mb-6 rounded-xl overflow-hidden border border-[#00daf3]/50 bg-black min-h-[260px] max-h-[480px] flex items-center justify-center relative shadow-[0_0_25px_rgba(0,227,253,0.15)]">
-                    {modalVideoInfo.type === 'youtube' || modalVideoInfo.type === 'vimeo' || modalVideoInfo.type === 'gdrive' ? (
+                    {modalVideoInfo.type === 'youtube' || modalVideoInfo.type === 'vimeo' || modalVideoInfo.type === 'gdrive' || modalVideoInfo.type === 'streamable' || modalVideoInfo.type === 'loom' ? (
                       <iframe
                         src={modalVideoInfo.embedUrl}
                         title={selectedProject.title}
@@ -326,6 +327,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         controls
                         autoPlay
                         playsInline
+                        muted
                         preload="auto"
                         className="w-full max-h-[440px] object-contain rounded-xl"
                       />
