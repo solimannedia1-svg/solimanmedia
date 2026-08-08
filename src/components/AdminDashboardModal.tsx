@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Project, SiteSettings, SocialPlatform, GalleryItem } from '../types';
-import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS } from '../data/portfolioData';
+import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS, DEFAULT_GALLERY_ITEMS } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
 import { SocialIcon } from './SocialIcon';
 
@@ -50,6 +50,17 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   // Settings State
   const [settingsForm, setSettingsForm] = useState<SiteSettings>(siteSettings);
   const [saveNotice, setSaveNotice] = useState<string>('');
+
+  useEffect(() => {
+    if (siteSettings) {
+      setSettingsForm({
+        ...siteSettings,
+        galleryItems: (siteSettings.galleryItems && siteSettings.galleryItems.length > 0)
+          ? siteSettings.galleryItems
+          : DEFAULT_GALLERY_ITEMS
+      });
+    }
+  }, [siteSettings]);
 
   if (!isOpen) return null;
 
@@ -233,7 +244,9 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   };
 
   // Gallery CRUD Handlers
-  const currentGalleryItems = settingsForm.galleryItems || [];
+  const currentGalleryItems = (settingsForm.galleryItems && settingsForm.galleryItems.length > 0)
+    ? settingsForm.galleryItems
+    : DEFAULT_GALLERY_ITEMS;
 
   const handleOpenNewGalleryItem = () => {
     setEditingGalleryItem({
