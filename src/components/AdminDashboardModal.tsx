@@ -1330,10 +1330,10 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                     <div>
                       <h4 className="font-space text-base font-bold text-[#e1e3e4] flex items-center gap-2">
                         <span className="material-symbols-outlined text-[#00daf3]">stars</span>
-                        <span>VIP GALLERY &amp; TESTIMONIALS (معرض اللحظات والشهادات)</span>
+                        <span>VIP GALLERY &amp; TESTIMONIALS MANAGEMENT</span>
                       </h4>
                       <p className="font-mono-code text-xs text-[#919094] mt-1">
-                        إدارة صور وفيديوهات التكريمات، اللقاءات مع الشخصيات البارزة، وفيديوهات الشكر.
+                        Manage VIP showcase photos, executive encounters, video testimonials, and media highlights.
                       </p>
                     </div>
 
@@ -1343,11 +1343,11 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                       className="px-4 py-2.5 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-bold hover:bg-[#00daf3]/80 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(0,218,243,0.3)] cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">add</span>
-                      <span>إضافة عنصر جديد للمعرض</span>
+                      <span>ADD GALLERY ITEM</span>
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 dir-rtl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {currentGalleryItems.map((item) => (
                       <div
                         key={item.id}
@@ -1367,9 +1367,9 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           <h5 className="font-bold text-sm text-[#e1e3e4] truncate">{item.title}</h5>
                           <p className="text-xs text-[#919094] line-clamp-2">{item.description}</p>
                           <div className="flex items-center gap-2 pt-2 text-[10px] font-mono-code text-[#79797e]">
-                            <span>نوع الميديا: {item.mediaType === 'video' ? '🎬 فيديو' : '🖼️ صورة'}</span>
+                            <span>TYPE: {item.mediaType === 'video' ? '🎬 VIDEO' : '🖼️ IMAGE'}</span>
                             <span>•</span>
-                            <span>الفئة: {item.category}</span>
+                            <span>CATEGORY: {item.category === 'celebrity' ? 'VIP GUEST' : 'TESTIMONIAL'}</span>
                           </div>
                         </div>
 
@@ -1378,7 +1378,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                             type="button"
                             onClick={() => handleOpenEditGalleryItem(item)}
                             className="p-1.5 rounded-lg bg-white/5 hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] border border-white/10 transition-colors cursor-pointer"
-                            title="تعديل"
+                            title="Edit"
                           >
                             <span className="material-symbols-outlined text-sm">edit</span>
                           </button>
@@ -1386,7 +1386,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                             type="button"
                             onClick={() => handleDeleteGalleryItem(item.id)}
                             className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-600 text-red-300 transition-colors cursor-pointer"
-                            title="حذف"
+                            title="Delete"
                           >
                             <span className="material-symbols-outlined text-sm">delete</span>
                           </button>
@@ -1396,7 +1396,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
 
                     {currentGalleryItems.length === 0 && (
                       <div className="col-span-full py-12 text-center font-mono-code text-xs text-[#919094] bg-[#1d2021] rounded-xl border border-dashed border-white/10">
-                        لا توجد عناصر حالياً في المعرض. اضغط على "إضافة عنصر جديد للمعرض" للبدء.
+                        No gallery items found. Click "ADD GALLERY ITEM" to create one.
                       </div>
                     )}
                   </div>
@@ -1405,13 +1405,13 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
 
               {/* TAB GALLERY FORM: ADD / EDIT GALLERY ITEM */}
               {activeTab === 'gallery-form' && editingGalleryItem && (
-                <form onSubmit={handleSaveGalleryItem} className="space-y-6 dir-rtl">
+                <form onSubmit={handleSaveGalleryItem} className="space-y-6">
                   <div className="p-6 rounded-xl bg-[#1d2021] border border-[#00daf3]/40 space-y-4">
                     <div className="flex items-center justify-between pb-3 border-b border-white/10">
                       <h4 className="font-space text-base font-bold text-[#e1e3e4] flex items-center gap-2">
                         <span className="material-symbols-outlined text-[#00daf3]">stars</span>
                         <span>
-                          {editingGalleryItem.id ? 'تعديل عنصر المعرض' : 'إضافة عنصر جديد للمعرض'}
+                          {editingGalleryItem.id ? 'EDIT GALLERY ITEM' : 'ADD NEW GALLERY ITEM'}
                         </span>
                       </h4>
                       <button
@@ -1419,14 +1419,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         onClick={() => setActiveTab('gallery')}
                         className="text-xs font-mono-code text-[#919094] hover:text-white"
                       >
-                        إلغاء ✕
+                        CANCEL ✕
                       </button>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                          عنوان اللقاء أو الفيديو أو التكريم *
+                          TITLE / EVENT NAME *
                         </label>
                         <input
                           type="text"
@@ -1435,14 +1435,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           onChange={(e) =>
                             setEditingGalleryItem((prev) => ({ ...prev, title: e.target.value }))
                           }
-                          placeholder="مثال: لقاء خاص مع مستشار التحول الرقمي..."
+                          placeholder="e.g. Executive Strategic Summit with Tech Leaders"
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
 
                       <div>
                         <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                          اسم الشخصية المشهورة / جهة التقدير (VIP Guest Name)
+                          VIP GUEST NAME / CLIENT (Person Name)
                         </label>
                         <input
                           type="text"
@@ -1450,14 +1450,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           onChange={(e) =>
                             setEditingGalleryItem((prev) => ({ ...prev, personName: e.target.value }))
                           }
-                          placeholder="مثال: د. أحمد العوضي / المهندس كريم الشاذلي"
+                          placeholder="e.g. Dr. Ahmed El-Awady"
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
 
                       <div>
                         <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                          المنصب / الصفة (Person Title / Role)
+                          ROLE / TITLE (Person Title)
                         </label>
                         <input
                           type="text"
@@ -1465,14 +1465,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           onChange={(e) =>
                             setEditingGalleryItem((prev) => ({ ...prev, personRole: e.target.value }))
                           }
-                          placeholder="مثال: رئيس مجلس إدارة Celeste / خبير الذكاء الاصطناعي"
+                          placeholder="e.g. Founder & CEO — CELESTE Group"
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
 
                       <div>
                         <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                          قسم المعرض (Category)
+                          CATEGORY
                         </label>
                         <select
                           value={editingGalleryItem.category || 'celebrity'}
@@ -1481,16 +1481,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           }
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         >
-                          <option value="celebrity">مع الشخصيات والشهيرات (VIP Guests)</option>
-                          <option value="testimonial">فيديوهات شكر وتقدير (Testimonials)</option>
-                          <option value="event">فعاليات وتكريمات (Events)</option>
-                          <option value="press">صحافة وإعلام (Press & Media)</option>
+                          <option value="celebrity">VIP GUESTS</option>
+                          <option value="testimonial">TESTIMONIALS</option>
                         </select>
                       </div>
 
                       <div>
                         <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                          نوع الميديا (Media Type)
+                          MEDIA TYPE
                         </label>
                         <select
                           value={editingGalleryItem.mediaType || 'image'}
@@ -1499,14 +1497,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           }
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         >
-                          <option value="image">صورة فقط (Photo)</option>
-                          <option value="video">فيديو (Video with link)</option>
+                          <option value="image">Image Only</option>
+                          <option value="video">Video (YouTube / MP4)</option>
                         </select>
                       </div>
 
                       <div>
                         <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                          التاريخ أو المناسبة (Date / Occasion)
+                          DATE / OCCASION
                         </label>
                         <input
                           type="text"
@@ -1514,7 +1512,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           onChange={(e) =>
                             setEditingGalleryItem((prev) => ({ ...prev, date: e.target.value }))
                           }
-                          placeholder="2025 أو قمة القاهرة للتكنولوجيا"
+                          placeholder="e.g. 2025 or Tech Summit"
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
@@ -1522,7 +1520,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
 
                     <div>
                       <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                        رابط الصورة / Thumbnail URL *
+                        IMAGE / THUMBNAIL URL *
                       </label>
                       <input
                         type="text"
@@ -1539,7 +1537,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                     {editingGalleryItem.mediaType === 'video' && (
                       <div>
                         <label className="block font-mono-code text-xs text-[#00daf3] uppercase mb-1 font-bold">
-                          رابط الفيديو (YouTube, YouTube Shorts, MP4)
+                          VIDEO URL (YouTube, YouTube Shorts, MP4)
                         </label>
                         <input
                           type="text"
@@ -1555,7 +1553,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
 
                     <div>
                       <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                        الوصف والتفاصيل (Description)
+                        DESCRIPTION &amp; DETAILS
                       </label>
                       <textarea
                         rows={3}
@@ -1563,7 +1561,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         onChange={(e) =>
                           setEditingGalleryItem((prev) => ({ ...prev, description: e.target.value }))
                         }
-                        placeholder="اكتب نبذة عن اللقاء أو الشكر..."
+                        placeholder="Provide details about the encounter or testimonial..."
                         className="w-full bg-[#0c0f10] border border-white/10 rounded-xl p-3 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                       />
                     </div>
@@ -1579,7 +1577,7 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         className="w-4 h-4 accent-[#00daf3] rounded"
                       />
                       <label htmlFor="gal-featured" className="text-xs font-mono-code text-[#e1e3e4] cursor-pointer">
-                        إظهار كـ VIP مميز (Featured)
+                        FEATURED IN HERO GRID
                       </label>
                     </div>
 
@@ -1589,14 +1587,14 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         onClick={() => setActiveTab('gallery')}
                         className="px-6 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca]"
                       >
-                        إلغاء
+                        CANCEL
                       </button>
                       <button
                         type="submit"
                         className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2"
                       >
                         <span className="material-symbols-outlined text-sm">save</span>
-                        <span>حفظ في المعرض</span>
+                        <span>SAVE GALLERY ITEM</span>
                       </button>
                     </div>
                   </div>
