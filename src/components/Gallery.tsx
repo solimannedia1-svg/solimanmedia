@@ -38,17 +38,17 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
     return url;
   };
 
-  // Helper to pick items for specific grid slots
+  // Helper to pick items for specific grid slots without duplication
   const getItemAt = (index: number) => {
-    if (filteredItems.length === 0) return null;
-    return filteredItems[index % filteredItems.length];
+    if (index >= filteredItems.length) return null;
+    return filteredItems[index];
   };
 
   const itemLeft = getItemAt(0);
-  const itemCenter = getItemAt(1) || itemLeft;
-  const itemRight = getItemAt(2) || itemCenter;
-  const itemBottom1 = getItemAt(3) || itemLeft;
-  const itemBottom2 = getItemAt(4) || itemCenter;
+  const itemCenter = getItemAt(1);
+  const itemRight = getItemAt(2);
+  const itemBottom1 = getItemAt(3);
+  const itemBottom2 = getItemAt(4);
 
   return (
     <section id="gallery" className="py-24 relative overflow-hidden bg-[#0a0c0d] text-[#e1e3e4]">
@@ -119,11 +119,17 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
             {/* TOP ROW: 3-COLUMN ASYMMETRICAL LAYOUT */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
               
-              {/* CARD 1 (LEFT COLUMN - 3 COLS): TALL PORTRAIT CARD */}
+              {/* CARD 1 (LEFT COLUMN): PORTRAIT CARD */}
               {itemLeft && (
                 <div
                   onClick={() => setSelectedItem(itemLeft)}
-                  className="lg:col-span-3 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] shadow-2xl"
+                  className={`${
+                    filteredItems.length === 1
+                      ? 'lg:col-span-12'
+                      : filteredItems.length === 2
+                      ? 'lg:col-span-6'
+                      : 'lg:col-span-3'
+                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] shadow-2xl`}
                 >
                   {/* Image Background */}
                   <div className="absolute inset-0 z-0">
@@ -164,11 +170,13 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                 </div>
               )}
 
-              {/* CARD 2 (CENTER COLUMN - 5 COLS): FEATURED ALBUM GRID */}
+              {/* CARD 2 (CENTER COLUMN): FEATURED ALBUM GRID */}
               {itemCenter && (
                 <div
                   onClick={() => setSelectedItem(itemCenter)}
-                  className="lg:col-span-5 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[380px] sm:min-h-[460px] flex flex-col justify-between p-6 shadow-2xl"
+                  className={`${
+                    filteredItems.length === 2 ? 'lg:col-span-6' : 'lg:col-span-5'
+                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[380px] sm:min-h-[460px] flex flex-col justify-between p-6 shadow-2xl`}
                 >
                   {/* Camera Reticle Corners */}
                   <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#00daf3]/60 group-hover:border-[#00daf3]" />
@@ -224,23 +232,25 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   </div>
 
                   {/* Mini Gallery Previews Grid at Bottom */}
-                  <div className="relative z-10 grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
-                    {filteredItems.slice(0, 3).map((thumb, idx) => (
-                      <div
-                        key={idx}
-                        className="relative h-16 bg-black border border-white/10 overflow-hidden group/thumb"
-                      >
-                        <img
-                          src={thumb.image}
-                          alt={thumb.title}
-                          className="w-full h-full object-cover opacity-70 group-hover/thumb:opacity-100 group-hover/thumb:scale-110 transition-all"
-                        />
-                        <div className="absolute bottom-1 right-1 text-[9px] font-mono-code bg-black/80 px-1 text-[#00daf3]">
-                          0{idx + 1}
+                  {filteredItems.length >= 3 && (
+                    <div className="relative z-10 grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
+                      {filteredItems.slice(0, 3).map((thumb, idx) => (
+                        <div
+                          key={thumb.id || idx}
+                          className="relative h-16 bg-black border border-white/10 overflow-hidden group/thumb"
+                        >
+                          <img
+                            src={thumb.image}
+                            alt={thumb.title}
+                            className="w-full h-full object-cover opacity-70 group-hover/thumb:opacity-100 group-hover/thumb:scale-110 transition-all"
+                          />
+                          <div className="absolute bottom-1 right-1 text-[9px] font-mono-code bg-black/80 px-1 text-[#00daf3]">
+                            0{idx + 1}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -297,11 +307,13 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
             {/* BOTTOM ROW: 2 WIDE PANORAMIC CARDS */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
 
-              {/* BOTTOM LEFT (7 COLS): PANORAMIC WIDE FEATURE BANNER */}
+              {/* BOTTOM LEFT: PANORAMIC WIDE FEATURE BANNER */}
               {itemBottom1 && (
                 <div
                   onClick={() => setSelectedItem(itemBottom1)}
-                  className="lg:col-span-7 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl"
+                  className={`${
+                    !itemBottom2 ? 'lg:col-span-12' : 'lg:col-span-7'
+                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl`}
                 >
                   {/* Reticle Accent Line */}
                   <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#00daf3] to-transparent" />

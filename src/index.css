@@ -52,14 +52,29 @@
   white-space: nowrap;
 }
 
-.marquee-content {
-  display: inline-block;
-  animation: marquee 35s linear infinite;
+.animate-marquee-left {
+  display: inline-flex;
+  animation: marquee-left 35s linear infinite;
 }
 
-@keyframes marquee {
+.animate-marquee-right {
+  display: inline-flex;
+  animation: marquee-right 35s linear infinite;
+}
+
+.marquee-container:hover .animate-marquee-left,
+.marquee-container:hover .animate-marquee-right {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
 /* Custom Scrollbar */
