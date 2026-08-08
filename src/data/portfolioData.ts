@@ -21,9 +21,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   clientSatisfaction: '100%',
   socialPlatforms: [
     { id: 'facebook', name: 'Facebook', url: 'https://facebook.com/solimanmediaofficial', icon: 'facebook', color: '#1877F2' },
-    { id: 'instagram', name: 'Instagram', url: 'https://instagram.com/solimanmedia', icon: 'instagram', color: '#E1306C' },
-    { id: 'tiktok', name: 'TikTok', url: 'https://tiktok.com/@solimanmedia', icon: 'tiktok', color: '#00F2FE' },
-    { id: 'youtube', name: 'YouTube', url: 'https://youtube.com/@solimanmedia', icon: 'youtube', color: '#FF0000' }
+    { id: 'instagram', name: 'Instagram', url: 'https://instagram.com/solimanmedia', icon: 'instagram', color: '#E1306C' }
   ]
 };
 
