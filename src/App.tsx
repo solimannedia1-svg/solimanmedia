@@ -18,6 +18,9 @@ import { Project, SiteSettings } from './types';
 import { db } from './lib/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
+const SETTINGS_CACHE_KEY = 'mohamed_soliman_site_settings_v3';
+const PROJECTS_CACHE_KEY = 'mohamed_soliman_projects_v3';
+
 // Helper to safely store objects/arrays in localStorage without quota crashes
 function safeSaveToLocalStorage<T>(key: string, value: T): void {
   try {
@@ -50,7 +53,7 @@ function safeSaveToLocalStorage<T>(key: string, value: T): void {
 export default function App() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => {
     try {
-      const saved = localStorage.getItem('mohamed_soliman_site_settings_v1');
+      const saved = localStorage.getItem(SETTINGS_CACHE_KEY);
       return saved ? JSON.parse(saved) : DEFAULT_SITE_SETTINGS;
     } catch {
       return DEFAULT_SITE_SETTINGS;
@@ -59,7 +62,7 @@ export default function App() {
 
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
-      const saved = localStorage.getItem('mohamed_soliman_projects_v2');
+      const saved = localStorage.getItem(PROJECTS_CACHE_KEY);
       return saved ? JSON.parse(saved) : PROJECTS_DATA;
     } catch {
       return PROJECTS_DATA;
@@ -80,7 +83,7 @@ export default function App() {
       if (snapshot.exists()) {
         const data = snapshot.data() as SiteSettings;
         setSiteSettings(data);
-        safeSaveToLocalStorage('mohamed_soliman_site_settings_v1', data);
+        safeSaveToLocalStorage(SETTINGS_CACHE_KEY, data);
       }
     }, (err) => {
       console.warn('Firestore settings listener info:', err);
@@ -91,7 +94,7 @@ export default function App() {
         const data = snapshot.data();
         if (data && Array.isArray(data.items)) {
           // Retrieve local projects to preserve local base64 video files if Firestore item is truncated
-          const localStored = localStorage.getItem('mohamed_soliman_projects_v2');
+          const localStored = localStorage.getItem(PROJECTS_CACHE_KEY);
           let localProjects: Project[] = [];
           if (localStored) {
             try { localProjects = JSON.parse(localStored); } catch {}
@@ -111,7 +114,7 @@ export default function App() {
           });
 
           setProjects(mergedProjects);
-          safeSaveToLocalStorage('mohamed_soliman_projects_v2', mergedProjects);
+          safeSaveToLocalStorage(PROJECTS_CACHE_KEY, mergedProjects);
         }
       }
     }, (err) => {
@@ -154,7 +157,7 @@ export default function App() {
 
   const handleSaveSiteSettings = async (newSettings: SiteSettings) => {
     setSiteSettings(newSettings);
-    safeSaveToLocalStorage('mohamed_soliman_site_settings_v1', newSettings);
+    safeSaveToLocalStorage(SETTINGS_CACHE_KEY, newSettings);
     try {
       await setDoc(doc(db, 'portfolio', 'settings'), newSettings);
     } catch (e) {
@@ -164,7 +167,7 @@ export default function App() {
 
   const handleSaveProjects = async (newProjects: Project[]) => {
     setProjects(newProjects);
-    safeSaveToLocalStorage('mohamed_soliman_projects_v2', newProjects);
+    safeSaveToLocalStorage(PROJECTS_CACHE_KEY, newProjects);
 
     try {
       // Clean oversized data URLs if necessary so Firestore 1MB limit is respected

@@ -29,6 +29,25 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 
 export const PROJECTS_DATA: Project[] = [
   {
+    id: 'proj_1786176852784',
+    title: 'CELESTE — Social Media Creative Design',
+    subtitle: 'Premium Social Media Visuals for a Modern Café & Restaurant.',
+    category: 'brand-media',
+    mediaType: 'image',
+    aspectRatio: 'landscape',
+    description: 'I developed a premium social media design direction for CELESTE, a modern café and restaurant brand. The project focused on creating visually engaging content that reflects the brand’s atmosphere, elevates its digital presence, and maintains a consistent visual language across social media platforms.\n\nThe designs combine elegant typography, refined compositions, carefully selected color palettes, and high-quality visual elements to create a sophisticated and memorable brand presence. Each design was crafted to capture attention, communicate the brand’s offerings clearly, and create a cohesive experience across the entire social media feed.\n',
+    image: 'https://i.ibb.co/qYxqGLbz/image.png',
+    videoUrl: '',
+    tags: ['React', 'AI', 'WebGL'],
+    featured: true,
+    liveUrl: '#',
+    codeSnippet: '',
+    metrics: [
+      { label: 'Status', value: 'Live' },
+      { label: 'Quality', value: 'High Definition' }
+    ]
+  },
+  {
     id: 'proj_1786142543936',
     title: 'MOLOTO — AI-Powered Digital Experience',
     subtitle: 'AI',
