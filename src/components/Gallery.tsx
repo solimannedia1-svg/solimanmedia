@@ -139,8 +139,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
 
                   {/* Top Bar */}
                   <div className="relative z-10 p-5 flex items-center justify-between">
-                    <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold">
-                      {itemLeft.category.toUpperCase()}
+                    <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold uppercase">
+                      {(itemLeft.category || 'celebrity').toUpperCase()}
                     </span>
                     <span className="font-mono-code text-[10px] text-white/50">01 / ALBUM</span>
                   </div>
@@ -197,8 +197,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-4">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#00daf3] animate-pulse" />
-                      <span className="font-mono-code text-xs text-[#00daf3] font-bold tracking-widest uppercase">
-                        {itemCenter.mediaType === 'video' || itemCenter.videoUrl ? 'VIDEO TESTIMONIAL' : 'FEATURED MOMENT'}
+                      <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold uppercase">
+                        {(itemCenter.category || 'celebrity').toUpperCase()}
                       </span>
                     </div>
                     <span className="font-mono-code text-xs text-white/60">
@@ -253,11 +253,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
 
                   {/* Top Reticle Header */}
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="font-mono-code text-[11px] text-[#00daf3] font-bold tracking-widest">
-                      [ VIP SPOTLIGHT ]
+                    <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold uppercase">
+                      {(itemRight.category || 'celebrity').toUpperCase()}
                     </span>
                     <span className="font-mono-code text-[10px] text-[#919094]">
-                      {itemRight.category.toUpperCase()}
+                      {itemRight.date || '2025'}
                     </span>
                   </div>
 
@@ -313,7 +313,9 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   </div>
 
                   <div className="relative z-10 flex items-center justify-between font-mono-code text-xs text-[#00daf3]">
-                    <span>[ NEWS &amp; HIGHLIGHTS ]</span>
+                    <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold uppercase">
+                      {(itemBottom1.category || 'celebrity').toUpperCase()}
+                    </span>
                     <span className="text-white/50">{itemBottom1.date || '2025'}</span>
                   </div>
 
@@ -352,8 +354,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   </div>
 
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="font-mono-code text-xs text-[#00daf3] font-bold">
-                      [ TESTIMONIAL VIDEO ]
+                    <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold uppercase">
+                      {(itemBottom2.category || 'celebrity').toUpperCase()}
                     </span>
                     {(itemBottom2.mediaType === 'video' || itemBottom2.videoUrl) && (
                       <span className="w-8 h-8 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center font-bold shadow-[0_0_15px_rgba(0,218,243,0.6)]">
@@ -412,11 +414,16 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       </div>
 
                       <div>
-                        {item.personName && (
-                          <span className="text-[11px] font-mono-code text-[#00daf3] block">
-                            {item.personName}
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className="font-mono-code text-[10px] text-[#00daf3] bg-[#00daf3]/10 border border-[#00daf3]/40 px-2 py-0.5 tracking-wider font-bold uppercase">
+                            {(item.category || 'celebrity').toUpperCase()}
                           </span>
-                        )}
+                          {item.personName && (
+                            <span className="text-[11px] font-mono-code text-[#00daf3] truncate">
+                              {item.personName}
+                            </span>
+                          )}
+                        </div>
                         <h4 className="font-bold text-sm text-white group-hover:text-[#00daf3] transition-colors truncate">
                           {item.title}
                         </h4>
