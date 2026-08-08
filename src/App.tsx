@@ -247,7 +247,7 @@ export default function App() {
         <Marquee />
         <Skills />
         <WorkShowcase projects={projects} onSaveProjects={handleSaveProjects} onResetDefaults={handleResetDefaults} />
-        <Gallery galleryItems={siteSettings.galleryItems || DEFAULT_GALLERY_ITEMS} />
+        <Gallery galleryItems={Array.isArray(siteSettings.galleryItems) ? siteSettings.galleryItems : DEFAULT_GALLERY_ITEMS} />
         <AIPersonaStudio />
         <Journey />
         <StatusDashboard />

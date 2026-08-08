@@ -55,7 +55,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     if (siteSettings) {
       setSettingsForm({
         ...siteSettings,
-        galleryItems: (siteSettings.galleryItems && siteSettings.galleryItems.length > 0)
+        galleryItems: Array.isArray(siteSettings.galleryItems)
           ? siteSettings.galleryItems
           : DEFAULT_GALLERY_ITEMS
       });
@@ -244,7 +244,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   };
 
   // Gallery CRUD Handlers
-  const currentGalleryItems = (settingsForm.galleryItems && settingsForm.galleryItems.length > 0)
+  const currentGalleryItems = Array.isArray(settingsForm.galleryItems)
     ? settingsForm.galleryItems
     : DEFAULT_GALLERY_ITEMS;
 
