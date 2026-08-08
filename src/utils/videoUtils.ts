@@ -86,3 +86,56 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
     originalUrl: trimmed
   };
 }
+
+/**
+ * Extracts YouTube thumbnail URL if videoUrl is a valid YouTube link.
+ */
+export const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80';
+
+/**
+ * Checks whether a video URL represents a 9:16 vertical video format (YouTube Short, Instagram Reel, TikTok)
+ */
+export function isReelVideo(url?: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+  const lower = url.toLowerCase().trim();
+  return (
+    lower.includes('/shorts/') ||
+    lower.includes('/reel') ||
+    lower.includes('tiktok.com') ||
+    lower.includes('instagram.com')
+  );
+}
+
+/**
+ * Extracts YouTube thumbnail URL using reliable i.ytimg.com CDN.
+ */
+export function getYouTubeThumbnail(url: string | undefined): string {
+  if (!url || typeof url !== 'string' || !url.trim()) return '';
+  const ytRegex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([\w-]{11})/;
+  const match = url.trim().match(ytRegex);
+  if (match && match[1]) {
+    return `https://i.ytimg.com/vi/${match[1]}/hqdefault.jpg`;
+  }
+  return '';
+}
+
+/**
+ * Helper to safely resolve a valid display image for a gallery item,
+ * automatically falling back to a YouTube thumbnail or sleek video poster.
+ */
+export function getItemDisplayImage(item: { image?: string; videoUrl?: string; mediaType?: string } | undefined): string {
+  if (!item) return DEFAULT_FALLBACK_IMAGE;
+  
+  const cleanImg = item.image ? item.image.trim() : '';
+  if (cleanImg && !cleanImg.includes('...[large video') && cleanImg !== 'undefined' && cleanImg !== 'null') {
+    return cleanImg;
+  }
+  
+  if (item.videoUrl) {
+    const ytThumb = getYouTubeThumbnail(item.videoUrl);
+    if (ytThumb) return ytThumb;
+  }
+  
+  return DEFAULT_FALLBACK_IMAGE;
+}
+

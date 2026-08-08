@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { GalleryItem } from '../types';
+import { getVideoSourceInfo, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 
 interface GalleryProps {
   galleryItems?: GalleryItem[];
@@ -20,22 +21,14 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
     { id: 'testimonial', label: 'TESTIMONIALS', icon: 'movie' },
   ];
 
-  // Helper to extract embeddable YouTube URL
+  // Helper to extract embeddable Video URL
   const getEmbedUrl = (url?: string) => {
     if (!url) return '';
-    if (url.includes('youtube.com/shorts/')) {
-      const id = url.split('youtube.com/shorts/')[1]?.split('?')[0];
-      return `https://www.youtube.com/embed/${id}?autoplay=1`;
+    const info = getVideoSourceInfo(url);
+    if (info.type === 'youtube' && !info.embedUrl.includes('autoplay=1')) {
+      return `${info.embedUrl}&autoplay=1`;
     }
-    if (url.includes('watch?v=')) {
-      const id = url.split('watch?v=')[1]?.split('&')[0];
-      return `https://www.youtube.com/embed/${id}?autoplay=1`;
-    }
-    if (url.includes('youtu.be/')) {
-      const id = url.split('youtu.be/')[1]?.split('?')[0];
-      return `https://www.youtube.com/embed/${id}?autoplay=1`;
-    }
-    return url;
+    return info.embedUrl || url;
   };
 
   // Helper to pick items for specific grid slots without duplication
@@ -134,8 +127,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   {/* Image Background */}
                   <div className="absolute inset-0 z-0">
                     <img
-                      src={itemLeft.image}
+                      src={getItemDisplayImage(itemLeft)}
                       alt={itemLeft.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                      }}
                       className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/60 to-transparent" />
@@ -187,8 +183,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   {/* Background Image */}
                   <div className="absolute inset-0 z-0">
                     <img
-                      src={itemCenter.image}
+                      src={getItemDisplayImage(itemCenter)}
                       alt={itemCenter.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                      }}
                       className="w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/70 to-[#0a0c0d]/40" />
@@ -199,7 +198,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#00daf3] animate-pulse" />
                       <span className="font-mono-code text-xs text-[#00daf3] font-bold tracking-widest uppercase">
-                        FEATURED MOMENT
+                        {itemCenter.mediaType === 'video' || itemCenter.videoUrl ? 'VIDEO TESTIMONIAL' : 'FEATURED MOMENT'}
                       </span>
                     </div>
                     <span className="font-mono-code text-xs text-white/60">
@@ -209,7 +208,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
 
                   {/* Center Content / Play Icon if video */}
                   <div className="relative z-10 my-auto text-center space-y-4 py-8">
-                    {itemCenter.mediaType === 'video' ? (
+                    {itemCenter.mediaType === 'video' || itemCenter.videoUrl ? (
                       <div className="w-20 h-20 mx-auto rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center shadow-[0_0_35px_rgba(0,218,243,0.8)] group-hover:scale-110 transition-transform">
                         <span className="material-symbols-outlined text-4xl ml-1">play_arrow</span>
                       </div>
@@ -240,10 +239,18 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                           className="relative h-16 bg-black border border-white/10 overflow-hidden group/thumb"
                         >
                           <img
-                            src={thumb.image}
+                            src={getItemDisplayImage(thumb)}
                             alt={thumb.title}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                            }}
                             className="w-full h-full object-cover opacity-70 group-hover/thumb:opacity-100 group-hover/thumb:scale-110 transition-all"
                           />
+                          {(thumb.mediaType === 'video' || thumb.videoUrl) && (
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                              <span className="material-symbols-outlined text-xs text-[#00daf3]">play_arrow</span>
+                            </div>
+                          )}
                           <div className="absolute bottom-1 right-1 text-[9px] font-mono-code bg-black/80 px-1 text-[#00daf3]">
                             0{idx + 1}
                           </div>
@@ -263,8 +270,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   {/* Background Image */}
                   <div className="absolute inset-0 z-0">
                     <img
-                      src={itemRight.image}
+                      src={getItemDisplayImage(itemRight)}
                       alt={itemRight.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                      }}
                       className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/60 to-transparent" />
@@ -321,8 +331,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   {/* Background Image */}
                   <div className="absolute inset-0 z-0">
                     <img
-                      src={itemBottom1.image}
+                      src={getItemDisplayImage(itemBottom1)}
                       alt={itemBottom1.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                      }}
                       className="w-full h-full object-cover opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#0a0c0d] via-[#0a0c0d]/80 to-transparent" />
@@ -357,8 +370,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                 >
                   <div className="absolute inset-0 z-0">
                     <img
-                      src={itemBottom2.image}
+                      src={getItemDisplayImage(itemBottom2)}
                       alt={itemBottom2.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                      }}
                       className="w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/70 to-transparent" />
@@ -368,8 +384,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                     <span className="font-mono-code text-xs text-[#00daf3] font-bold">
                       [ TESTIMONIAL VIDEO ]
                     </span>
-                    {itemBottom2.mediaType === 'video' && (
-                      <span className="w-8 h-8 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center font-bold">
+                    {(itemBottom2.mediaType === 'video' || itemBottom2.videoUrl) && (
+                      <span className="w-8 h-8 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center font-bold shadow-[0_0_15px_rgba(0,218,243,0.6)]">
                         <span className="material-symbols-outlined text-lg">play_arrow</span>
                       </span>
                     )}
@@ -408,13 +424,16 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                     >
                       <div className="relative h-48 bg-black overflow-hidden">
                         <img
-                          src={item.image}
+                          src={getItemDisplayImage(item)}
                           alt={item.title}
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                          }}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
-                        {item.mediaType === 'video' && (
+                        {(item.mediaType === 'video' || item.videoUrl) && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                            <div className="w-12 h-12 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center shadow-[0_0_15px_rgba(0,218,243,0.8)]">
                               <span className="material-symbols-outlined text-2xl ml-0.5">play_arrow</span>
                             </div>
                           </div>
@@ -457,7 +476,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#00daf3] animate-pulse" />
                 <span className="font-mono-code text-xs text-[#00daf3] font-bold uppercase tracking-wider">
-                  [ {selectedItem.mediaType === 'video' ? 'VIDEO TESTIMONIAL' : 'PHOTO SHOWCASE'} ]
+                  [ {(selectedItem.mediaType === 'video' || selectedItem.videoUrl) ? (isReelVideo(selectedItem.videoUrl) ? 'REEL / SHORT SHOWCASE' : 'VIDEO SHOWCASE') : 'PHOTO SHOWCASE'} ]
                 </span>
               </div>
               <button
@@ -471,21 +490,42 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
 
             {/* Modal Media Content */}
             <div className="relative w-full bg-black">
-              {selectedItem.mediaType === 'video' && selectedItem.videoUrl ? (
-                <div className="aspect-video w-full">
-                  <iframe
-                    src={getEmbedUrl(selectedItem.videoUrl)}
-                    title={selectedItem.title}
-                    className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
+              {(selectedItem.mediaType === 'video' || selectedItem.videoUrl) ? (
+                isReelVideo(selectedItem.videoUrl) ? (
+                  <div className="flex flex-col items-center justify-center bg-[#080a0b] py-6 px-4">
+                    <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-[9/16] max-h-[72vh] rounded-3xl overflow-hidden border-2 border-[#00daf3] shadow-[0_0_50px_rgba(0,218,243,0.4)] bg-black">
+                      <iframe
+                        src={getEmbedUrl(selectedItem.videoUrl)}
+                        title={selectedItem.title}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                      <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#00daf3]/50 text-[#00daf3] text-[10px] font-mono-code font-bold flex items-center gap-2 shadow-lg pointer-events-none">
+                        <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                        <span>REEL / SHORT • 9:16</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="aspect-video w-full bg-black">
+                    <iframe
+                      src={getEmbedUrl(selectedItem.videoUrl)}
+                      title={selectedItem.title}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )
               ) : (
                 <div className="max-h-[65vh] overflow-hidden flex items-center justify-center bg-[#0a0c0d]">
                   <img
-                    src={selectedItem.image}
+                    src={getItemDisplayImage(selectedItem)}
                     alt={selectedItem.title}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                    }}
                     className="max-h-[65vh] w-auto object-contain"
                   />
                 </div>

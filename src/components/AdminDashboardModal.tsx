@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project, SiteSettings, SocialPlatform, GalleryItem } from '../types';
 import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS, DEFAULT_GALLERY_ITEMS } from '../data/portfolioData';
-import { getVideoSourceInfo } from '../utils/videoUtils';
+import { getVideoSourceInfo, getYouTubeThumbnail, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 import { SocialIcon } from './SocialIcon';
 
 interface AdminDashboardModalProps {
@@ -283,15 +283,20 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     e.preventDefault();
     if (!editingGalleryItem || !editingGalleryItem.title) return;
 
+    const computedVideoUrl = editingGalleryItem.videoUrl ? editingGalleryItem.videoUrl.trim() : '';
+    const computedMediaType = (editingGalleryItem.mediaType as any) || (computedVideoUrl ? 'video' : 'image');
+
     const fullItem: GalleryItem = {
       id: editingGalleryItem.id || 'gal_' + Date.now(),
       title: editingGalleryItem.title,
       personName: editingGalleryItem.personName || '',
       personRole: editingGalleryItem.personRole || '',
       category: (editingGalleryItem.category as any) || 'celebrity',
-      mediaType: (editingGalleryItem.mediaType as any) || 'image',
-      image: editingGalleryItem.image || 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
-      videoUrl: editingGalleryItem.videoUrl || '',
+      mediaType: computedMediaType,
+      image: (editingGalleryItem.image && editingGalleryItem.image.trim())
+        ? editingGalleryItem.image.trim()
+        : getItemDisplayImage({ image: editingGalleryItem.image, videoUrl: computedVideoUrl, mediaType: computedMediaType }),
+      videoUrl: computedVideoUrl,
       description: editingGalleryItem.description || '',
       date: editingGalleryItem.date || '2025',
       featured: editingGalleryItem.featured ?? true
@@ -1366,11 +1371,23 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         key={item.id}
                         className="bg-[#1d2021] border border-white/10 rounded-xl p-4 flex gap-4 items-start hover:border-[#00daf3]/40 transition-colors"
                       >
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-20 h-20 object-cover rounded-lg border border-white/10 flex-shrink-0"
-                        />
+                        <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-white/10 flex-shrink-0 bg-[#0c0f10]">
+                          <img
+                            src={getItemDisplayImage(item)}
+                            alt={item.title}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                          {(item.mediaType === 'video' || item.videoUrl) && (
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                              <span className="material-symbols-outlined text-[#00daf3] text-xl drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]">
+                                play_circle
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <div className="flex-1 min-w-0 space-y-1">
                           {item.personName && (
                             <span className="inline-block text-[10px] font-mono-code font-bold text-[#00daf3] bg-[#00daf3]/10 px-2 py-0.5 rounded">
@@ -1533,16 +1550,16 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
 
                     <div>
                       <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                        IMAGE / THUMBNAIL URL *
+                        IMAGE / THUMBNAIL URL {editingGalleryItem.mediaType === 'video' || editingGalleryItem.videoUrl ? '(اختياري بالفيديو)' : '*'}
                       </label>
                       <input
                         type="text"
-                        required
+                        required={editingGalleryItem.mediaType !== 'video' && !editingGalleryItem.videoUrl}
                         value={editingGalleryItem.image || ''}
                         onChange={(e) =>
                           setEditingGalleryItem((prev) => ({ ...prev, image: e.target.value }))
                         }
-                        placeholder="https://..."
+                        placeholder="https://... (يمكن تركه فارغاً بالفيديو وسيجلب صورة اليوتيوب تلقائياً)"
                         className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                       />
                     </div>
@@ -1555,10 +1572,19 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                         <input
                           type="text"
                           value={editingGalleryItem.videoUrl || ''}
-                          onChange={(e) =>
-                            setEditingGalleryItem((prev) => ({ ...prev, videoUrl: e.target.value }))
-                          }
-                          placeholder="https://youtube.com/shorts/..."
+                          onChange={(e) => {
+                            const newVideoUrl = e.target.value;
+                            const autoThumb = getYouTubeThumbnail(newVideoUrl);
+                            setEditingGalleryItem((prev) => ({
+                              ...prev,
+                              videoUrl: newVideoUrl,
+                              mediaType: 'video',
+                              image: (prev?.image && prev.image.trim() && !prev.image.includes('img.youtube.com'))
+                                ? prev.image
+                                : (autoThumb || prev?.image || '')
+                            }));
+                          }}
+                          placeholder="https://youtube.com/shorts/... or https://youtu.be/..."
                           className="w-full bg-[#0c0f10] border border-[#00daf3]/40 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
