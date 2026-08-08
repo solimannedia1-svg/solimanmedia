@@ -104,13 +104,25 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
       tags: ['React', 'AI', 'WebGL'],
       featured: true,
       mediaType: 'image',
-      aspectRatio: 'landscape'
+      aspectRatio: 'landscape',
+      metrics: [
+        { label: 'FPS TARGET', value: '120 FPS' },
+        { label: 'PERFORMANCE', value: '100 / 100' },
+        { label: 'SECURITY', value: 'AES-256' }
+      ]
     });
     setActiveTab('project-form');
   };
 
   const handleOpenEdit = (project: Project) => {
-    setEditingProject({ ...project });
+    setEditingProject({
+      ...project,
+      metrics: project.metrics ? project.metrics.map(m => ({ ...m })) : [
+        { label: 'FPS TARGET', value: '120 FPS' },
+        { label: 'PERFORMANCE', value: '100 / 100' },
+        { label: 'SECURITY', value: 'AES-256' }
+      ]
+    });
     setActiveTab('project-form');
   };
 
@@ -193,10 +205,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
       featured: editingProject.featured ?? true,
       liveUrl: editingProject.liveUrl || '#',
       codeSnippet: editingProject.codeSnippet || '',
-      metrics: editingProject.metrics || [
-        { label: 'Status', value: 'Live' },
-        { label: 'Quality', value: 'High Definition' }
-      ]
+      metrics: editingProject.metrics || []
     };
 
     const index = projects.findIndex((p) => p.id === fullProject.id);
@@ -1098,6 +1107,116 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                       placeholder="React, AI, WebGL"
                       className="w-full bg-[#1d2021] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                     />
+                  </div>
+
+                  {/* PROJECT METRICS & SPECIFICATIONS EDITOR */}
+                  <div className="p-4 rounded-xl bg-[#1d2021] border border-[#00daf3]/30 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <label className="font-mono-code text-xs text-[#00daf3] uppercase font-bold flex items-center gap-2">
+                        <span className="material-symbols-outlined text-sm">analytics</span>
+                        <span>PROJECT METRICS &amp; SPECIFICATIONS (مؤشرات ومواصفات المشروع)</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentMetrics = editingProject?.metrics || [];
+                          setEditingProject((prev) => ({
+                            ...prev,
+                            metrics: [...currentMetrics, { label: 'METRIC', value: '100%' }]
+                          }));
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-[#00daf3]/10 text-[#00daf3] border border-[#00daf3]/30 font-mono-code text-xs font-bold hover:bg-[#00daf3] hover:text-[#001f24] transition-colors self-start sm:self-auto cursor-pointer"
+                      >
+                        + ADD METRIC
+                      </button>
+                    </div>
+
+                    <p className="font-mono-code text-[11px] text-[#919094]">
+                      تظهر هذه المؤشرات مباشرة أسفل بطاقة المشروع في المعرض (مثل FPS TARGET, PERFORMANCE, SECURITY).
+                    </p>
+
+                    {/* Quick presets */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <span className="font-mono-code text-[10px] text-[#79797e]">إضافة سريعة:</span>
+                      {[
+                        { label: 'FPS TARGET', value: '120 FPS' },
+                        { label: 'PERFORMANCE', value: '100 / 100' },
+                        { label: 'SECURITY', value: 'AES-256' },
+                        { label: 'LATENCY', value: '< 120ms' },
+                        { label: 'STATUS', value: 'Live' }
+                      ].map((preset, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => {
+                            const current = editingProject?.metrics || [];
+                            if (!current.some((m) => m.label.toUpperCase() === preset.label.toUpperCase())) {
+                              setEditingProject((prev) => ({
+                                ...prev,
+                                metrics: [...current, preset]
+                              }));
+                            }
+                          }}
+                          className="px-2 py-1 rounded bg-[#0c0f10] text-[#00daf3] border border-white/10 hover:border-[#00daf3]/40 font-mono-code text-[10px] font-semibold cursor-pointer"
+                        >
+                          + {preset.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="space-y-3 pt-2">
+                      {(editingProject?.metrics || []).map((metric, idx) => (
+                        <div key={idx} className="flex items-center gap-2 bg-[#0c0f10] p-3 rounded-xl border border-white/5">
+                          <div className="flex-1 grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block font-mono-code text-[10px] text-[#79797e] uppercase mb-1">LABEL (اسم المؤشر)</label>
+                              <input
+                                type="text"
+                                value={metric.label}
+                                onChange={(e) => {
+                                  const updated = [...(editingProject?.metrics || [])];
+                                  updated[idx] = { ...updated[idx], label: e.target.value };
+                                  setEditingProject((prev) => ({ ...prev, metrics: updated }));
+                                }}
+                                placeholder="FPS TARGET"
+                                className="w-full bg-[#1d2021] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3] font-mono-code font-bold uppercase"
+                              />
+                            </div>
+                            <div>
+                              <label className="block font-mono-code text-[10px] text-[#79797e] uppercase mb-1">VALUE (قيمة المؤشر)</label>
+                              <input
+                                type="text"
+                                value={metric.value}
+                                onChange={(e) => {
+                                  const updated = [...(editingProject?.metrics || [])];
+                                  updated[idx] = { ...updated[idx], value: e.target.value };
+                                  setEditingProject((prev) => ({ ...prev, metrics: updated }));
+                                }}
+                                placeholder="120 FPS"
+                                className="w-full bg-[#1d2021] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3] font-mono-code"
+                              />
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = (editingProject?.metrics || []).filter((_, i) => i !== idx);
+                              setEditingProject((prev) => ({ ...prev, metrics: updated }));
+                            }}
+                            className="text-red-400 hover:text-red-300 p-2 rounded hover:bg-red-500/10 font-bold self-end cursor-pointer"
+                            title="Remove Metric"
+                          >
+                            <span className="material-symbols-outlined text-base">delete</span>
+                          </button>
+                        </div>
+                      ))}
+
+                      {(!editingProject?.metrics || editingProject.metrics.length === 0) && (
+                        <div className="text-center py-4 font-mono-code text-xs text-[#79797e] bg-[#0c0f10] rounded-xl border border-dashed border-white/10">
+                          لا توجد مؤشرات حالياً لهذا المشروع. اضغط على "+ ADD METRIC" للإضافة.
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-white/10">

@@ -373,6 +373,18 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
               {selectedProject.description}
             </p>
 
+            {/* Metrics if present */}
+            {selectedProject.metrics && selectedProject.metrics.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 mb-6 rounded-xl bg-[#0c0f10] border border-white/10 font-mono-code text-xs">
+                {selectedProject.metrics.map((m, idx) => (
+                  <div key={idx} className="overflow-hidden">
+                    <div className="text-[#79797e] text-[10px] uppercase truncate">{m.label}</div>
+                    <div className="text-[#00daf3] font-bold text-sm truncate">{m.value}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Code Snippet if present */}
             {selectedProject.codeSnippet && (
               <div className="mb-6">
