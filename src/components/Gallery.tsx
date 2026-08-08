@@ -564,7 +564,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   className="w-full sm:w-auto px-8 py-3 bg-[#00daf3] hover:bg-[#00c5dc] text-[#001f24] font-mono-code text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,218,243,0.5)] rounded-xl border border-[#00daf3] active:scale-95"
                 >
                   <span className="material-symbols-outlined text-base font-bold">close</span>
-                  <span>إغلاق / CLOSE</span>
+                  <span>CLOSE</span>
                 </button>
               </div>
             </div>

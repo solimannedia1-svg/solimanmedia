@@ -420,7 +420,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   className="w-full sm:w-auto px-8 py-3 font-mono-code text-xs font-black border border-[#00daf3] bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] active:scale-95 transition-all rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer min-h-[44px]"
                 >
                   <span className="material-symbols-outlined text-base font-bold">close</span>
-                  <span>إغلاق / CLOSE</span>
+                  <span>CLOSE</span>
                 </button>
               </div>
             </div>
