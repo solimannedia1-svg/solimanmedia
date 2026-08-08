@@ -1,11 +1,11 @@
 export interface VideoSourceInfo {
-  type: 'youtube' | 'vimeo' | 'gdrive' | 'streamable' | 'loom' | 'direct' | 'none';
+  type: 'youtube' | 'vimeo' | 'gdrive' | 'streamable' | 'loom' | 'facebook' | 'instagram' | 'tiktok' | 'direct' | 'none';
   embedUrl: string;
   originalUrl: string;
 }
 
 /**
- * Parses any video URL (YouTube, YouTube Shorts, Vimeo, Google Drive, Streamable, Loom, or Direct MP4/WebM/Blob/Data URL)
+ * Parses any video URL (YouTube, YouTube Shorts, Vimeo, Google Drive, Streamable, Loom, Facebook, Instagram, TikTok, or Direct MP4/WebM/Blob/Data URL)
  * and returns embed metadata for smooth playback across desktop and mobile.
  */
 export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
@@ -30,12 +30,43 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
   if (ytMatch && ytMatch[1]) {
     return {
       type: 'youtube',
-      embedUrl: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=0&rel=0&modestbranding=1&playsinline=1`,
+      embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1&playsinline=1`,
       originalUrl: trimmed
     };
   }
 
-  // 2. Google Drive video matcher
+  // 2. Facebook Video / Reel matcher
+  if (trimmed.includes('facebook.com') || trimmed.includes('fb.watch')) {
+    return {
+      type: 'facebook',
+      embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(trimmed)}&show_text=0`,
+      originalUrl: trimmed
+    };
+  }
+
+  // 3. Instagram Reel / Post matcher
+  const instaRegex = /instagram\.com\/(?:p|reel|tv)\/([\w-]+)/;
+  const instaMatch = trimmed.match(instaRegex);
+  if (instaMatch && instaMatch[1]) {
+    return {
+      type: 'instagram',
+      embedUrl: `https://www.instagram.com/p/${instaMatch[1]}/embed`,
+      originalUrl: trimmed
+    };
+  }
+
+  // 4. TikTok matcher
+  const tiktokRegex = /tiktok\.com\/@[\w.-]+\/video\/(\d+)/;
+  const tiktokMatch = trimmed.match(tiktokRegex);
+  if (tiktokMatch && tiktokMatch[1]) {
+    return {
+      type: 'tiktok',
+      embedUrl: `https://www.tiktok.com/embed/v2/${tiktokMatch[1]}`,
+      originalUrl: trimmed
+    };
+  }
+
+  // 5. Google Drive video matcher
   const gdriveRegex = /drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/;
   const gdriveMatch = trimmed.match(gdriveRegex);
   if (gdriveMatch && gdriveMatch[1]) {
@@ -46,7 +77,7 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
     };
   }
 
-  // 3. Vimeo matcher
+  // 6. Vimeo matcher
   const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/;
   const vimeoMatch = trimmed.match(vimeoRegex);
   if (vimeoMatch && vimeoMatch[1]) {
@@ -57,7 +88,7 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
     };
   }
 
-  // 4. Streamable matcher
+  // 7. Streamable matcher
   const streamableRegex = /streamable\.com\/([\w-]+)/;
   const streamableMatch = trimmed.match(streamableRegex);
   if (streamableMatch && streamableMatch[1]) {
@@ -68,7 +99,7 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
     };
   }
 
-  // 5. Loom matcher
+  // 8. Loom matcher
   const loomRegex = /loom\.com\/(?:share|embed)\/([\w-]+)/;
   const loomMatch = trimmed.match(loomRegex);
   if (loomMatch && loomMatch[1]) {
@@ -79,7 +110,7 @@ export function getVideoSourceInfo(url: string | undefined): VideoSourceInfo {
     };
   }
 
-  // 6. Direct MP4 / WebM / Data URL / Blob / external link
+  // 9. Direct MP4 / WebM / Data URL / Blob / external link
   return {
     type: 'direct',
     embedUrl: trimmed,

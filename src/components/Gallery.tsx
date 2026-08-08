@@ -490,46 +490,80 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
 
             {/* Modal Media Content */}
             <div className="relative w-full bg-black">
-              {(selectedItem.mediaType === 'video' || selectedItem.videoUrl) ? (
-                isReelVideo(selectedItem.videoUrl) ? (
-                  <div className="flex flex-col items-center justify-center bg-[#080a0b] py-6 px-4">
-                    <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-[9/16] max-h-[72vh] rounded-3xl overflow-hidden border-2 border-[#00daf3] shadow-[0_0_50px_rgba(0,218,243,0.4)] bg-black">
-                      <iframe
-                        src={getEmbedUrl(selectedItem.videoUrl)}
-                        title={selectedItem.title}
-                        className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                      <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#00daf3]/50 text-[#00daf3] text-[10px] font-mono-code font-bold flex items-center gap-2 shadow-lg pointer-events-none">
-                        <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
-                        <span>REEL / SHORT • 9:16</span>
+              {(() => {
+                const info = getVideoSourceInfo(selectedItem.videoUrl);
+                const embedSrc = getEmbedUrl(selectedItem.videoUrl);
+                const isVideo = selectedItem.mediaType === 'video' || Boolean(selectedItem.videoUrl && selectedItem.videoUrl.trim());
+
+                if (isVideo) {
+                  if (isReelVideo(selectedItem.videoUrl)) {
+                    return (
+                      <div className="flex flex-col items-center justify-center bg-[#080a0b] py-6 px-4">
+                        <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-[9/16] max-h-[72vh] rounded-3xl overflow-hidden border-2 border-[#00daf3] shadow-[0_0_50px_rgba(0,218,243,0.4)] bg-black">
+                          {info.type === 'direct' ? (
+                            <video
+                              src={info.embedUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
+                              poster={getItemDisplayImage(selectedItem)}
+                              controls
+                              autoPlay
+                              playsInline
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <iframe
+                              src={embedSrc}
+                              title={selectedItem.title}
+                              className="w-full h-full border-0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          )}
+                          <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#00daf3]/50 text-[#00daf3] text-[10px] font-mono-code font-bold flex items-center gap-2 shadow-lg pointer-events-none">
+                            <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                            <span>REEL / SHORT • 9:16</span>
+                          </div>
+                        </div>
                       </div>
+                    );
+                  }
+
+                  return (
+                    <div className="aspect-video w-full bg-black flex items-center justify-center">
+                      {info.type === 'direct' ? (
+                        <video
+                          src={info.embedUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
+                          poster={getItemDisplayImage(selectedItem)}
+                          controls
+                          autoPlay
+                          playsInline
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <iframe
+                          src={embedSrc}
+                          title={selectedItem.title}
+                          className="w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  <div className="aspect-video w-full bg-black">
-                    <iframe
-                      src={getEmbedUrl(selectedItem.videoUrl)}
-                      title={selectedItem.title}
-                      className="w-full h-full border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
+                  );
+                }
+
+                return (
+                  <div className="max-h-[65vh] overflow-hidden flex items-center justify-center bg-[#0a0c0d]">
+                    <img
+                      src={getItemDisplayImage(selectedItem)}
+                      alt={selectedItem.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
+                      }}
+                      className="max-h-[65vh] w-auto object-contain"
                     />
                   </div>
-                )
-              ) : (
-                <div className="max-h-[65vh] overflow-hidden flex items-center justify-center bg-[#0a0c0d]">
-                  <img
-                    src={getItemDisplayImage(selectedItem)}
-                    alt={selectedItem.title}
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
-                    }}
-                    className="max-h-[65vh] w-auto object-contain"
-                  />
-                </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* Modal Text Details */}
