@@ -1,4 +1,5 @@
 import React from 'react';
+import { SocialIcon } from './SocialIcon';
 import { DEFAULT_SITE_SETTINGS } from '../data/portfolioData';
 import { SiteSettings } from '../types';
 
@@ -28,9 +29,7 @@ export const Footer: React.FC<FooterProps> = ({ siteSettings = DEFAULT_SITE_SETT
               rel="noopener noreferrer"
               className="text-[#919094] hover:text-[#00daf3] transition-colors interactive flex items-center gap-1"
             >
-              <span className="material-symbols-outlined text-sm" style={{ color: platform.color }}>
-                {platform.icon}
-              </span>
+              <SocialIcon platform={platform} className="w-4 h-4 flex-shrink-0" />
               <span>{platform.name}</span>
             </a>
           ))}

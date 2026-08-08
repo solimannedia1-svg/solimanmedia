@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SocialIcon } from './SocialIcon';
 import { DEFAULT_SITE_SETTINGS } from '../data/portfolioData';
 import { SiteSettings } from '../types';
 
@@ -93,9 +94,7 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
                   className="p-3 rounded-xl bg-[#1d2021] border border-white/10 hover:border-[#00daf3] transition-all flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg" style={{ color: platform.color }}>
-                      {platform.icon}
-                    </span>
+                    <SocialIcon platform={platform} className="w-4 h-4 flex-shrink-0" />
                     <span className="font-mono-code text-xs font-bold text-[#e1e3e4] group-hover:text-[#00daf3] transition-colors">
                       {platform.name}
                     </span>

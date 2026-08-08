@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TechEcosystem3D } from './TechEcosystem3D';
+import { SocialIcon } from './SocialIcon';
 import { PORTRAIT_IMAGE_URL, DEFAULT_SITE_SETTINGS } from '../data/portfolioData';
 import { SiteSettings } from '../types';
 
@@ -90,9 +91,7 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171a1b] border border-white/10 hover:border-[#00daf3] transition-all text-xs font-mono-code text-[#c7c6ca] hover:text-white group shadow-sm"
                 title={`Visit Mohamed Soliman on ${platform.name}`}
               >
-                <span className="material-symbols-outlined text-sm" style={{ color: platform.color }}>
-                  {platform.icon}
-                </span>
+                <SocialIcon platform={platform} className="w-4 h-4 flex-shrink-0" />
                 <span className="font-bold">{platform.name}</span>
                 <span className="material-symbols-outlined text-[12px] opacity-0 group-hover:opacity-100 transition-opacity">
                   north_east

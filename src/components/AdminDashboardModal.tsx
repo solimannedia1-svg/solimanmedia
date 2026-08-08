@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Project, SiteSettings, SocialPlatform } from '../types';
 import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
+import { SocialIcon } from './SocialIcon';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
@@ -1174,21 +1175,27 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                     <div className="grid md:grid-cols-2 gap-4">
                       {settingsForm.socialPlatforms.map((platform, idx) => (
                         <div key={platform.id} className="p-4 rounded-xl bg-[#0c0f10] border border-white/5 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <input
-                              type="text"
-                              value={platform.name}
-                              onChange={(e) => {
-                                const updated = [...settingsForm.socialPlatforms];
-                                updated[idx] = { ...updated[idx], name: e.target.value };
-                                setSettingsForm({ ...settingsForm, socialPlatforms: updated });
-                              }}
-                              className="bg-[#1d2021] border border-white/10 rounded px-2.5 py-1 text-xs font-bold text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
-                            />
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 flex-1">
+                              <div className="p-1.5 rounded-lg bg-[#1d2021] border border-white/10 flex items-center justify-center">
+                                <SocialIcon platform={platform} className="w-4 h-4 flex-shrink-0" />
+                              </div>
+                              <input
+                                type="text"
+                                value={platform.name}
+                                onChange={(e) => {
+                                  const updated = [...settingsForm.socialPlatforms];
+                                  updated[idx] = { ...updated[idx], name: e.target.value };
+                                  setSettingsForm({ ...settingsForm, socialPlatforms: updated });
+                                }}
+                                className="w-full bg-[#1d2021] border border-white/10 rounded px-2.5 py-1 text-xs font-bold text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                                placeholder="Platform Name (e.g. Facebook)"
+                              />
+                            </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveSocialPlatform(platform.id)}
-                              className="text-red-400 hover:text-red-300 text-xs font-bold"
+                              className="text-red-400 hover:text-red-300 text-xs font-bold px-1"
                             >
                               REMOVE
                             </button>

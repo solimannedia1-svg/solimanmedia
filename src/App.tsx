@@ -18,6 +18,35 @@ import { Project, SiteSettings } from './types';
 import { db } from './lib/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
+// Helper to safely store objects/arrays in localStorage without quota crashes
+function safeSaveToLocalStorage<T>(key: string, value: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    // If quota exceeded (e.g. large base64 strings), strip massive base64 media before saving
+    try {
+      if (Array.isArray(value)) {
+        const sanitized = value.map((item: any) => {
+          if (item && typeof item === 'object') {
+            const copy = { ...item };
+            if (copy.videoUrl && copy.videoUrl.startsWith('data:') && copy.videoUrl.length > 200000) {
+              copy.videoUrl = '';
+            }
+            if (copy.image && copy.image.startsWith('data:') && copy.image.length > 200000) {
+              copy.image = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+            }
+            return copy;
+          }
+          return item;
+        });
+        localStorage.setItem(key, JSON.stringify(sanitized));
+      }
+    } catch {
+      console.warn('Unable to persist to localStorage cache');
+    }
+  }
+}
+
 export default function App() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => {
     try {
@@ -51,7 +80,7 @@ export default function App() {
       if (snapshot.exists()) {
         const data = snapshot.data() as SiteSettings;
         setSiteSettings(data);
-        localStorage.setItem('mohamed_soliman_site_settings_v1', JSON.stringify(data));
+        safeSaveToLocalStorage('mohamed_soliman_site_settings_v1', data);
       }
     }, (err) => {
       console.warn('Firestore settings listener info:', err);
@@ -82,9 +111,7 @@ export default function App() {
           });
 
           setProjects(mergedProjects);
-          try {
-            localStorage.setItem('mohamed_soliman_projects_v2', JSON.stringify(mergedProjects));
-          } catch {}
+          safeSaveToLocalStorage('mohamed_soliman_projects_v2', mergedProjects);
         }
       }
     }, (err) => {
@@ -127,7 +154,7 @@ export default function App() {
 
   const handleSaveSiteSettings = async (newSettings: SiteSettings) => {
     setSiteSettings(newSettings);
-    localStorage.setItem('mohamed_soliman_site_settings_v1', JSON.stringify(newSettings));
+    safeSaveToLocalStorage('mohamed_soliman_site_settings_v1', newSettings);
     try {
       await setDoc(doc(db, 'portfolio', 'settings'), newSettings);
     } catch (e) {
@@ -137,11 +164,7 @@ export default function App() {
 
   const handleSaveProjects = async (newProjects: Project[]) => {
     setProjects(newProjects);
-    try {
-      localStorage.setItem('mohamed_soliman_projects_v2', JSON.stringify(newProjects));
-    } catch (e) {
-      console.warn('localStorage quota warning when saving projects:', e);
-    }
+    safeSaveToLocalStorage('mohamed_soliman_projects_v2', newProjects);
 
     try {
       // Clean oversized data URLs if necessary so Firestore 1MB limit is respected

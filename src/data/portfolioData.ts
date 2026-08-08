@@ -8,11 +8,11 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   tagline: 'I Build Digital Experiences Where Code, AI & Creativity Meet.',
   bio: 'Bridging the gap between engineering, generative AI, and high-converting social media architecture.',
   portraitUrl: PORTRAIT_IMAGE_URL,
-  location: 'Cairo, Egypt / Remote Worldwide',
+  location: 'Portsaid, Egypt / Remote Worldwide',
   availability: 'AVAILABLE FOR SELECT PROJECTS',
-  contactEmail: 'soliman@aistudio.dev',
-  contactPhone: '+20 100 234 5678',
-  adminPassword: 'admin', // Default secure password, editable in Admin Panel Settings
+  contactEmail: 'soliman@solimanmedia.site',
+  contactPhone: '+201099313523',
+  adminPassword: '!@#12Bad', // Default secure password, editable in Admin Panel Settings
   aboutHeading: 'ARCHITECTING NEXT-GEN DIGITAL EXPERIENCES',
   aboutBio: 'With 5+ years specializing in full-stack engineering, WebGL GLSL shader systems, Gemini AI integration, and digital brand scaling, I engineer platforms that captivate audiences and drive exponential social growth.',
   yearsExp: '5+',
@@ -20,31 +20,46 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   impressions: '3.5M+',
   clientSatisfaction: '100%',
   socialPlatforms: [
-    { id: 'youtube', name: 'YouTube', url: 'https://youtube.com', icon: 'smart_display', color: '#FF0000' },
-    { id: 'instagram', name: 'Instagram', url: 'https://instagram.com', icon: 'photo_camera', color: '#E1306C' },
-    { id: 'tiktok', name: 'TikTok', url: 'https://tiktok.com', icon: 'movie_edit', color: '#00F2FE' },
-    { id: 'linkedin', name: 'LinkedIn', url: 'https://linkedin.com', icon: 'work', color: '#0077B5' },
-    { id: 'x', name: 'X / Twitter', url: 'https://x.com', icon: 'tag', color: '#E1E3E4' },
-    { id: 'github', name: 'GitHub', url: 'https://github.com', icon: 'terminal', color: '#FFFFFF' }
+    { id: 'facebook', name: 'Facebook', url: 'https://facebook.com/solimanmediaofficial', icon: 'facebook', color: '#1877F2' },
+    { id: 'instagram', name: 'Instagram', url: 'https://instagram.com/solimanmedia', icon: 'instagram', color: '#E1306C' },
+    { id: 'tiktok', name: 'TikTok', url: 'https://tiktok.com/@solimanmedia', icon: 'tiktok', color: '#00F2FE' },
+    { id: 'youtube', name: 'YouTube', url: 'https://youtube.com/@solimanmedia', icon: 'youtube', color: '#FF0000' }
   ]
 };
 
 export const PROJECTS_DATA: Project[] = [
   {
+    id: 'proj_1786142543936',
+    title: 'MOLOTO — AI-Powered Digital Experience',
+    subtitle: 'AI',
+    category: 'ai-videos',
+    mediaType: 'video',
+    aspectRatio: 'reel',
+    description: 'A modern digital project created with the power of Artificial Intelligence, combining creative direction, intelligent development, and a refined user experience.\n\nThe project explores how AI can accelerate the creative and development process while maintaining a premium visual identity, intuitive UX, responsive layouts, smooth interactions, and engaging animations.\n\nFrom concept and visual direction to implementation and optimization, MOLOTO was built around a modern AI-first workflow, transforming ideas into a polished and interactive digital experience.\n\nKey Highlights:• AI-Assisted Design & Development• Modern UI/UX• Responsive Experience• Smooth Animations & Transitions• Interactive Micro-Interactions• Creative Visual Direction• AI-Powered Workflow• Performance & Usability Optimization• Desktop & Mobile Experience',
+    image: 'https://i.ibb.co/4Z7xY6fx/image.png',
+    videoUrl: 'https://youtube.com/shorts/RQEN_d4-tTQ',
+    tags: ['React', 'AI', 'WebGL'],
+    featured: true,
+    liveUrl: '#',
+    codeSnippet: '',
+    metrics: [
+      { label: 'Status', value: 'Live' },
+      { label: 'Quality', value: 'High Definition' }
+    ]
+  },
+  {
     id: 'aura-mind',
-    title: 'AURA MIND PLATFORM',
-    subtitle: 'Generative Canvas & AI Spatial Intelligence Engine',
+    title: 'DODO DESIGN - WEBSITE',
+    subtitle: 'Custom Web Design & Development',
     category: 'web-app',
-    description: 'An AI-powered spatial web application combining real-time Gemini multimodal vision, generative canvas nodes, and natural audio synthesis for creative directors and UI architects.',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+    mediaType: 'image',
+    aspectRatio: 'landscape',
+    description: 'A fully custom website designed and developed from the ground up with a strong focus on UI/UX, modern interactions, and performance.\n\nThe project features a clean and intuitive user experience, responsive layouts, smooth page transitions, interactive elements, hover effects, scroll-based animations, micro-interactions, and dynamic visual components.\n\nEvery detail was carefully designed to create a seamless experience across desktop, tablet, and mobile devices, combining **creative design, advanced frontend development, smooth animations, and strong visual storytelling**.\n\n**Key Highlights:**\n• Custom UI/UX Design\n• Responsive Web Development\n• Smooth Scroll Animations\n• Interactive Hover Effects\n• Micro-Interactions\n• Page Transitions\n• Dynamic Visual Elements\n• Mobile & Desktop Optimization\n• Performance-Focused Development\n• Modern & Clean Interface\n',
+    image: 'https://scontent.fcai11-1.fna.fbcdn.net/v/t39.30808-6/759849901_122113594689379413_5411630161315505762_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x2048&ctp=s2048x2048&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEbpPx7Xf6D8qdBsJG1tcI-Z-31sD0RDkNn7fWwPREOQ21qSPKyZGSAb5SeCfuEBTF6CXH2Jpr37r9dyIqhwJYw&_nc_ohc=4pYxeTK6GCEQ7kNvwFRR9oI&_nc_oc=Adpv37Kyh4upZqJm-pQfu-ifY-dqpoAglP9IeBF7Zy81kV0msqoBI6nMU2o_G4q31g44cawvcAzTjbbfwNQggNmV&_nc_zt=23&_nc_ht=scontent.fcai11-1.fna&_nc_gid=PbAt7qpJN78aZCbDt6WdMw&_nc_ss=782a8&oh=00_AQHuB_RenXtOJKV4QK8EUhVwvBLIk7_ciqSg03d7GNZsMg&oe=6A7C25C0',
+    videoUrl: '',
     tags: ['React 19', 'Gemini 3.6 API', 'Three.js', 'Tailwind v4', 'Web App'],
     featured: true,
-    metrics: [
-      { label: 'Latency', value: '< 120ms' },
-      { label: 'Active Users', value: '45,000+' },
-      { label: 'AI Engine', value: 'Gemini Multimodal' }
-    ],
-    liveUrl: 'https://ais-dev-yg337ldzll4ehlsx7jr5zw-250945921547.europe-west1.run.app',
+    liveUrl: 'https://dododesign.shop',
     codeSnippet: `// Gemini 3.6 Multimodal Visual Stream Initialization
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -58,23 +73,25 @@ async function analyzeCanvasFrame(imageBuffer: ArrayBuffer) {
   });
   return result.text;
 }`,
-    demoType: 'ai-prompt'
+    metrics: [
+      { label: 'Latency', value: '< 120ms' },
+      { label: 'Active Users', value: '45,000+' },
+      { label: 'AI Engine', value: 'Gemini Multimodal' }
+    ]
   },
   {
     id: 'cybernoir-app',
-    title: 'CYBERNOIR ARCHITECTURE',
+    title: 'GLOW PRETTY - WEBSITE',
     subtitle: 'High-Performance WebGL & Fullstack Dashboard',
     category: 'web-app',
+    mediaType: 'image',
+    aspectRatio: 'landscape',
     description: 'A full-stack WebGL web application with custom GLSL shaders, telemetry real-time monitoring, and modular dark mode React components.',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+    image: 'https://scontent.fcai11-1.fna.fbcdn.net/v/t39.30808-6/761597576_122114110821379413_5963439306426916378_n.jpg?stp=dst-jpg_tt6&cstp=mx1024x1024&ctp=s1024x1024&_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeG01_iymdmnnD96DSu-EXR1uYpSQVM7PEm5ilJBUzs8SYhIBHo-V-_DBCAOgt96wghivXRpGSQr62rSz41SrTPS&_nc_ohc=trllpfql-SMQ7kNvwG17mIi&_nc_oc=AdrFigqsvN0DKNWrhqAW0QpwsZ54gMrYoknnF6cqt9ajpdjfdEcfFkd7jPO_R2udBOqz_l-rjdobtrFHDHd35x-7&_nc_zt=23&_nc_ht=scontent.fcai11-1.fna&_nc_gid=5gkIF8YwuulK-zJM-faYiQ&_nc_ss=782a8&oh=00_AQFlDe4OJjUS2gf_2okJA-jIHcwp7HumcKedv_MVKgRiSA&oe=6A7C2E63',
+    videoUrl: '',
     tags: ['React 19', 'TypeScript', 'WebGL GLSL', 'Express.js', 'Tailwind v4'],
     featured: true,
-    metrics: [
-      { label: 'FPS Target', value: '120 FPS' },
-      { label: 'Performance', value: '100 / 100' },
-      { label: 'Security', value: 'AES-256' }
-    ],
-    liveUrl: 'https://ais-dev-yg337ldzll4ehlsx7jr5zw-250945921547.europe-west1.run.app',
+    liveUrl: 'https://glowpretty.site',
     codeSnippet: `precision highp float;
 uniform float u_time;
 uniform vec2 u_resolution;
@@ -86,77 +103,11 @@ void main() {
     float flow = sin(uv.x * 5.0 + u_time * 0.5) * 0.5 + 0.5;
     gl_FragColor = vec4(mix(black, accent, flow * 0.25), 1.0);
 }`,
-    demoType: 'shader'
-  },
-  {
-    id: 'nexus-brand',
-    title: 'NEXUS BRAND & MEDIA SYSTEM',
-    subtitle: 'AI Social Media Architecture & Audience Engine',
-    category: 'brand-media',
-    description: 'An end-to-end automated social media brand strategy platform that parses trending technical topics, generates video scripts, creates visual thumbnails, and schedules multi-channel publishing.',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Brand Strategy', 'Social Automation', 'Media Pipelines', 'Analytics'],
-    featured: true,
     metrics: [
-      { label: 'Engagement Boost', value: '+320%' },
-      { label: 'Monthly Reach', value: '1.2M+' },
-      { label: 'Channels', value: 'X / LinkedIn / Insta' }
-    ],
-    liveUrl: '#',
-    demoType: 'ui-preview'
-  },
-  {
-    id: 'soliman-media-kit',
-    title: 'SOLIMAN CREATIVE IDENTITY',
-    subtitle: 'Cinematic Visual Identity & Social Strategy',
-    category: 'brand-media',
-    description: 'Complete brand positioning and digital creative direction for modern tech influencers, including typography systems, motion identity, and high-converting creative messaging.',
-    image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Creative Direction', 'Brand Identity', 'Typography', 'Visual Strategy'],
-    featured: false,
-    metrics: [
-      { label: 'Conversion', value: '4.8x' },
-      { label: 'Brand Value', value: 'Enterprise' }
-    ],
-    liveUrl: '#',
-    demoType: 'ui-preview'
-  },
-  {
-    id: 'neural-cinema-video',
-    title: 'NEURAL CINEMA: AI VIDEO SYNTHESIS',
-    subtitle: 'Generative AI Video & Motion Showcase',
-    category: 'ai-videos',
-    mediaType: 'video',
-    aspectRatio: 'reel',
-    description: 'Cinematic AI generated video production utilizing advanced text-to-video models, camera motion controls, neural voiceover synthesis, and frame-by-frame upscale enhancement.',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    tags: ['AI Video Generation', 'Sora & Runway', 'Neural Motion', 'Cinematic AI'],
-    featured: true,
-    metrics: [
-      { label: 'Resolution', value: '4K Cinematic' },
-      { label: 'Generation Time', value: 'Sub-30s' },
-      { label: 'FPS', value: '60 FPS Smooth' }
-    ],
-    demoType: 'video'
-  },
-  {
-    id: 'cybernetic-realms-video',
-    title: 'CYBERNETIC REALMS: AI COMMERCIAL',
-    subtitle: 'Futuristic Sci-Fi Generative Commercial',
-    category: 'ai-videos',
-    mediaType: 'video',
-    aspectRatio: 'reel',
-    description: 'A concept AI trailer showcasing high-budget sci-fi aesthetics, procedural 3D elements, sound design, and generative AI visual effects created entirely with AI tools.',
-    image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    tags: ['AI Commercial', 'Gen-2 Video', '3D Neural VFX', 'Generative Audio'],
-    featured: true,
-    metrics: [
-      { label: 'Views', value: '250K+' },
-      { label: 'Style', value: 'Cinematic Noir' }
-    ],
-    demoType: 'video'
+      { label: 'FPS Target', value: '120 FPS' },
+      { label: 'Performance', value: '100 / 100' },
+      { label: 'Security', value: 'AES-256' }
+    ]
   }
 ];
 
