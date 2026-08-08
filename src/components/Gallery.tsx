@@ -229,35 +229,6 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       </h3>
                     </div>
                   </div>
-
-                  {/* Mini Gallery Previews Grid at Bottom */}
-                  {filteredItems.length >= 3 && (
-                    <div className="relative z-10 grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
-                      {filteredItems.slice(0, 3).map((thumb, idx) => (
-                        <div
-                          key={thumb.id || idx}
-                          className="relative h-16 bg-black border border-white/10 overflow-hidden group/thumb"
-                        >
-                          <img
-                            src={getItemDisplayImage(thumb)}
-                            alt={thumb.title}
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
-                            }}
-                            className="w-full h-full object-cover opacity-70 group-hover/thumb:opacity-100 group-hover/thumb:scale-110 transition-all"
-                          />
-                          {(thumb.mediaType === 'video' || thumb.videoUrl) && (
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                              <span className="material-symbols-outlined text-xs text-[#00daf3]">play_arrow</span>
-                            </div>
-                          )}
-                          <div className="absolute bottom-1 right-1 text-[9px] font-mono-code bg-black/80 px-1 text-[#00daf3]">
-                            0{idx + 1}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
 
