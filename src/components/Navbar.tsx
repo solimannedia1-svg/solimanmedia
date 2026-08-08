@@ -55,6 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) 
 
   const navLinks = [
     { name: 'Work', href: '#work' },
+    { name: 'Gallery', href: '#gallery' },
     { name: 'Skills', href: '#skills' },
     { name: 'AI Studio', href: '#ai-studio', onClick: onAiStudioClick },
     { name: 'Journey', href: '#journey' },

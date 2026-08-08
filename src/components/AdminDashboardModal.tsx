@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Project, SiteSettings, SocialPlatform } from '../types';
+import { Project, SiteSettings, SocialPlatform, GalleryItem } from '../types';
 import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
 import { SocialIcon } from './SocialIcon';
@@ -36,13 +36,16 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
   const [passwordChangeNotice, setPasswordChangeNotice] = useState<string>('');
 
-  // Tabs: 'projects' | 'hero' | 'about' | 'contact' | 'security' | 'export' | 'project-form'
-  const [activeTab, setActiveTab] = useState<'projects' | 'hero' | 'about' | 'contact' | 'security' | 'export' | 'project-form'>('projects');
+  // Tabs: 'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form'
+  const [activeTab, setActiveTab] = useState<'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form'>('projects');
   
   // Projects State
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmRestore, setConfirmRestore] = useState<boolean>(false);
+
+  // Gallery CMS State
+  const [editingGalleryItem, setEditingGalleryItem] = useState<Partial<GalleryItem> | null>(null);
 
   // Settings State
   const [settingsForm, setSettingsForm] = useState<SiteSettings>(siteSettings);
@@ -226,6 +229,76 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     e.preventDefault();
     onSaveSiteSettings(settingsForm);
     setSaveNotice('✓ Website settings successfully saved!');
+    setTimeout(() => setSaveNotice(''), 3000);
+  };
+
+  // Gallery CRUD Handlers
+  const currentGalleryItems = settingsForm.galleryItems || [];
+
+  const handleOpenNewGalleryItem = () => {
+    setEditingGalleryItem({
+      id: 'gal_' + Date.now(),
+      title: '',
+      personName: '',
+      personRole: '',
+      category: 'celebrity',
+      mediaType: 'image',
+      image: '',
+      videoUrl: '',
+      description: '',
+      date: '2025',
+      featured: true
+    });
+    setActiveTab('gallery-form');
+  };
+
+  const handleOpenEditGalleryItem = (item: GalleryItem) => {
+    setEditingGalleryItem({ ...item });
+    setActiveTab('gallery-form');
+  };
+
+  const handleDeleteGalleryItem = (id: string) => {
+    const updatedItems = currentGalleryItems.filter((g) => g.id !== id);
+    const updatedSettings = { ...settingsForm, galleryItems: updatedItems };
+    setSettingsForm(updatedSettings);
+    onSaveSiteSettings(updatedSettings);
+    setSaveNotice('✓ Gallery item removed');
+    setTimeout(() => setSaveNotice(''), 3000);
+  };
+
+  const handleSaveGalleryItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGalleryItem || !editingGalleryItem.title) return;
+
+    const fullItem: GalleryItem = {
+      id: editingGalleryItem.id || 'gal_' + Date.now(),
+      title: editingGalleryItem.title,
+      personName: editingGalleryItem.personName || '',
+      personRole: editingGalleryItem.personRole || '',
+      category: (editingGalleryItem.category as any) || 'celebrity',
+      mediaType: (editingGalleryItem.mediaType as any) || 'image',
+      image: editingGalleryItem.image || 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
+      videoUrl: editingGalleryItem.videoUrl || '',
+      description: editingGalleryItem.description || '',
+      date: editingGalleryItem.date || '2025',
+      featured: editingGalleryItem.featured ?? true
+    };
+
+    const idx = currentGalleryItems.findIndex((g) => g.id === fullItem.id);
+    let updatedList: GalleryItem[];
+    if (idx >= 0) {
+      updatedList = [...currentGalleryItems];
+      updatedList[idx] = fullItem;
+    } else {
+      updatedList = [...currentGalleryItems, fullItem];
+    }
+
+    const updatedSettings = { ...settingsForm, galleryItems: updatedList };
+    setSettingsForm(updatedSettings);
+    onSaveSiteSettings(updatedSettings);
+    setEditingGalleryItem(null);
+    setActiveTab('gallery');
+    setSaveNotice('✓ Gallery item saved successfully!');
     setTimeout(() => setSaveNotice(''), 3000);
   };
 
@@ -438,6 +511,18 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                 >
                   <span className="material-symbols-outlined text-sm">view_carousel</span>
                   <span>PROJECTS ({projects.length})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('gallery')}
+                  className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                    activeTab === 'gallery' || activeTab === 'gallery-form'
+                      ? 'bg-[#00daf3] text-[#001f24] font-bold'
+                      : 'text-[#c7c6ca] hover:text-white border border-white/10'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-sm">stars</span>
+                  <span>GALLERY ({currentGalleryItems.length})</span>
                 </button>
 
                 <button
@@ -1234,6 +1319,286 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                       <span className="material-symbols-outlined text-sm">save</span>
                       <span>SAVE PROJECT</span>
                     </button>
+                  </div>
+                </form>
+              )}
+
+              {/* TAB GALLERY: GALLERY ITEMS LIST */}
+              {activeTab === 'gallery' && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-[#1d2021] border border-[#00daf3]/30">
+                    <div>
+                      <h4 className="font-space text-base font-bold text-[#e1e3e4] flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#00daf3]">stars</span>
+                        <span>VIP GALLERY &amp; TESTIMONIALS (معرض اللحظات والشهادات)</span>
+                      </h4>
+                      <p className="font-mono-code text-xs text-[#919094] mt-1">
+                        إدارة صور وفيديوهات التكريمات، اللقاءات مع الشخصيات البارزة، وفيديوهات الشكر.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleOpenNewGalleryItem}
+                      className="px-4 py-2.5 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-bold hover:bg-[#00daf3]/80 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(0,218,243,0.3)] cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">add</span>
+                      <span>إضافة عنصر جديد للمعرض</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 dir-rtl">
+                    {currentGalleryItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="bg-[#1d2021] border border-white/10 rounded-xl p-4 flex gap-4 items-start hover:border-[#00daf3]/40 transition-colors"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-20 h-20 object-cover rounded-lg border border-white/10 flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0 space-y-1">
+                          {item.personName && (
+                            <span className="inline-block text-[10px] font-mono-code font-bold text-[#00daf3] bg-[#00daf3]/10 px-2 py-0.5 rounded">
+                              {item.personName} ({item.personRole})
+                            </span>
+                          )}
+                          <h5 className="font-bold text-sm text-[#e1e3e4] truncate">{item.title}</h5>
+                          <p className="text-xs text-[#919094] line-clamp-2">{item.description}</p>
+                          <div className="flex items-center gap-2 pt-2 text-[10px] font-mono-code text-[#79797e]">
+                            <span>نوع الميديا: {item.mediaType === 'video' ? '🎬 فيديو' : '🖼️ صورة'}</span>
+                            <span>•</span>
+                            <span>الفئة: {item.category}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditGalleryItem(item)}
+                            className="p-1.5 rounded-lg bg-white/5 hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] border border-white/10 transition-colors cursor-pointer"
+                            title="تعديل"
+                          >
+                            <span className="material-symbols-outlined text-sm">edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteGalleryItem(item.id)}
+                            className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-600 text-red-300 transition-colors cursor-pointer"
+                            title="حذف"
+                          >
+                            <span className="material-symbols-outlined text-sm">delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {currentGalleryItems.length === 0 && (
+                      <div className="col-span-full py-12 text-center font-mono-code text-xs text-[#919094] bg-[#1d2021] rounded-xl border border-dashed border-white/10">
+                        لا توجد عناصر حالياً في المعرض. اضغط على "إضافة عنصر جديد للمعرض" للبدء.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB GALLERY FORM: ADD / EDIT GALLERY ITEM */}
+              {activeTab === 'gallery-form' && editingGalleryItem && (
+                <form onSubmit={handleSaveGalleryItem} className="space-y-6 dir-rtl">
+                  <div className="p-6 rounded-xl bg-[#1d2021] border border-[#00daf3]/40 space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                      <h4 className="font-space text-base font-bold text-[#e1e3e4] flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#00daf3]">stars</span>
+                        <span>
+                          {editingGalleryItem.id ? 'تعديل عنصر المعرض' : 'إضافة عنصر جديد للمعرض'}
+                        </span>
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('gallery')}
+                        className="text-xs font-mono-code text-[#919094] hover:text-white"
+                      >
+                        إلغاء ✕
+                      </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                          عنوان اللقاء أو الفيديو أو التكريم *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={editingGalleryItem.title || ''}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, title: e.target.value }))
+                          }
+                          placeholder="مثال: لقاء خاص مع مستشار التحول الرقمي..."
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                          اسم الشخصية المشهورة / جهة التقدير (VIP Guest Name)
+                        </label>
+                        <input
+                          type="text"
+                          value={editingGalleryItem.personName || ''}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, personName: e.target.value }))
+                          }
+                          placeholder="مثال: د. أحمد العوضي / المهندس كريم الشاذلي"
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                          المنصب / الصفة (Person Title / Role)
+                        </label>
+                        <input
+                          type="text"
+                          value={editingGalleryItem.personRole || ''}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, personRole: e.target.value }))
+                          }
+                          placeholder="مثال: رئيس مجلس إدارة Celeste / خبير الذكاء الاصطناعي"
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                          قسم المعرض (Category)
+                        </label>
+                        <select
+                          value={editingGalleryItem.category || 'celebrity'}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, category: e.target.value as any }))
+                          }
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        >
+                          <option value="celebrity">مع الشخصيات والشهيرات (VIP Guests)</option>
+                          <option value="testimonial">فيديوهات شكر وتقدير (Testimonials)</option>
+                          <option value="event">فعاليات وتكريمات (Events)</option>
+                          <option value="press">صحافة وإعلام (Press & Media)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                          نوع الميديا (Media Type)
+                        </label>
+                        <select
+                          value={editingGalleryItem.mediaType || 'image'}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, mediaType: e.target.value as any }))
+                          }
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        >
+                          <option value="image">صورة فقط (Photo)</option>
+                          <option value="video">فيديو (Video with link)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                          التاريخ أو المناسبة (Date / Occasion)
+                        </label>
+                        <input
+                          type="text"
+                          value={editingGalleryItem.date || '2025'}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, date: e.target.value }))
+                          }
+                          placeholder="2025 أو قمة القاهرة للتكنولوجيا"
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                        رابط الصورة / Thumbnail URL *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editingGalleryItem.image || ''}
+                        onChange={(e) =>
+                          setEditingGalleryItem((prev) => ({ ...prev, image: e.target.value }))
+                        }
+                        placeholder="https://..."
+                        className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                      />
+                    </div>
+
+                    {editingGalleryItem.mediaType === 'video' && (
+                      <div>
+                        <label className="block font-mono-code text-xs text-[#00daf3] uppercase mb-1 font-bold">
+                          رابط الفيديو (YouTube, YouTube Shorts, MP4)
+                        </label>
+                        <input
+                          type="text"
+                          value={editingGalleryItem.videoUrl || ''}
+                          onChange={(e) =>
+                            setEditingGalleryItem((prev) => ({ ...prev, videoUrl: e.target.value }))
+                          }
+                          placeholder="https://youtube.com/shorts/..."
+                          className="w-full bg-[#0c0f10] border border-[#00daf3]/40 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
+                        الوصف والتفاصيل (Description)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={editingGalleryItem.description || ''}
+                        onChange={(e) =>
+                          setEditingGalleryItem((prev) => ({ ...prev, description: e.target.value }))
+                        }
+                        placeholder="اكتب نبذة عن اللقاء أو الشكر..."
+                        className="w-full bg-[#0c0f10] border border-white/10 rounded-xl p-3 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2">
+                      <input
+                        type="checkbox"
+                        id="gal-featured"
+                        checked={editingGalleryItem.featured ?? true}
+                        onChange={(e) =>
+                          setEditingGalleryItem((prev) => ({ ...prev, featured: e.target.checked }))
+                        }
+                        className="w-4 h-4 accent-[#00daf3] rounded"
+                      />
+                      <label htmlFor="gal-featured" className="text-xs font-mono-code text-[#e1e3e4] cursor-pointer">
+                        إظهار كـ VIP مميز (Featured)
+                      </label>
+                    </div>
+
+                    <div className="flex gap-4 pt-4 border-t border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('gallery')}
+                        className="px-6 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca]"
+                      >
+                        إلغاء
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-sm">save</span>
+                        <span>حفظ في المعرض</span>
+                      </button>
+                    </div>
                   </div>
                 </form>
               )}

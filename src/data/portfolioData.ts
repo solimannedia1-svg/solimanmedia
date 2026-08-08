@@ -1,6 +1,59 @@
-import { Project, SkillCategory, JourneyMilestone, SystemMetric, SiteSettings } from '../types';
+import { Project, SkillCategory, JourneyMilestone, SystemMetric, SiteSettings, GalleryItem } from '../types';
 
 export const PORTRAIT_IMAGE_URL = "https://lh3.googleusercontent.com/aida-public/AB6AXuC0VKUCVZPv-ajubaAy4cV7l2zeUL2bDaLwd8YCyDhtSmMKZwZxL7xvQyHtDbUMQgZHAMPIURkEcysSTYj71PHcXiCSspB9d7T39ALUO60C04v9AIt9rJ6Fsr7yuRFEphGs8KOJz4x1qmK0R7wG9nS8cJqWXKKGR55mSTCirmHW_ltMl010XqMHpqggOMfChrjtS57zrpL9nMyMPuDHUS838HcPboOZvtvpQ8vEud5zbwMkqoEzs3pm6zh2CyTJQ_eHdl0";
+
+export const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
+  {
+    id: 'gal_1',
+    title: 'Exclusive Strategic Summit with Tech Leaders',
+    personName: 'Dr. Ahmed El-Awady',
+    personRole: 'Digital Transformation & AI Strategy Consultant',
+    category: 'celebrity',
+    mediaType: 'image',
+    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
+    description: 'An executive roundtable discussing cutting-edge Generative AI workflows, user interface innovation, and scaling digital tech brands.',
+    date: '2025',
+    featured: true
+  },
+  {
+    id: 'gal_2',
+    title: 'Executive Video Testimonial from CELESTE Group',
+    personName: 'Eng. Karim El-Shazly',
+    personRole: 'Founder & CEO — CELESTE Group',
+    category: 'testimonial',
+    mediaType: 'video',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
+    videoUrl: 'https://youtube.com/shorts/RQEN_d4-tTQ',
+    description: 'A message of gratitude and appreciation following the launch of CELESTE visual identity and AI-driven marketing campaigns with outstanding results.',
+    date: '2025',
+    featured: true
+  },
+  {
+    id: 'gal_3',
+    title: 'VIP Keynote Honor at Middle East Tech Summit',
+    personName: 'Middle East Tech Summit',
+    personRole: 'Honoring Top Smart Digital Experience Creator',
+    category: 'celebrity',
+    mediaType: 'image',
+    image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80',
+    description: 'Honored with the Excellence Award for designing and building AI-powered interactive web applications and digital interfaces.',
+    date: '2024',
+    featured: true
+  },
+  {
+    id: 'gal_4',
+    title: 'Media Broadcast Interview & Client Gratitude',
+    personName: 'Sara Mansour',
+    personRole: 'Host — Future Tech Pioneers Show',
+    category: 'testimonial',
+    mediaType: 'video',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80',
+    videoUrl: 'https://youtube.com/shorts/RQEN_d4-tTQ',
+    description: 'Special media coverage highlighting client success stories, pioneering web projects, and modern brand architectures.',
+    date: '2024',
+    featured: false
+  }
+];
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   name: 'MOHAMED SOLIMAN',
@@ -22,7 +75,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   socialPlatforms: [
     { id: 'facebook', name: 'Facebook', url: 'https://facebook.com/solimanmediaofficial', icon: 'facebook', color: '#1877F2' },
     { id: 'instagram', name: 'Instagram', url: 'https://instagram.com/solimanmedia', icon: 'instagram', color: '#E1306C' }
-  ]
+  ],
+  galleryItems: DEFAULT_GALLERY_ITEMS
 };
 
 export const PROJECTS_DATA: Project[] = [

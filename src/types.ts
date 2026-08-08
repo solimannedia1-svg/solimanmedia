@@ -6,6 +6,20 @@ export interface SocialPlatform {
   color?: string;
 }
 
+export interface GalleryItem {
+  id: string;
+  title: string;
+  personName?: string;
+  personRole?: string;
+  category: 'celebrity' | 'testimonial' | 'event' | 'press';
+  mediaType: 'image' | 'video';
+  image: string;
+  videoUrl?: string;
+  description: string;
+  date?: string;
+  featured?: boolean;
+}
+
 export interface SiteSettings {
   // Personal & Hero Info
   name: string;
@@ -31,10 +45,11 @@ export interface SiteSettings {
   impressions?: string;
   clientSatisfaction?: string;
 
-  // Platforms & Skills & Journey CMS Data
+  // Platforms & Skills & Journey & Gallery CMS Data
   socialPlatforms: SocialPlatform[];
   skillCategories?: SkillCategory[];
   journeyMilestones?: JourneyMilestone[];
+  galleryItems?: GalleryItem[];
 }
 
 export interface Project {

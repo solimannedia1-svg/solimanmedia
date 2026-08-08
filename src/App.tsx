@@ -7,13 +7,14 @@ import { About } from './components/About';
 import { Marquee } from './components/Marquee';
 import { Skills } from './components/Skills';
 import { WorkShowcase } from './components/WorkShowcase';
+import { Gallery } from './components/Gallery';
 import { AIPersonaStudio } from './components/AIPersonaStudio';
 import { Journey } from './components/Journey';
 import { StatusDashboard } from './components/StatusDashboard';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { AdminDashboardModal } from './components/AdminDashboardModal';
-import { DEFAULT_SITE_SETTINGS, PROJECTS_DATA } from './data/portfolioData';
+import { DEFAULT_SITE_SETTINGS, PROJECTS_DATA, DEFAULT_GALLERY_ITEMS } from './data/portfolioData';
 import { Project, SiteSettings } from './types';
 import { db } from './lib/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
@@ -246,6 +247,7 @@ export default function App() {
         <Marquee />
         <Skills />
         <WorkShowcase projects={projects} onSaveProjects={handleSaveProjects} onResetDefaults={handleResetDefaults} />
+        <Gallery galleryItems={siteSettings.galleryItems || DEFAULT_GALLERY_ITEMS} />
         <AIPersonaStudio />
         <Journey />
         <StatusDashboard />
