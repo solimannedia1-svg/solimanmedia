@@ -464,28 +464,21 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
       {/* LIGHTBOX / VIDEO MODAL */}
       {selectedItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 sm:p-6 overflow-y-auto"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-black/92 backdrop-blur-2xl p-3 sm:p-6 overflow-y-auto animate-fadeIn"
           onClick={() => setSelectedItem(null)}
         >
           <div
-            className="relative w-full max-w-4xl bg-[#121618] border border-[#00daf3] overflow-hidden shadow-[0_0_50px_rgba(0,218,243,0.4)] my-8"
+            className="relative w-full max-w-4xl bg-[#121618] border border-[#00daf3]/80 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,218,243,0.4)] my-auto text-left"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Reticle Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#0a0c0d]">
+            <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 border-b border-[#00daf3]/30 bg-[#0a0c0d]">
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#00daf3] animate-pulse" />
                 <span className="font-mono-code text-xs text-[#00daf3] font-bold uppercase tracking-wider">
                   [ {(selectedItem.mediaType === 'video' || selectedItem.videoUrl) ? (isReelVideo(selectedItem.videoUrl) ? 'REEL / SHORT SHOWCASE' : 'VIDEO SHOWCASE') : 'PHOTO SHOWCASE'} ]
                 </span>
               </div>
-              <button
-                onClick={() => setSelectedItem(null)}
-                className="px-3 py-1.5 bg-[#00daf3]/10 border border-[#00daf3] hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] font-mono-code text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(0,218,243,0.3)]"
-              >
-                <span>CLOSE</span>
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
             </div>
 
             {/* Modal Media Content */}
@@ -583,21 +576,24 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                 {selectedItem.description}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-white/10">
                 {selectedItem.date ? (
                   <div className="text-xs font-mono-code text-[#79797e]">
                     DATE / OCCASION: {selectedItem.date}
                   </div>
                 ) : <div />}
 
-                {/* Big Prominent Close Button */}
+                {/* Big Prominent Close Button at Bottom */}
                 <button
                   type="button"
-                  onClick={() => setSelectedItem(null)}
-                  className="px-6 py-2.5 bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-bold hover:bg-[#00daf3]/80 transition-colors flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(0,218,243,0.4)]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedItem(null);
+                  }}
+                  className="w-full sm:w-auto px-8 py-3 bg-[#00daf3] hover:bg-[#00c5dc] text-[#001f24] font-mono-code text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,218,243,0.5)] rounded-xl border border-[#00daf3] active:scale-95"
                 >
-                  <span className="material-symbols-outlined text-sm">close</span>
-                  <span>CLOSE SHOWCASE</span>
+                  <span className="material-symbols-outlined text-base font-bold">close</span>
+                  <span>إغلاق / CLOSE</span>
                 </button>
               </div>
             </div>
