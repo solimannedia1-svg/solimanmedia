@@ -163,7 +163,7 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
             <img
               src={siteSettings.portraitUrl || PORTRAIT_IMAGE_URL}
               alt={`${siteSettings.name} Portrait`}
-              className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105"
+              className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-active:grayscale-0 group-active:opacity-100 group-focus:grayscale-0 group-focus:opacity-100 scale-100 group-hover:scale-105 transition-all duration-700"
             />
 
             {/* Gradient Overlay */}
