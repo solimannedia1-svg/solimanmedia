@@ -156,7 +156,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       : filteredItems.length === 2
                       ? 'lg:col-span-6'
                       : 'lg:col-span-3'
-                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] shadow-2xl`}
+                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] shadow-2xl touch-manipulation select-none`}
                 >
                   {/* Image Background */}
                   <div className="absolute inset-0 z-0">
@@ -166,7 +166,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
                       }}
-                      className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                      className="w-full h-full object-cover max-sm:opacity-90 max-sm:grayscale-0 sm:opacity-60 group-hover:opacity-100 group-active:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500 sm:grayscale group-hover:grayscale-0 group-active:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/60 to-transparent" />
                   </div>
@@ -186,7 +186,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                         {itemLeft.personName}
                       </div>
                     )}
-                    <h3 className="text-xl font-bold text-white group-hover:text-[#00daf3] transition-colors leading-tight">
+                    <h3 className="text-xl font-bold text-white group-hover:text-[#00daf3] group-active:text-[#00daf3] transition-colors leading-tight">
                       {itemLeft.title}
                     </h3>
                     <p className="text-xs text-[#919094] line-clamp-2">
@@ -206,13 +206,13 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   onClick={() => setSelectedItem(itemCenter)}
                   className={`${
                     filteredItems.length === 2 ? 'lg:col-span-6' : 'lg:col-span-5'
-                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[380px] sm:min-h-[460px] flex flex-col justify-between p-6 shadow-2xl`}
+                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer min-h-[380px] sm:min-h-[460px] flex flex-col justify-between p-6 shadow-2xl touch-manipulation select-none`}
                 >
                   {/* Camera Reticle Corners */}
-                  <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#00daf3]/60 group-hover:border-[#00daf3]" />
-                  <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-[#00daf3]/60 group-hover:border-[#00daf3]" />
-                  <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-[#00daf3]/60 group-hover:border-[#00daf3]" />
-                  <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#00daf3]/60 group-hover:border-[#00daf3]" />
+                  <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#00daf3]/60 group-hover:border-[#00daf3] group-active:border-[#00daf3]" />
+                  <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-[#00daf3]/60 group-hover:border-[#00daf3] group-active:border-[#00daf3]" />
+                  <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-[#00daf3]/60 group-hover:border-[#00daf3] group-active:border-[#00daf3]" />
+                  <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#00daf3]/60 group-hover:border-[#00daf3] group-active:border-[#00daf3]" />
 
                   {/* Background Image */}
                   <div className="absolute inset-0 z-0">
@@ -222,7 +222,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
                       }}
-                      className="w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                      className="w-full h-full object-cover max-sm:opacity-85 max-sm:grayscale-0 sm:opacity-50 group-hover:opacity-90 group-active:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500 sm:grayscale group-hover:grayscale-0 group-active:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/70 to-[#0a0c0d]/40" />
                   </div>
@@ -243,11 +243,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   {/* Center Content / Play Icon if video */}
                   <div className="relative z-10 my-auto text-center space-y-4 py-8">
                     {itemCenter.mediaType === 'video' || itemCenter.videoUrl ? (
-                      <div className="w-20 h-20 mx-auto rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center shadow-[0_0_35px_rgba(0,218,243,0.8)] group-hover:scale-110 transition-transform">
+                      <div className="w-20 h-20 mx-auto rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center shadow-[0_0_35px_rgba(0,218,243,0.8)] group-hover:scale-110 group-active:scale-110 transition-transform">
                         <span className="material-symbols-outlined text-4xl ml-1">play_arrow</span>
                       </div>
                     ) : (
-                      <div className="w-16 h-16 mx-auto rounded-full bg-white/10 border border-[#00daf3]/40 text-[#00daf3] flex items-center justify-center backdrop-blur-md group-hover:bg-[#00daf3] group-hover:text-[#001f24] transition-all">
+                      <div className="w-16 h-16 mx-auto rounded-full bg-white/10 border border-[#00daf3]/40 text-[#00daf3] flex items-center justify-center backdrop-blur-md group-hover:bg-[#00daf3] group-hover:text-[#001f24] group-active:bg-[#00daf3] group-active:text-[#001f24] transition-all">
                         <span className="material-symbols-outlined text-2xl">photo_camera</span>
                       </div>
                     )}
@@ -258,7 +258,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                           {itemCenter.personName} — {itemCenter.personRole}
                         </span>
                       )}
-                      <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight group-hover:text-[#00daf3] group-active:text-[#00daf3]">
                         {itemCenter.title}
                       </h3>
                     </div>
@@ -270,7 +270,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {itemRight && (
                 <div
                   onClick={() => setSelectedItem(itemRight)}
-                  className="lg:col-span-4 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] p-6 shadow-2xl"
+                  className="lg:col-span-4 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] p-6 shadow-2xl touch-manipulation select-none"
                 >
                   {/* Background Image */}
                   <div className="absolute inset-0 z-0">
@@ -280,7 +280,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
                       }}
-                      className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                      className="w-full h-full object-cover max-sm:opacity-90 max-sm:grayscale-0 sm:opacity-60 group-hover:opacity-90 group-active:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500 sm:grayscale group-hover:grayscale-0 group-active:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/60 to-transparent" />
                   </div>
@@ -307,7 +307,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                         {itemRight.personRole}
                       </p>
                     )}
-                    <h3 className="text-2xl font-extrabold text-white leading-snug group-hover:text-[#00daf3] transition-colors">
+                    <h3 className="text-2xl font-extrabold text-white leading-snug group-hover:text-[#00daf3] group-active:text-[#00daf3] transition-colors">
                       {itemRight.title}
                     </h3>
                     <p className="text-xs text-[#c0c2c3] leading-relaxed line-clamp-3">
@@ -328,7 +328,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   onClick={() => setSelectedItem(itemBottom1)}
                   className={`${
                     !itemBottom2 ? 'lg:col-span-12' : 'lg:col-span-7'
-                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl`}
+                  } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl touch-manipulation select-none`}
                 >
                   {/* Reticle Accent Line */}
                   <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#00daf3] to-transparent" />
@@ -341,7 +341,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
                       }}
-                      className="w-full h-full object-cover opacity-45 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
+                      className="w-full h-full object-cover max-sm:opacity-85 max-sm:grayscale-0 sm:opacity-45 group-hover:opacity-85 group-active:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500 sm:grayscale group-hover:grayscale-0 group-active:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#0a0c0d] via-[#0a0c0d]/80 to-transparent" />
                   </div>
@@ -359,7 +359,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                         {itemBottom1.personName} ({itemBottom1.personRole})
                       </span>
                     )}
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#00daf3] transition-colors leading-tight">
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#00daf3] group-active:text-[#00daf3] transition-colors leading-tight">
                       {itemBottom1.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-[#919094] line-clamp-2">
@@ -373,7 +373,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {itemBottom2 && (
                 <div
                   onClick={() => setSelectedItem(itemBottom2)}
-                  className="lg:col-span-5 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all duration-500 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl"
+                  className="lg:col-span-5 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl touch-manipulation select-none"
                 >
                   <div className="absolute inset-0 z-0">
                     <img
@@ -382,7 +382,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
                       }}
-                      className="w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                      className="w-full h-full object-cover max-sm:opacity-90 max-sm:grayscale-0 sm:opacity-50 group-hover:opacity-90 group-active:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500 sm:grayscale group-hover:grayscale-0 group-active:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c0d] via-[#0a0c0d]/70 to-transparent" />
                   </div>
@@ -404,7 +404,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                         {itemBottom2.personName}
                       </p>
                     )}
-                    <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#00daf3] transition-colors">
+                    <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#00daf3] group-active:text-[#00daf3] transition-colors">
                       {itemBottom2.title}
                     </h3>
                   </div>
@@ -427,16 +427,16 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                     <div
                       key={item.id}
                       onClick={() => setSelectedItem(item)}
-                      className="group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] transition-all overflow-hidden cursor-pointer p-4 space-y-3"
+                      className="group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_25px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all overflow-hidden cursor-pointer p-4 space-y-3 touch-manipulation select-none"
                     >
-                      <div className="relative h-48 bg-black overflow-hidden">
+                      <div className="relative h-48 bg-black overflow-hidden rounded-lg">
                         <img
                           src={getItemDisplayImage(item)}
                           alt={item.title}
                           onError={(e) => {
                             (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
                           }}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          className="w-full h-full object-cover max-sm:opacity-95 max-sm:grayscale-0 sm:opacity-75 group-hover:opacity-100 group-active:opacity-100 group-hover:scale-105 group-active:scale-105 transition-transform duration-500 sm:grayscale group-hover:grayscale-0 group-active:grayscale-0"
                         />
                         {(item.mediaType === 'video' || item.videoUrl) && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -458,7 +458,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                             </span>
                           )}
                         </div>
-                        <h4 className="font-bold text-sm text-white group-hover:text-[#00daf3] transition-colors truncate">
+                        <h4 className="font-bold text-sm text-white group-hover:text-[#00daf3] group-active:text-[#00daf3] transition-colors truncate">
                           {item.title}
                         </h4>
                       </div>
