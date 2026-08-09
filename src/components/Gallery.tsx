@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { GalleryItem } from '../types';
 import { getVideoSourceInfo, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 
@@ -51,32 +52,37 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* TOP SECTION HEADER - PHOTIX RETICLE STYLE */}
-        <div className="relative text-center mb-16 pt-8">
+        <div className="relative text-center mb-10 sm:mb-16 pt-4 sm:pt-8 overflow-hidden">
           {/* Top Cyan Accent Line */}
-          <div className="w-24 h-[3px] bg-[#00daf3] mx-auto mb-8 shadow-[0_0_12px_#00daf3]" />
+          <div className="w-16 sm:w-24 h-[2px] sm:h-[3px] bg-[#00daf3] mx-auto mb-6 sm:mb-8 shadow-[0_0_12px_#00daf3]" />
 
           {/* Camera Viewfinder Framing Reticle Corners for Header */}
-          <div className="relative inline-block px-8 py-4 sm:px-16 sm:py-6">
-            {/* Corner Marks */}
-            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#00daf3] shadow-[0_0_8px_#00daf3]" />
-            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#00daf3] shadow-[0_0_8px_#00daf3]" />
-            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#00daf3] shadow-[0_0_8px_#00daf3]" />
-            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#00daf3] shadow-[0_0_8px_#00daf3]" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative inline-block max-w-full px-4 sm:px-12 py-3 sm:py-5 my-1"
+          >
+            {/* Corner Marks with subtle pulsing glowing animation */}
+            <div className="absolute top-0 left-0 w-3.5 h-3.5 sm:w-5 sm:h-5 border-t-2 border-l-2 border-[#00daf3] shadow-[0_0_8px_#00daf3] animate-pulse" />
+            <div className="absolute top-0 right-0 w-3.5 h-3.5 sm:w-5 sm:h-5 border-t-2 border-r-2 border-[#00daf3] shadow-[0_0_8px_#00daf3] animate-pulse" />
+            <div className="absolute bottom-0 left-0 w-3.5 h-3.5 sm:w-5 sm:h-5 border-b-2 border-l-2 border-[#00daf3] shadow-[0_0_8px_#00daf3] animate-pulse" />
+            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 sm:w-5 sm:h-5 border-b-2 border-r-2 border-[#00daf3] shadow-[0_0_8px_#00daf3] animate-pulse" />
 
-            {/* Giant Display Title */}
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black font-space tracking-[0.2em] text-white uppercase select-none flex items-center justify-center gap-2 sm:gap-4">
+            {/* Display Title - Responsive & Sleek (Static) */}
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-black font-space tracking-[0.06em] sm:tracking-[0.15em] lg:tracking-[0.2em] text-white uppercase select-none flex flex-wrap items-center justify-center gap-1.5 sm:gap-3.5 max-w-full leading-tight">
               <span>GALLERY</span>
-              <span className="w-4 h-4 sm:w-6 sm:h-6 rounded-full border-4 border-[#00daf3] bg-transparent animate-pulse inline-block mx-1 shadow-[0_0_15px_#00daf3]" />
+              <span className="w-2.5 h-2.5 sm:w-4 sm:h-4 rounded-full border-2 sm:border-3 border-[#00daf3] bg-transparent inline-block mx-0.5 sm:mx-1 shadow-[0_0_12px_#00daf3] shrink-0 animate-pulse" />
               <span>ALBUMS</span>
             </h2>
 
-            <p className="font-mono-code text-xs sm:text-sm text-[#00daf3] tracking-[0.3em] uppercase mt-3 font-semibold">
+            <p className="font-mono-code text-[9px] sm:text-xs text-[#00daf3] tracking-[0.08em] sm:tracking-[0.2em] uppercase mt-2 sm:mt-3 font-semibold max-w-full break-words">
               HONORARY MOMENTS &amp; TESTIMONIALS • VIP SHOWCASE
             </p>
-          </div>
+          </motion.div>
 
           {/* Subtitle description */}
-          <p className="max-w-2xl mx-auto text-xs sm:text-sm text-[#919094] mt-6 leading-relaxed">
+          <p className="max-w-2xl mx-auto text-xs sm:text-sm text-[#919094] mt-4 sm:mt-6 leading-relaxed px-4">
             High-resolution documentation of technology meeting creativity, featuring exclusive VIP encounters and video testimonials from industry leaders.
           </p>
 
