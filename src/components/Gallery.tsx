@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { GalleryItem } from '../types';
 import { getVideoSourceInfo, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
@@ -10,6 +10,48 @@ interface GalleryProps {
 export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+
+  // Track touch position to prevent opening modal during scroll
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  };
+
+  const handleCardSelect = (item: GalleryItem, e: React.MouseEvent) => {
+    if (touchStartPos.current) {
+      const nativeEvent = e.nativeEvent as TouchEvent;
+      if (nativeEvent && nativeEvent.changedTouches && nativeEvent.changedTouches.length > 0) {
+        const touch = nativeEvent.changedTouches[0];
+        const dx = Math.abs(touch.clientX - touchStartPos.current.x);
+        const dy = Math.abs(touch.clientY - touchStartPos.current.y);
+        // If finger moved more than 8px, user was scrolling, do not trigger modal
+        if (dx > 8 || dy > 8) {
+          touchStartPos.current = null;
+          return;
+        }
+      }
+    }
+    touchStartPos.current = null;
+    setSelectedItem(item);
+  };
+
+  // Lock body scroll and listen for Escape key when modal is active
+  useEffect(() => {
+    if (selectedItem) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setSelectedItem(null);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [selectedItem]);
 
   const filteredItems = galleryItems.filter((item) => {
     if (activeCategory === 'all') return true;
@@ -149,7 +191,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {/* CARD 1 (LEFT COLUMN): PORTRAIT CARD */}
               {itemLeft && (
                 <div
-                  onClick={() => setSelectedItem(itemLeft)}
+                  onTouchStart={handleTouchStart}
+                  onClick={(e) => handleCardSelect(itemLeft, e)}
                   className={`${
                     filteredItems.length === 1
                       ? 'lg:col-span-12'
@@ -203,7 +246,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {/* CARD 2 (CENTER COLUMN): FEATURED ALBUM GRID */}
               {itemCenter && (
                 <div
-                  onClick={() => setSelectedItem(itemCenter)}
+                  onTouchStart={handleTouchStart}
+                  onClick={(e) => handleCardSelect(itemCenter, e)}
                   className={`${
                     filteredItems.length === 2 ? 'lg:col-span-6' : 'lg:col-span-5'
                   } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer min-h-[380px] sm:min-h-[460px] flex flex-col justify-between p-6 shadow-2xl touch-manipulation select-none`}
@@ -269,7 +313,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {/* CARD 3 (RIGHT COLUMN - 4 COLS): MYSTICAL SPOTLIGHT PORTRAIT */}
               {itemRight && (
                 <div
-                  onClick={() => setSelectedItem(itemRight)}
+                  onTouchStart={handleTouchStart}
+                  onClick={(e) => handleCardSelect(itemRight, e)}
                   className="lg:col-span-4 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] sm:min-h-[460px] p-6 shadow-2xl touch-manipulation select-none"
                 >
                   {/* Background Image */}
@@ -325,7 +370,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {/* BOTTOM LEFT: PANORAMIC WIDE FEATURE BANNER */}
               {itemBottom1 && (
                 <div
-                  onClick={() => setSelectedItem(itemBottom1)}
+                  onTouchStart={handleTouchStart}
+                  onClick={(e) => handleCardSelect(itemBottom1, e)}
                   className={`${
                     !itemBottom2 ? 'lg:col-span-12' : 'lg:col-span-7'
                   } group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl touch-manipulation select-none`}
@@ -372,7 +418,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
               {/* BOTTOM RIGHT (5 COLS): DUAL ACTION / TESTIMONIAL BANNER */}
               {itemBottom2 && (
                 <div
-                  onClick={() => setSelectedItem(itemBottom2)}
+                  onTouchStart={handleTouchStart}
+                  onClick={(e) => handleCardSelect(itemBottom2, e)}
                   className="lg:col-span-5 group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_30px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all duration-300 overflow-hidden cursor-pointer min-h-[260px] sm:min-h-[300px] flex flex-col justify-between p-6 sm:p-8 shadow-2xl touch-manipulation select-none"
                 >
                   <div className="absolute inset-0 z-0">
@@ -426,7 +473,8 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   {filteredItems.slice(5).map((item) => (
                     <div
                       key={item.id}
-                      onClick={() => setSelectedItem(item)}
+                      onTouchStart={handleTouchStart}
+                      onClick={(e) => handleCardSelect(item, e)}
                       className="group relative bg-[#121618] border border-white/10 hover:border-[#00daf3] active:border-[#00daf3] active:bg-[#182225] active:shadow-[0_0_25px_rgba(0,218,243,0.5)] active:scale-[0.98] transition-all overflow-hidden cursor-pointer p-4 space-y-3 touch-manipulation select-none"
                     >
                       <div className="relative h-48 bg-black overflow-hidden rounded-lg">
@@ -479,6 +527,19 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
           className="fixed inset-0 z-[150] flex items-center justify-center bg-black/92 backdrop-blur-2xl p-3 sm:p-6 overflow-y-auto animate-fadeIn"
           onClick={() => setSelectedItem(null)}
         >
+          {/* Floating Top Right Close Button for Mobile & Desktop */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedItem(null);
+            }}
+            aria-label="Close"
+            className="fixed top-3 right-3 sm:top-6 sm:right-6 z-[210] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#00daf3] text-[#001f24] hover:bg-white hover:text-black flex items-center justify-center shadow-[0_0_25px_rgba(0,218,243,0.9)] border-2 border-white transition-all transform hover:scale-110 active:scale-90 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-2xl font-black">close</span>
+          </button>
+
           <div
             className="relative w-full max-w-4xl bg-[#121618] border border-[#00daf3]/80 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,218,243,0.4)] my-auto text-left"
             onClick={(e) => e.stopPropagation()}
@@ -491,6 +552,14 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   [ {(selectedItem.mediaType === 'video' || selectedItem.videoUrl) ? (isReelVideo(selectedItem.videoUrl) ? 'REEL / SHORT SHOWCASE' : 'VIDEO SHOWCASE') : 'PHOTO SHOWCASE'} ]
                 </span>
               </div>
+              <button
+                type="button"
+                onClick={() => setSelectedItem(null)}
+                className="px-3 py-1.5 rounded-lg bg-[#00daf3]/10 hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] font-mono-code text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-[#00daf3]/40"
+              >
+                <span className="material-symbols-outlined text-sm font-bold">close</span>
+                <span>CLOSE</span>
+              </button>
             </div>
 
             {/* Modal Media Content */}

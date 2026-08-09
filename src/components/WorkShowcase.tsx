@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Project } from '../types';
 import { PROJECTS_DATA } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
@@ -36,6 +36,48 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [previewIframeUrl, setPreviewIframeUrl] = useState<string | null>(null);
+
+  // Track touch start to differentiate scrolling from clicking
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  };
+
+  const handleProjectSelect = (project: Project, e: React.MouseEvent) => {
+    if (touchStartPos.current) {
+      const nativeEvent = e.nativeEvent as TouchEvent;
+      if (nativeEvent && nativeEvent.changedTouches && nativeEvent.changedTouches.length > 0) {
+        const touch = nativeEvent.changedTouches[0];
+        const dx = Math.abs(touch.clientX - touchStartPos.current.x);
+        const dy = Math.abs(touch.clientY - touchStartPos.current.y);
+        // Finger moved > 8px, user was scrolling page
+        if (dx > 8 || dy > 8) {
+          touchStartPos.current = null;
+          return;
+        }
+      }
+    }
+    touchStartPos.current = null;
+    setSelectedProject(project);
+  };
+
+  // Lock body scroll and handle Escape key for modal
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setSelectedProject(null);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [selectedProject]);
 
   const handleOpenAdmin = () => {
     window.dispatchEvent(new CustomEvent('open-admin'));
@@ -107,6 +149,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
             return (
               <div
                 key={project.id}
+                onTouchStart={handleTouchStart}
                 className="glass-card glass-card-hover rounded-2xl overflow-hidden border border-white/10 active:border-[#00daf3] active:shadow-[0_0_30px_rgba(0,218,243,0.4)] group flex flex-col justify-between transition-all duration-300 touch-manipulation select-none"
               >
                 {/* Media Preview (Video or Image) */}
@@ -217,8 +260,9 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   {/* Action Buttons */}
                   <div className="pt-2 flex items-center gap-3">
                     <button
-                      onClick={() => setSelectedProject(project)}
-                      className="px-4 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca] hover:text-white hover:border-[#00daf3]/50 transition-colors flex items-center justify-center gap-2"
+                      type="button"
+                      onClick={(e) => handleProjectSelect(project, e)}
+                      className="px-4 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca] hover:text-white hover:border-[#00daf3]/50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>DETAILS</span>
                       <span className="material-symbols-outlined text-sm">info</span>
@@ -226,14 +270,15 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
 
                     {project.category === 'web-app' && project.liveUrl && (
                       <button
-                        onClick={() => {
+                        type="button"
+                        onClick={(e) => {
                           if (project.liveUrl?.startsWith('http')) {
                             window.open(project.liveUrl, '_blank');
                           } else {
-                            setSelectedProject(project);
+                            handleProjectSelect(project, e);
                           }
                         }}
-                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
                       >
                         <span>LAUNCH WEB APP</span>
                         <span className="material-symbols-outlined text-sm">open_in_new</span>
@@ -242,8 +287,9 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
 
                     {(project.category === 'ai-videos' || isVideo) && (
                       <button
-                        onClick={() => setSelectedProject(project)}
-                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                        type="button"
+                        onClick={(e) => handleProjectSelect(project, e)}
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
                       >
                         <span>PLAY FULL VIDEO</span>
                         <span className="material-symbols-outlined text-sm">play_arrow</span>
@@ -252,8 +298,9 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
 
                     {project.category === 'brand-media' && !isVideo && (
                       <button
-                        onClick={() => setSelectedProject(project)}
-                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                        type="button"
+                        onClick={(e) => handleProjectSelect(project, e)}
+                        className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
                       >
                         <span>VIEW MEDIA KIT</span>
                         <span className="material-symbols-outlined text-sm">visibility</span>
@@ -271,11 +318,25 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
       {selectedProject && (
         <div
           className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-2xl animate-fadeIn overflow-y-auto"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedProject(null);
-          }}
+          onClick={() => setSelectedProject(null)}
         >
-          <div className="glass-card max-w-3xl w-full my-auto rounded-2xl p-4 sm:p-8 border border-[#00daf3]/60 relative shadow-[0_0_40px_rgba(0,227,253,0.25)] bg-[#0e1112] text-left">
+          {/* Floating Top Right Close Button for Viewport */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedProject(null);
+            }}
+            aria-label="Close"
+            className="fixed top-3 right-3 sm:top-6 sm:right-6 z-[210] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#00daf3] text-[#001f24] hover:bg-white hover:text-black flex items-center justify-center shadow-[0_0_25px_rgba(0,218,243,0.9)] border-2 border-white transition-all transform hover:scale-110 active:scale-90 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-2xl font-black">close</span>
+          </button>
+
+          <div
+            className="glass-card max-w-3xl w-full my-auto rounded-2xl p-4 sm:p-8 border border-[#00daf3]/60 relative shadow-[0_0_40px_rgba(0,227,253,0.25)] bg-[#0e1112] text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
             
             {/* Top Modal Header */}
             <div className="flex items-center justify-between bg-[#0e1112] py-3.5 px-4 -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 mb-5 sm:mb-6 border-b border-[#00daf3]/30 rounded-t-2xl">
@@ -283,6 +344,14 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00daf3] animate-pulse" />
                 <span>PROJECT DETAILS</span>
               </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProject(null)}
+                className="px-3 py-1.5 rounded-lg bg-[#00daf3]/10 hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] font-mono-code text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-[#00daf3]/40"
+              >
+                <span className="material-symbols-outlined text-sm font-bold">close</span>
+                <span>CLOSE</span>
+              </button>
             </div>
 
             {/* Video or Image Header in Modal */}
