@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import { SocialIcon } from './SocialIcon';
-import { DEFAULT_SITE_SETTINGS } from '../data/portfolioData';
-import { SiteSettings } from '../types';
+import { DEFAULT_SITE_SETTINGS, DEFAULT_BUDGET_OPTIONS, DEFAULT_SERVICE_OPTIONS } from '../data/portfolioData';
+import { SiteSettings, ContactMessage } from '../types';
 
 interface ContactProps {
   siteSettings?: SiteSettings;
+  onSendMessage?: (msg: ContactMessage) => void;
 }
 
-export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SETTINGS }) => {
+export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SETTINGS, onSendMessage }) => {
+  const serviceOptions = (siteSettings.serviceOptions && siteSettings.serviceOptions.length > 0)
+    ? siteSettings.serviceOptions
+    : DEFAULT_SERVICE_OPTIONS;
+
+  const budgetOptions = (siteSettings.budgetOptions && siteSettings.budgetOptions.length > 0)
+    ? siteSettings.budgetOptions
+    : DEFAULT_BUDGET_OPTIONS;
+
   const [form, setForm] = useState({
     name: '',
     email: '',
-    projectType: 'Web & AI Architecture',
-    budget: '$5k - $10k',
+    projectType: serviceOptions[0] || 'Web & AI Architecture',
+    budget: budgetOptions[0] || '$5,000 - $10,000',
     message: ''
   });
 
@@ -25,21 +34,39 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
     if (!form.name || !form.email || !form.message) return;
 
     setSubmitting(true);
+
+    const newMessage: ContactMessage = {
+      id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      name: form.name.trim(),
+      email: form.email.trim(),
+      projectType: form.projectType,
+      budget: form.budget,
+      message: form.message.trim(),
+      createdAt: new Date().toISOString(),
+      read: false
+    };
+
     try {
-      const res = await fetch('/api/contact', {
+      await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(newMessage)
       });
-      const data = await res.json();
-      setSubmitted(true);
-      setResponseMsg(data.message || `Thank you ${form.name}! Mohamed Soliman has received your message.`);
-    } catch {
-      setSubmitted(true);
-      setResponseMsg(`Thank you ${form.name}! Your message has been transmitted.`);
-    } finally {
-      setSubmitting(false);
+    } catch (err) {
+      console.warn('API contact error:', err);
     }
+
+    try {
+      if (onSendMessage) {
+        onSendMessage(newMessage);
+      }
+    } catch (err) {
+      console.warn('SendMessage handler error:', err);
+    }
+
+    setSubmitted(true);
+    setResponseMsg(`Thank you ${form.name}! Mohamed Soliman has received your message.`);
+    setSubmitting(false);
   };
 
   return (
@@ -120,7 +147,13 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
               <button
                 onClick={() => {
                   setSubmitted(false);
-                  setForm({ name: '', email: '', projectType: 'Web & AI Architecture', budget: '$5k - $10k', message: '' });
+                  setForm({
+                    name: '',
+                    email: '',
+                    projectType: serviceOptions[0] || 'Web & AI Architecture',
+                    budget: budgetOptions[0] || '$5,000 - $10,000',
+                    message: ''
+                  });
                 }}
                 className="btn-primary mt-4 px-6 py-3 font-mono-code text-xs uppercase rounded font-bold"
               >
@@ -169,10 +202,11 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
                     onChange={(e) => setForm({ ...form, projectType: e.target.value })}
                     className="w-full bg-[#1d2021] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#e1e3e4] focus:outline-none focus:border-[#00daf3] font-body"
                   >
-                    <option value="Web & AI Architecture">Web &amp; AI Architecture</option>
-                    <option value="3D WebGL / Interactive Experience">3D WebGL / Interactive Experience</option>
-                    <option value="Social Media & Audience Strategy">Social Media &amp; Audience Strategy</option>
-                    <option value="Full Creative Direction & Consulting">Full Creative Direction &amp; Consulting</option>
+                    {serviceOptions.map((opt, i) => (
+                      <option key={i} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -185,10 +219,11 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
                     onChange={(e) => setForm({ ...form, budget: e.target.value })}
                     className="w-full bg-[#1d2021] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#e1e3e4] focus:outline-none focus:border-[#00daf3] font-body"
                   >
-                    <option value="< $5k">&lt; $5,000</option>
-                    <option value="$5k - $10k">$5,000 - $10,000</option>
-                    <option value="$10k - $25k">$10,000 - $25,000</option>
-                    <option value="$25k+">$25,000+</option>
+                    {budgetOptions.map((opt, i) => (
+                      <option key={i} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -210,7 +245,7 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-primary w-full py-4 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive"
+                className="btn-primary w-full py-4 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
               >
                 <span>{submitting ? 'TRANSMITTING...' : 'TRANSMIT PROJECT INQUIRY'}</span>
                 <span className="material-symbols-outlined text-sm">send</span>

@@ -54,7 +54,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
   });
 
   return (
-    <section id="work" className="py-28 px-6 md:px-16 max-w-[1440px] mx-auto relative z-20 border-t border-white/5">
+    <section id="work" className="pt-16 md:pt-24 pb-8 md:pb-12 px-6 md:px-16 max-w-[1440px] mx-auto relative z-20 border-t border-white/5">
       {/* Header & Category Selection */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div>

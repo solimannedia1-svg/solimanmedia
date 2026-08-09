@@ -55,6 +55,20 @@ export const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
   }
 ];
 
+export const DEFAULT_BUDGET_OPTIONS = [
+  '< $5,000',
+  '$5,000 - $10,000',
+  '$10,000 - $25,000',
+  '$25,000+'
+];
+
+export const DEFAULT_SERVICE_OPTIONS = [
+  'Web & AI Architecture',
+  '3D WebGL / Interactive Experience',
+  'Social Media & Audience Strategy',
+  'Full Creative Direction & Consulting'
+];
+
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   name: 'MOHAMED SOLIMAN',
   title: 'FULL-STACK ENGINEER & AI CREATIVE STRATEGIST',
@@ -65,6 +79,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   availability: 'AVAILABLE FOR SELECT PROJECTS',
   contactEmail: 'soliman@solimanmedia.site',
   contactPhone: '+201099313523',
+  budgetOptions: DEFAULT_BUDGET_OPTIONS,
+  serviceOptions: DEFAULT_SERVICE_OPTIONS,
   adminPassword: '!@#12Bad', // Default secure password, editable in Admin Panel Settings
   aboutHeading: 'ARCHITECTING NEXT-GEN DIGITAL EXPERIENCES',
   aboutBio: 'With 5+ years specializing in full-stack engineering, WebGL GLSL shader systems, Gemini AI integration, and digital brand scaling, I engineer platforms that captivate audiences and drive exponential social growth.',

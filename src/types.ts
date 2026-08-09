@@ -20,6 +20,17 @@ export interface GalleryItem {
   featured?: boolean;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  projectType: string;
+  budget: string;
+  message: string;
+  createdAt: string;
+  read?: boolean;
+}
+
 export interface SiteSettings {
   // Personal & Hero Info
   name: string;
@@ -33,6 +44,10 @@ export interface SiteSettings {
   // Direct Contact
   contactEmail: string;
   contactPhone: string;
+
+  // Custom Budget & Service Options
+  budgetOptions?: string[];
+  serviceOptions?: string[];
   
   // Security
   adminPassword: string;

@@ -45,7 +45,35 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
   const itemBottom2 = getItemAt(4);
 
   return (
-    <section id="gallery" className="py-24 relative overflow-hidden bg-[#0a0c0d] text-[#e1e3e4]">
+    <section id="gallery" className="pt-4 sm:pt-8 pb-16 sm:pb-24 relative overflow-hidden bg-[#0a0c0d] text-[#e1e3e4]">
+      {/* FAST PROGRAMMING LANGUAGES TICKER MARQUEE */}
+      <div className="w-full bg-[#05080a]/90 border-y border-[#00daf3]/20 py-2.5 mb-6 sm:mb-10 overflow-hidden relative shadow-[0_0_20px_rgba(0,218,243,0.05)]">
+        {/* Side gradient overlays for seamless fading */}
+        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0a0c0d] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0a0c0d] to-transparent z-10 pointer-events-none" />
+
+        <div className="marquee-container flex items-center select-none">
+          <div className="animate-marquee-left flex items-center gap-6 whitespace-nowrap [animation-duration:16s]">
+            {[
+              'PYTHON', 'TYPESCRIPT', 'JAVASCRIPT', 'C++', 'JAVA', 'GO', 'RUST', 'C#', 
+              'PHP', 'SWIFT', 'KOTLIN', 'FLUTTER', 'REACT', 'NEXT.JS', 'NODE.JS', 'SQL', 
+              'TAILWIND CSS', 'DOCKER', 'KUBERNETES', 'GRAPHQL', 'MONGODB', 'POSTGRESQL', 
+              'FIREBASE', 'GCP', 'AWS', 'REDIS', 'VUE.JS', 'ANGULAR', 'REST API', 'GIT'
+            ].concat([
+              'PYTHON', 'TYPESCRIPT', 'JAVASCRIPT', 'C++', 'JAVA', 'GO', 'RUST', 'C#', 
+              'PHP', 'SWIFT', 'KOTLIN', 'FLUTTER', 'REACT', 'NEXT.JS', 'NODE.JS', 'SQL', 
+              'TAILWIND CSS', 'DOCKER', 'KUBERNETES', 'GRAPHQL', 'MONGODB', 'POSTGRESQL', 
+              'FIREBASE', 'GCP', 'AWS', 'REDIS', 'VUE.JS', 'ANGULAR', 'REST API', 'GIT'
+            ]).map((tech, i) => (
+              <span key={i} className="inline-flex items-center gap-2 font-mono-code text-[11px] font-bold text-[#00daf3] tracking-widest hover:text-white transition-colors cursor-default">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00daf3] shadow-[0_0_6px_#00daf3] animate-pulse" />
+                <span>{tech}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Background Subtle Cyber Glows */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-[#00daf3]/5 rounded-full blur-[120px] pointer-events-none" />
 

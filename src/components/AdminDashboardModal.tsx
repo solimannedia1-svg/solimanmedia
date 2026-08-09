@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Project, SiteSettings, SocialPlatform, GalleryItem } from '../types';
-import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS, DEFAULT_GALLERY_ITEMS } from '../data/portfolioData';
+import { Project, SiteSettings, SocialPlatform, GalleryItem, ContactMessage } from '../types';
+import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS, DEFAULT_GALLERY_ITEMS, DEFAULT_BUDGET_OPTIONS, DEFAULT_SERVICE_OPTIONS } from '../data/portfolioData';
 import { getVideoSourceInfo, getYouTubeThumbnail, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 import { SocialIcon } from './SocialIcon';
 
@@ -13,6 +13,8 @@ interface AdminDashboardModalProps {
   siteSettings: SiteSettings;
   onSaveSiteSettings: (settings: SiteSettings) => void;
   isStandalonePage?: boolean;
+  messages?: ContactMessage[];
+  onSaveMessages?: (messages: ContactMessage[]) => void;
 }
 
 export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
@@ -23,7 +25,9 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   onResetDefaults,
   siteSettings,
   onSaveSiteSettings,
-  isStandalonePage = false
+  isStandalonePage = false,
+  messages = [],
+  onSaveMessages
 }) => {
   // Security State
   const [passwordInput, setPasswordInput] = useState<string>('');
@@ -36,8 +40,20 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
   const [passwordChangeNotice, setPasswordChangeNotice] = useState<string>('');
 
-  // Tabs: 'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form'
-  const [activeTab, setActiveTab] = useState<'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form'>('projects');
+  // Tabs
+  const [activeTab, setActiveTab] = useState<'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form' | 'messages'>('messages');
+
+  // Messages state
+  const [messageFilter, setMessageFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [messageSearch, setMessageSearch] = useState<string>('');
+  const [showDirectMsgForm, setShowDirectMsgForm] = useState<boolean>(false);
+  const [directMsgForm, setDirectMsgForm] = useState({
+    name: 'Admin Direct Message',
+    email: 'soliman@solimanmedia.site',
+    projectType: 'Web & AI Architecture',
+    budget: '$5,000 - $10,000',
+    message: ''
+  });
   
   // Projects State
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
@@ -406,6 +422,110 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
     }));
   };
 
+  // Messages Management Handlers
+  const unreadMessagesCount = messages.filter((m) => !m.read).length;
+
+  const handleToggleReadMessage = (id: string) => {
+    const updated = messages.map((m) => (m.id === id ? { ...m, read: !m.read } : m));
+    onSaveMessages?.(updated);
+  };
+
+  const handleMarkAllRead = () => {
+    const updated = messages.map((m) => ({ ...m, read: true }));
+    onSaveMessages?.(updated);
+  };
+
+  const handleDeleteMessage = (id: string) => {
+    const updated = messages.filter((m) => m.id !== id);
+    onSaveMessages?.(updated);
+  };
+
+  const handleClearAllMessages = () => {
+    if (window.confirm('Are you sure you want to delete ALL messages?')) {
+      onSaveMessages?.([]);
+    }
+  };
+
+  const handleSendAdminDirectMsg = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!directMsgForm.message.trim()) return;
+
+    const newMsg: ContactMessage = {
+      id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      name: directMsgForm.name.trim() || 'Admin Note',
+      email: directMsgForm.email.trim(),
+      projectType: directMsgForm.projectType,
+      budget: directMsgForm.budget,
+      message: directMsgForm.message.trim(),
+      createdAt: new Date().toISOString(),
+      read: true
+    };
+
+    onSaveMessages?.([newMsg, ...messages]);
+    setDirectMsgForm((prev) => ({ ...prev, message: '' }));
+    setShowDirectMsgForm(false);
+    setSaveNotice('✓ Direct message recorded successfully!');
+    setTimeout(() => setSaveNotice(''), 3000);
+  };
+
+  // Budget Options Management Handlers
+  const currentBudgetOptions = (settingsForm.budgetOptions && settingsForm.budgetOptions.length > 0)
+    ? settingsForm.budgetOptions
+    : DEFAULT_BUDGET_OPTIONS;
+
+  const handleAddBudgetOption = () => {
+    const updated = [...currentBudgetOptions, 'New Budget Range'];
+    setSettingsForm((prev) => ({ ...prev, budgetOptions: updated }));
+  };
+
+  const handleUpdateBudgetOption = (idx: number, val: string) => {
+    const updated = [...currentBudgetOptions];
+    updated[idx] = val;
+    setSettingsForm((prev) => ({ ...prev, budgetOptions: updated }));
+  };
+
+  const handleRemoveBudgetOption = (idx: number) => {
+    const updated = currentBudgetOptions.filter((_, i) => i !== idx);
+    setSettingsForm((prev) => ({ ...prev, budgetOptions: updated }));
+  };
+
+  const handleMoveBudgetOption = (idx: number, direction: 'up' | 'down') => {
+    if ((direction === 'up' && idx === 0) || (direction === 'down' && idx === currentBudgetOptions.length - 1)) return;
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    const updated = [...currentBudgetOptions];
+    const temp = updated[idx];
+    updated[idx] = updated[targetIdx];
+    updated[targetIdx] = temp;
+    setSettingsForm((prev) => ({ ...prev, budgetOptions: updated }));
+  };
+
+  const handleApplyBudgetPreset = (presetList: string[]) => {
+    setSettingsForm((prev) => ({ ...prev, budgetOptions: presetList }));
+    setSaveNotice('✓ Budget preset applied!');
+    setTimeout(() => setSaveNotice(''), 3000);
+  };
+
+  // Service Options Management Handlers
+  const currentServiceOptions = (settingsForm.serviceOptions && settingsForm.serviceOptions.length > 0)
+    ? settingsForm.serviceOptions
+    : DEFAULT_SERVICE_OPTIONS;
+
+  const handleAddServiceOption = () => {
+    const updated = [...currentServiceOptions, 'New Service Category'];
+    setSettingsForm((prev) => ({ ...prev, serviceOptions: updated }));
+  };
+
+  const handleUpdateServiceOption = (idx: number, val: string) => {
+    const updated = [...currentServiceOptions];
+    updated[idx] = val;
+    setSettingsForm((prev) => ({ ...prev, serviceOptions: updated }));
+  };
+
+  const handleRemoveServiceOption = (idx: number) => {
+    const updated = currentServiceOptions.filter((_, i) => i !== idx);
+    setSettingsForm((prev) => ({ ...prev, serviceOptions: updated }));
+  };
+
   return (
     <div className={isStandalonePage ? "fixed inset-0 z-[100] p-3 md:p-6 bg-[#0c0f10] overflow-y-auto flex flex-col justify-center items-center" : "fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fadeIn"}>
       <div className={`glass-card max-w-6xl w-full flex flex-col shadow-2xl bg-[#111415] rounded-2xl border border-[#00daf3]/50 overflow-hidden ${isStandalonePage ? "min-h-[85vh] max-h-[95vh]" : "max-h-[92vh]"}`}>
@@ -500,6 +620,23 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
             <div className="px-6 py-3 bg-[#1d2021] border-b border-white/5 flex flex-wrap items-center justify-between font-mono-code text-xs gap-2">
               <div className="flex flex-wrap gap-2">
                 <button
+                  onClick={() => setActiveTab('messages')}
+                  className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 relative cursor-pointer ${
+                    activeTab === 'messages'
+                      ? 'bg-[#00daf3] text-[#001f24] font-bold shadow-lg shadow-[#00daf3]/20'
+                      : 'text-[#c7c6ca] hover:text-white border border-white/10 hover:border-[#00daf3]/50'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-sm">mark_email_unread</span>
+                  <span>MESSAGES ({messages.length})</span>
+                  {unreadMessagesCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-red-500 text-white font-bold animate-pulse">
+                      {unreadMessagesCount} NEW
+                    </span>
+                  )}
+                </button>
+
+                <button
                   onClick={() => setActiveTab('hero')}
                   className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
                     activeTab === 'hero' ? 'bg-[#00daf3] text-[#001f24] font-bold' : 'text-[#c7c6ca] hover:text-white border border-white/10'
@@ -591,6 +728,344 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
               {saveNotice && (
                 <div className="p-4 mb-4 rounded-xl bg-green-950/80 border border-green-500/50 text-green-300 font-mono-code text-xs font-bold animate-fadeIn">
                   {saveNotice}
+                </div>
+              )}
+
+              {/* TAB 0: MESSAGES & PROJECT INQUIRIES */}
+              {activeTab === 'messages' && (
+                <div className="space-y-6">
+                  {/* Messages Header Bar & Action Stats */}
+                  <div className="p-6 rounded-xl bg-[#1d2021] border border-[#00daf3]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="font-space text-lg font-bold text-[#e1e3e4] flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#00daf3]">inbox</span>
+                        <span>RECEIVED PROJECT INQUIRIES &amp; MESSAGES</span>
+                      </h4>
+                      <p className="font-body text-xs text-[#919094] mt-1">
+                        رسائل وطلبات المشاريع الواردة مباشرة من نموذج الاتصال بالوقع
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowDirectMsgForm(!showDirectMsgForm)}
+                        className="px-3.5 py-2 rounded-xl bg-[#00daf3]/10 text-[#00daf3] border border-[#00daf3]/40 hover:bg-[#00daf3] hover:text-[#001f24] font-mono-code text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                      >
+                        <span className="material-symbols-outlined text-sm">add_comment</span>
+                        <span>{showDirectMsgForm ? 'CANCEL NOTE' : '+ RECORD ADMIN NOTE'}</span>
+                      </button>
+
+                      {unreadMessagesCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={handleMarkAllRead}
+                          className="px-3.5 py-2 rounded-xl bg-green-950/60 text-green-300 border border-green-500/40 hover:bg-green-600 hover:text-white font-mono-code text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-sm">done_all</span>
+                          <span>MARK ALL READ</span>
+                        </button>
+                      )}
+
+                      {messages.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={handleClearAllMessages}
+                          className="px-3.5 py-2 rounded-xl bg-red-950/60 text-red-400 border border-red-500/40 hover:bg-red-600 hover:text-white font-mono-code text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-sm">delete_sweep</span>
+                          <span>CLEAR ALL</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Direct Admin Note Form */}
+                  {showDirectMsgForm && (
+                    <form onSubmit={handleSendAdminDirectMsg} className="p-6 rounded-xl bg-[#1d2021] border border-[#00daf3]/50 space-y-4 animate-fadeIn">
+                      <h5 className="font-mono-code text-xs font-bold text-[#00daf3] uppercase flex items-center gap-2">
+                        <span className="material-symbols-outlined text-sm">edit_note</span>
+                        <span>RECORD A DIRECT MESSAGE / INTERNAL NOTE</span>
+                      </h5>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block font-mono-code text-[11px] text-[#79797e] uppercase mb-1">
+                            SENDER NAME
+                          </label>
+                          <input
+                            type="text"
+                            value={directMsgForm.name}
+                            onChange={(e) => setDirectMsgForm({ ...directMsgForm, name: e.target.value })}
+                            className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-mono-code text-[11px] text-[#79797e] uppercase mb-1">
+                            SENDER EMAIL
+                          </label>
+                          <input
+                            type="email"
+                            value={directMsgForm.email}
+                            onChange={(e) => setDirectMsgForm({ ...directMsgForm, email: e.target.value })}
+                            className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block font-mono-code text-[11px] text-[#79797e] uppercase mb-1">
+                            SERVICE TYPE
+                          </label>
+                          <select
+                            value={directMsgForm.projectType}
+                            onChange={(e) => setDirectMsgForm({ ...directMsgForm, projectType: e.target.value })}
+                            className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                          >
+                            {currentServiceOptions.map((opt, i) => (
+                              <option key={i} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block font-mono-code text-[11px] text-[#79797e] uppercase mb-1">
+                            BUDGET
+                          </label>
+                          <select
+                            value={directMsgForm.budget}
+                            onChange={(e) => setDirectMsgForm({ ...directMsgForm, budget: e.target.value })}
+                            className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                          >
+                            {currentBudgetOptions.map((opt, i) => (
+                              <option key={i} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block font-mono-code text-[11px] text-[#79797e] uppercase mb-1">
+                          MESSAGE CONTENT *
+                        </label>
+                        <textarea
+                          rows={3}
+                          required
+                          value={directMsgForm.message}
+                          onChange={(e) => setDirectMsgForm({ ...directMsgForm, message: e.target.value })}
+                          placeholder="Type your note or test message here..."
+                          className="w-full bg-[#0c0f10] border border-white/10 rounded-xl p-3 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                        />
+                      </div>
+
+                      <div className="flex gap-3 justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setShowDirectMsgForm(false)}
+                          className="px-4 py-2 rounded-xl bg-white/5 text-[#c7c6ca] font-mono-code text-xs uppercase"
+                        >
+                          CANCEL
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn-primary px-6 py-2 rounded-xl font-mono-code text-xs uppercase font-bold"
+                        >
+                          SAVE NOTE
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Filter & Search Bar */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#111415] p-3 rounded-xl border border-white/10 font-mono-code text-xs">
+                    <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
+                      <button
+                        type="button"
+                        onClick={() => setMessageFilter('all')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          messageFilter === 'all'
+                            ? 'bg-[#00daf3] text-[#001f24] font-bold'
+                            : 'text-[#c7c6ca] hover:text-white'
+                        }`}
+                      >
+                        ALL ({messages.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMessageFilter('unread')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          messageFilter === 'unread'
+                            ? 'bg-red-500 text-white font-bold'
+                            : 'text-[#c7c6ca] hover:text-white'
+                        }`}
+                      >
+                        UNREAD ({unreadMessagesCount})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMessageFilter('read')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          messageFilter === 'read'
+                            ? 'bg-[#00daf3]/20 text-[#00daf3] font-bold'
+                            : 'text-[#c7c6ca] hover:text-white'
+                        }`}
+                      >
+                        READ ({messages.length - unreadMessagesCount})
+                      </button>
+                    </div>
+
+                    <div className="w-full sm:w-64 relative">
+                      <span className="material-symbols-outlined text-sm text-[#79797e] absolute left-3 top-2.5">
+                        search
+                      </span>
+                      <input
+                        type="text"
+                        value={messageSearch}
+                        onChange={(e) => setMessageSearch(e.target.value)}
+                        placeholder="Search name, email, or message..."
+                        className="w-full bg-[#1d2021] border border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Messages List */}
+                  <div className="space-y-4">
+                    {messages
+                      .filter((msg) => {
+                        if (messageFilter === 'unread') return !msg.read;
+                        if (messageFilter === 'read') return msg.read;
+                        return true;
+                      })
+                      .filter((msg) => {
+                        if (!messageSearch.trim()) return true;
+                        const q = messageSearch.toLowerCase();
+                        return (
+                          msg.name.toLowerCase().includes(q) ||
+                          msg.email.toLowerCase().includes(q) ||
+                          msg.message.toLowerCase().includes(q) ||
+                          msg.projectType.toLowerCase().includes(q) ||
+                          msg.budget.toLowerCase().includes(q)
+                        );
+                      })
+                      .map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={`p-6 rounded-2xl border transition-all space-y-4 ${
+                            !msg.read
+                              ? 'bg-[#182022] border-[#00daf3] shadow-lg shadow-[#00daf3]/10'
+                              : 'bg-[#151819] border-white/10 hover:border-white/20'
+                          }`}
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-white/10">
+                            <div className="flex items-center gap-3">
+                              {!msg.read ? (
+                                <span className="px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 font-mono-code text-[10px] font-bold uppercase animate-pulse">
+                                  NEW UNREAD
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-0.5 rounded-full bg-white/5 text-[#79797e] border border-white/10 font-mono-code text-[10px] font-bold uppercase">
+                                  READ
+                                </span>
+                              )}
+
+                              <div>
+                                <h5 className="font-space text-base font-bold text-[#e1e3e4]">
+                                  {msg.name}
+                                </h5>
+                                <a
+                                  href={`mailto:${msg.email}`}
+                                  className="font-mono-code text-xs text-[#00daf3] hover:underline"
+                                >
+                                  {msg.email}
+                                </a>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <span className="font-mono-code text-[11px] text-[#79797e]">
+                                {new Date(msg.createdAt).toLocaleString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleReadMessage(msg.id)}
+                                  className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                                    msg.read
+                                      ? 'bg-white/5 text-[#79797e] border-white/10 hover:text-white'
+                                      : 'bg-[#00daf3]/20 text-[#00daf3] border-[#00daf3]/40 hover:bg-[#00daf3] hover:text-[#001f24]'
+                                  }`}
+                                  title={msg.read ? 'Mark as Unread' : 'Mark as Read'}
+                                >
+                                  <span className="material-symbols-outlined text-sm">
+                                    {msg.read ? 'mark_as_unread' : 'check_circle'}
+                                  </span>
+                                </button>
+
+                                <a
+                                  href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(
+                                    msg.projectType
+                                  )} Inquiry - Mohamed Soliman&body=${encodeURIComponent(
+                                    `Hi ${msg.name},\n\nThank you for reaching out regarding your project.\n\nBest regards,\nMohamed Soliman`
+                                  )}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="p-2 rounded-lg bg-[#00daf3]/10 text-[#00daf3] border border-[#00daf3]/30 hover:bg-[#00daf3] hover:text-[#001f24] transition-all cursor-pointer"
+                                  title="Reply via Email"
+                                >
+                                  <span className="material-symbols-outlined text-sm">reply</span>
+                                </a>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteMessage(msg.id)}
+                                  className="p-2 rounded-lg bg-red-950/40 text-red-400 border border-red-500/30 hover:bg-red-600 hover:text-white transition-all cursor-pointer"
+                                  title="Delete Message"
+                                >
+                                  <span className="material-symbols-outlined text-sm">delete</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Details Badges */}
+                          <div className="flex flex-wrap gap-2 font-mono-code text-xs">
+                            <div className="px-3 py-1 rounded-lg bg-[#111415] border border-white/10 text-[#c7c6ca] flex items-center gap-1.5">
+                              <span className="text-[#00daf3] font-bold">SERVICE:</span>
+                              <span>{msg.projectType}</span>
+                            </div>
+
+                            <div className="px-3 py-1 rounded-lg bg-[#00daf3]/10 border border-[#00daf3]/30 text-[#00daf3] font-bold flex items-center gap-1.5">
+                              <span>BUDGET:</span>
+                              <span className="text-white">{msg.budget}</span>
+                            </div>
+                          </div>
+
+                          {/* Message Text Box */}
+                          <div className="p-4 rounded-xl bg-[#0c0f10] border border-white/10 text-sm text-[#e1e3e4] font-body leading-relaxed whitespace-pre-wrap">
+                            {msg.message}
+                          </div>
+                        </div>
+                      ))}
+
+                    {messages.length === 0 && (
+                      <div className="py-16 text-center font-mono-code text-xs text-[#79797e] bg-[#1d2021] rounded-2xl border border-dashed border-white/10 space-y-3">
+                        <span className="material-symbols-outlined text-4xl text-[#00daf3]">
+                          mark_email_read
+                        </span>
+                        <p>NO RECEIVED MESSAGES YET.</p>
+                        <p className="text-[11px] text-[#919094]">
+                          Inquiries submitted from the website Contact Form will appear here automatically in real time!
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -1675,6 +2150,162 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
                       </div>
+                    </div>
+                  </div>
+
+                  {/* ESTIMATED BUDGET OPTIONS MANAGEMENT */}
+                  <div className="p-6 rounded-xl bg-[#1d2021] border border-[#00daf3]/40 space-y-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-white/10">
+                      <div>
+                        <h4 className="font-space text-base font-bold text-[#e1e3e4] flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[#00daf3]">payments</span>
+                          <span>ESTIMATED BUDGET RANGES (تعديل أسعار الميزانية)</span>
+                        </h4>
+                        <p className="font-body text-xs text-[#919094] mt-1">
+                          تعديل قائمة أسعار الميزانيات المتاحة للعملاء في القائمة المنسدلة بنموذج التواصل
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleAddBudgetOption}
+                        className="px-3.5 py-2 rounded-xl bg-[#00daf3]/10 text-[#00daf3] border border-[#00daf3]/30 font-mono-code text-xs font-bold hover:bg-[#00daf3] hover:text-[#001f24] transition-all cursor-pointer flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">add</span>
+                        <span>ADD BUDGET RANGE</span>
+                      </button>
+                    </div>
+
+                    {/* Quick Presets Buttons */}
+                    <div className="p-3 rounded-xl bg-[#0c0f10] border border-white/5 font-mono-code text-xs space-y-2">
+                      <span className="text-[#79797e] font-bold uppercase block text-[11px]">
+                        QUICK CURRENCY &amp; SCALE PRESETS:
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleApplyBudgetPreset(['< $5,000', '$5,000 - $10,000', '$10,000 - $25,000', '$25,000+'])}
+                          className="px-2.5 py-1 rounded bg-white/5 hover:bg-[#00daf3]/20 hover:text-[#00daf3] border border-white/10 text-[#c7c6ca] transition-all cursor-pointer"
+                        >
+                          💵 USD ($) Standard
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyBudgetPreset(['أقل من 25,000 ج.م', '25,000 - 50,000 ج.م', '50,000 - 100,000 ج.م', '100,000+ ج.م'])}
+                          className="px-2.5 py-1 rounded bg-white/5 hover:bg-[#00daf3]/20 hover:text-[#00daf3] border border-white/10 text-[#c7c6ca] transition-all cursor-pointer"
+                        >
+                          🇪🇬 EGP (ج.م) Egyptian
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyBudgetPreset(['أقل من 10,000 ر.س', '10,000 - 25,000 ر.س', '25,000 - 50,000 ر.س', '50,000+ ر.س'])}
+                          className="px-2.5 py-1 rounded bg-white/5 hover:bg-[#00daf3]/20 hover:text-[#00daf3] border border-white/10 text-[#c7c6ca] transition-all cursor-pointer"
+                        >
+                          🇸🇦 SAR (ر.س) Saudi
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyBudgetPreset(['Micro Project ($1k - $3k)', 'Growth App ($5k - $15k)', 'Enterprise Platform ($25k+)', 'Monthly Retainer ($3k/mo)'])}
+                          className="px-2.5 py-1 rounded bg-white/5 hover:bg-[#00daf3]/20 hover:text-[#00daf3] border border-white/10 text-[#c7c6ca] transition-all cursor-pointer"
+                        >
+                          🚀 Tiered Packages
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Editable Budget Options Inputs */}
+                    <div className="space-y-2">
+                      {currentBudgetOptions.map((opt, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <span className="font-mono-code text-xs text-[#00daf3] font-bold w-6 text-center">
+                            #{idx + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={opt}
+                            onChange={(e) => handleUpdateBudgetOption(idx, e.target.value)}
+                            className="flex-1 bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] font-mono-code focus:outline-none focus:border-[#00daf3]"
+                            placeholder="e.g. $5,000 - $10,000"
+                          />
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveBudgetOption(idx, 'up')}
+                              disabled={idx === 0}
+                              className="p-1.5 rounded bg-white/5 text-[#c7c6ca] hover:text-white disabled:opacity-30 cursor-pointer"
+                              title="Move Up"
+                            >
+                              <span className="material-symbols-outlined text-xs">arrow_upward</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveBudgetOption(idx, 'down')}
+                              disabled={idx === currentBudgetOptions.length - 1}
+                              className="p-1.5 rounded bg-white/5 text-[#c7c6ca] hover:text-white disabled:opacity-30 cursor-pointer"
+                              title="Move Down"
+                            >
+                              <span className="material-symbols-outlined text-xs">arrow_downward</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveBudgetOption(idx)}
+                              className="p-1.5 rounded bg-red-950/40 text-red-400 hover:bg-red-600 hover:text-white transition-all cursor-pointer"
+                              title="Remove"
+                            >
+                              <span className="material-symbols-outlined text-xs">delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SERVICE TYPES MANAGEMENT */}
+                  <div className="p-6 rounded-xl bg-[#1d2021] border border-white/10 space-y-4">
+                    <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                      <div>
+                        <h4 className="font-space text-base font-bold text-[#e1e3e4] flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[#00daf3]">design_services</span>
+                          <span>SERVICE TYPES (أنواع الخدمات)</span>
+                        </h4>
+                        <p className="font-body text-xs text-[#919094] mt-1">
+                          تعديل قائمة الخدمات المتاحة للعملاء في القائمة المنسدلة
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleAddServiceOption}
+                        className="px-3.5 py-2 rounded-xl bg-[#00daf3]/10 text-[#00daf3] border border-[#00daf3]/30 font-mono-code text-xs font-bold hover:bg-[#00daf3] hover:text-[#001f24] transition-all cursor-pointer flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">add</span>
+                        <span>ADD SERVICE</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      {currentServiceOptions.map((opt, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <span className="font-mono-code text-xs text-[#00daf3] font-bold w-6 text-center">
+                            #{idx + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={opt}
+                            onChange={(e) => handleUpdateServiceOption(idx, e.target.value)}
+                            className="flex-1 bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                            placeholder="e.g. Web & AI Architecture"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveServiceOption(idx)}
+                            className="p-1.5 rounded bg-red-950/40 text-red-400 hover:bg-red-600 hover:text-white transition-all cursor-pointer"
+                            title="Remove"
+                          >
+                            <span className="material-symbols-outlined text-xs">delete</span>
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
 

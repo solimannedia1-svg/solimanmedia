@@ -15,12 +15,13 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { AdminDashboardModal } from './components/AdminDashboardModal';
 import { DEFAULT_SITE_SETTINGS, PROJECTS_DATA, DEFAULT_GALLERY_ITEMS } from './data/portfolioData';
-import { Project, SiteSettings } from './types';
+import { Project, SiteSettings, ContactMessage } from './types';
 import { db } from './lib/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 const SETTINGS_CACHE_KEY = 'mohamed_soliman_site_settings_v3';
 const PROJECTS_CACHE_KEY = 'mohamed_soliman_projects_v3';
+const MESSAGES_CACHE_KEY = 'mohamed_soliman_messages_v1';
 
 // Helper to safely store objects/arrays in localStorage without quota crashes
 function safeSaveToLocalStorage<T>(key: string, value: T): void {
@@ -67,6 +68,15 @@ export default function App() {
       return saved ? JSON.parse(saved) : PROJECTS_DATA;
     } catch {
       return PROJECTS_DATA;
+    }
+  });
+
+  const [messages, setMessages] = useState<ContactMessage[]>(() => {
+    try {
+      const saved = localStorage.getItem(MESSAGES_CACHE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
   });
 
@@ -122,9 +132,22 @@ export default function App() {
       console.warn('Firestore projects listener info:', err);
     });
 
+    const unsubMessages = onSnapshot(doc(db, 'portfolio', 'messages'), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        if (data && Array.isArray(data.items)) {
+          setMessages(data.items);
+          safeSaveToLocalStorage(MESSAGES_CACHE_KEY, data.items);
+        }
+      }
+    }, (err) => {
+      console.warn('Firestore messages listener info:', err);
+    });
+
     return () => {
       unsubSettings();
       unsubProjects();
+      unsubMessages();
     };
   }, []);
 
@@ -166,6 +189,21 @@ export default function App() {
     }
   };
 
+  const handleSaveMessages = async (newMessages: ContactMessage[]) => {
+    setMessages(newMessages);
+    safeSaveToLocalStorage(MESSAGES_CACHE_KEY, newMessages);
+    try {
+      await setDoc(doc(db, 'portfolio', 'messages'), { items: newMessages });
+    } catch (e) {
+      console.error('Error writing messages to Firestore:', e);
+    }
+  };
+
+  const handleSendMessage = (msg: ContactMessage) => {
+    const updated = [msg, ...messages];
+    handleSaveMessages(updated);
+  };
+
   const handleSaveProjects = async (newProjects: Project[]) => {
     setProjects(newProjects);
     safeSaveToLocalStorage(PROJECTS_CACHE_KEY, newProjects);
@@ -188,11 +226,14 @@ export default function App() {
   const handleResetDefaults = async () => {
     setProjects(PROJECTS_DATA);
     setSiteSettings(DEFAULT_SITE_SETTINGS);
+    setMessages([]);
     localStorage.removeItem('mohamed_soliman_projects_v2');
     localStorage.removeItem('mohamed_soliman_site_settings_v1');
+    localStorage.removeItem(MESSAGES_CACHE_KEY);
     try {
       await setDoc(doc(db, 'portfolio', 'settings'), DEFAULT_SITE_SETTINGS);
       await setDoc(doc(db, 'portfolio', 'projects'), { items: PROJECTS_DATA });
+      await setDoc(doc(db, 'portfolio', 'messages'), { items: [] });
     } catch (e) {
       console.error('Error resetting Firestore defaults:', e);
     }
@@ -224,6 +265,8 @@ export default function App() {
           onResetDefaults={handleResetDefaults}
           siteSettings={siteSettings}
           onSaveSiteSettings={handleSaveSiteSettings}
+          messages={messages}
+          onSaveMessages={handleSaveMessages}
         />
       </div>
     );
@@ -251,7 +294,7 @@ export default function App() {
         <AIPersonaStudio />
         <Journey />
         <StatusDashboard />
-        <Contact siteSettings={siteSettings} />
+        <Contact siteSettings={siteSettings} onSendMessage={handleSendMessage} />
       </main>
 
       {/* Footer */}
