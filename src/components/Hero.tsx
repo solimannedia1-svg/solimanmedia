@@ -3,6 +3,7 @@ import { TechEcosystem3D } from './TechEcosystem3D';
 import { SocialIcon } from './SocialIcon';
 import { PORTRAIT_IMAGE_URL, DEFAULT_SITE_SETTINGS } from '../data/portfolioData';
 import { SiteSettings } from '../types';
+import { getOptimizedCloudinaryUrl } from '../utils/cloudinary';
 
 interface HeroProps {
   onAiTalkClick: () => void;
@@ -161,8 +162,10 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
           <div className="relative z-10 w-full max-w-sm aspect-[3/4] glass-card rounded-2xl overflow-hidden group border border-white/10 hover:border-[#00daf3]/40 transition-all duration-700 shadow-2xl interactive">
             {/* Hotlinked Image matching specs */}
             <img
-              src={siteSettings.portraitUrl || PORTRAIT_IMAGE_URL}
+              src={getOptimizedCloudinaryUrl(siteSettings.portraitUrl || PORTRAIT_IMAGE_URL, { width: 800, quality: 'auto' })}
               alt={`${siteSettings.name} Portrait`}
+              loading="eager"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-active:grayscale-0 group-active:opacity-100 group-focus:grayscale-0 group-focus:opacity-100 scale-100 group-hover:scale-105 transition-all duration-700"
             />
 

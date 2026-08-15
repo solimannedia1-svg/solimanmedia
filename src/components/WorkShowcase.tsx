@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Project } from '../types';
 import { PROJECTS_DATA } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
+import { getOptimizedCloudinaryUrl } from '../utils/cloudinary';
 
 const LOCAL_STORAGE_KEY = 'mohamed_soliman_projects_v2';
 
@@ -177,7 +178,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         ) : (
                           <video
                             src={videoInfo.embedUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
-                            poster={project.image}
+                            poster={getOptimizedCloudinaryUrl(project.image, { width: 800, quality: 'auto' })}
                             controls
                             playsInline
                             muted
@@ -194,8 +195,10 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   ) : (
                     <>
                       <img
-                        src={project.image}
+                        src={getOptimizedCloudinaryUrl(project.image, { width: 800, quality: 'auto' })}
                         alt={project.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover max-sm:grayscale-0 max-sm:opacity-100 sm:grayscale sm:opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-active:grayscale-0 group-active:opacity-100 group-focus:grayscale-0 group-focus:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#111415] via-[#111415]/20 to-transparent" />
@@ -396,8 +399,10 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
               return (
                 <div className="mb-6 h-52 sm:h-64 rounded-xl overflow-hidden border border-white/10 relative">
                   <img
-                    src={selectedProject.image}
+                    src={getOptimizedCloudinaryUrl(selectedProject.image, { width: 1200, quality: 'auto' })}
                     alt={selectedProject.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </div>

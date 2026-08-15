@@ -3,6 +3,8 @@ import { Project, SiteSettings, SocialPlatform, GalleryItem, ContactMessage } fr
 import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS, DEFAULT_GALLERY_ITEMS, DEFAULT_BUDGET_OPTIONS, DEFAULT_SERVICE_OPTIONS } from '../data/portfolioData';
 import { getVideoSourceInfo, getYouTubeThumbnail, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 import { SocialIcon } from './SocialIcon';
+import { CloudinaryMigrationManager } from './CloudinaryMigrationManager';
+import { uploadFileToCloudinary, isCloudinaryUrl } from '../utils/cloudinary';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
@@ -41,7 +43,11 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   const [passwordChangeNotice, setPasswordChangeNotice] = useState<string>('');
 
   // Tabs
-  const [activeTab, setActiveTab] = useState<'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form' | 'messages'>('messages');
+  const [activeTab, setActiveTab] = useState<'projects' | 'hero' | 'about' | 'gallery' | 'gallery-form' | 'contact' | 'security' | 'export' | 'project-form' | 'messages' | 'migration'>('messages');
+
+  // Cloudinary Direct Upload Indicator
+  const [isUploadingMedia, setIsUploadingMedia] = useState<string | null>(null);
+  const [uploadPercent, setUploadPercent] = useState<number>(0);
 
   // Messages state
   const [messageFilter, setMessageFilter] = useState<'all' | 'unread' | 'read'>('all');
@@ -162,9 +168,25 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     setDeletingId(null);
   };
 
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setIsUploadingMedia('project');
+    setUploadPercent(0);
+
+    try {
+      const res = await uploadFileToCloudinary(file, (pct) => setUploadPercent(pct));
+      if (res.secure_url) {
+        setEditingProject((prev) => ({
+          ...prev,
+          image: res.secure_url
+        }));
+        setSaveNotice('✓ Image uploaded directly to Cloudinary!');
+        setTimeout(() => setSaveNotice(''), 3000);
+      }
+    } catch (err: any) {
+      console.warn('Direct Cloudinary file upload failed, using local reader fallback:', err);
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -175,12 +197,31 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
         }
       };
       reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingMedia(null);
+      setUploadPercent(0);
     }
   };
 
-  const handlePortraitFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePortraitFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setIsUploadingMedia('portrait');
+    setUploadPercent(0);
+
+    try {
+      const res = await uploadFileToCloudinary(file, (pct) => setUploadPercent(pct));
+      if (res.secure_url) {
+        setSettingsForm((prev) => ({
+          ...prev,
+          portraitUrl: res.secure_url
+        }));
+        setSaveNotice('✓ Hero Portrait uploaded directly to Cloudinary!');
+        setTimeout(() => setSaveNotice(''), 3000);
+      }
+    } catch (err: any) {
+      console.warn('Direct Cloudinary portrait upload failed, using local reader fallback:', err);
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -191,6 +232,44 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
         }
       };
       reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingMedia(null);
+      setUploadPercent(0);
+    }
+  };
+
+  const handleGalleryImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingMedia('gallery');
+    setUploadPercent(0);
+
+    try {
+      const res = await uploadFileToCloudinary(file, (pct) => setUploadPercent(pct));
+      if (res.secure_url) {
+        setEditingGalleryItem((prev) => ({
+          ...prev,
+          image: res.secure_url
+        }));
+        setSaveNotice('✓ Gallery image uploaded directly to Cloudinary!');
+        setTimeout(() => setSaveNotice(''), 3000);
+      }
+    } catch (err: any) {
+      console.warn('Direct Cloudinary gallery upload failed, using local reader fallback:', err);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setEditingGalleryItem((prev) => ({
+            ...prev,
+            image: event.target!.result as string
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingMedia(null);
+      setUploadPercent(0);
     }
   };
 
@@ -688,6 +767,18 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                 >
                   <span className="material-symbols-outlined text-sm">share</span>
                   <span>SOCIAL &amp; CONTACT</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('migration')}
+                  className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    activeTab === 'migration'
+                      ? 'bg-[#00daf3] text-[#001f24] font-bold shadow-lg shadow-[#00daf3]/30'
+                      : 'text-[#00daf3] hover:text-white border border-[#00daf3]/30 hover:border-[#00daf3]'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-sm">cloud_upload</span>
+                  <span>CLOUDINARY MIGRATION</span>
                 </button>
 
                 <button
@@ -2023,20 +2114,44 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block font-mono-code text-xs text-[#79797e] uppercase mb-1">
-                        IMAGE / THUMBNAIL URL {editingGalleryItem.mediaType === 'video' || editingGalleryItem.videoUrl ? '(اختياري بالفيديو)' : '*'}
+                    <div className="p-4 rounded-xl bg-[#0c0f10] border border-white/10 space-y-3">
+                      <label className="block font-mono-code text-xs text-[#00daf3] uppercase font-bold">
+                        IMAGE / THUMBNAIL {editingGalleryItem.mediaType === 'video' || editingGalleryItem.videoUrl ? '(اختياري بالفيديو)' : '*'}
                       </label>
-                      <input
-                        type="text"
-                        required={editingGalleryItem.mediaType !== 'video' && !editingGalleryItem.videoUrl}
-                        value={editingGalleryItem.image || ''}
-                        onChange={(e) =>
-                          setEditingGalleryItem((prev) => ({ ...prev, image: e.target.value }))
-                        }
-                        placeholder="https://... (يمكن تركه فارغاً بالفيديو وسيجلب صورة اليوتيوب تلقائياً)"
-                        className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
-                      />
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block font-mono-code text-[10px] text-[#79797e] mb-1">
+                            Option A: Image URL / Cloudinary Link
+                          </label>
+                          <input
+                            type="text"
+                            required={editingGalleryItem.mediaType !== 'video' && !editingGalleryItem.videoUrl}
+                            value={editingGalleryItem.image || ''}
+                            onChange={(e) =>
+                              setEditingGalleryItem((prev) => ({ ...prev, image: e.target.value }))
+                            }
+                            placeholder="https://res.cloudinary.com/..."
+                            className="w-full bg-[#1d2021] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block font-mono-code text-[10px] text-[#79797e] mb-1">
+                            Option B: Upload Image File (Cloudinary)
+                          </label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleGalleryImageFileUpload}
+                            className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer"
+                          />
+                          {isUploadingMedia === 'gallery' && (
+                            <span className="text-[10px] text-[#00daf3] block mt-1 animate-pulse font-bold">
+                              Uploading to Cloudinary {uploadPercent > 0 ? `(${uploadPercent}%)` : ''}...
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {editingGalleryItem.mediaType === 'video' && (
@@ -2459,6 +2574,20 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                     <span>UPDATE ADMIN PASSWORD</span>
                   </button>
                 </form>
+              )}
+
+              {/* TAB: CLOUDINARY STORAGE & MIGRATION */}
+              {activeTab === 'migration' && (
+                <CloudinaryMigrationManager
+                  projects={projects}
+                  onSaveProjects={onSaveProjects}
+                  siteSettings={settingsForm}
+                  onSaveSiteSettings={(updated) => {
+                    setSettingsForm(updated);
+                    onSaveSiteSettings(updated);
+                  }}
+                  setSaveNotice={setSaveNotice}
+                />
               )}
 
               {/* TAB 6: VERCEL & GITHUB DEPLOYMENT EXPORT */}

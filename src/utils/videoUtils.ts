@@ -1,3 +1,5 @@
+import { getOptimizedCloudinaryUrl } from './cloudinary';
+
 export interface VideoSourceInfo {
   type: 'youtube' | 'vimeo' | 'gdrive' | 'streamable' | 'loom' | 'facebook' | 'instagram' | 'tiktok' | 'direct' | 'none';
   embedUrl: string;
@@ -159,7 +161,7 @@ export function getItemDisplayImage(item: { image?: string; videoUrl?: string; m
   
   const cleanImg = item.image ? item.image.trim() : '';
   if (cleanImg && !cleanImg.includes('...[large video') && cleanImg !== 'undefined' && cleanImg !== 'null') {
-    return cleanImg;
+    return getOptimizedCloudinaryUrl(cleanImg);
   }
   
   if (item.videoUrl) {

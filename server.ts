@@ -82,6 +82,107 @@ Respond as Mohamed himself — direct, articulate, enthusiastic about high-end d
     });
   });
 
+  // Cloudinary Proxy Migration / Upload Endpoint
+  app.post("/api/cloudinary/migrate-image", async (req, res) => {
+    try {
+      const { imageUrl } = req.body;
+      if (!imageUrl || typeof imageUrl !== 'string') {
+        return res.status(400).json({ error: "imageUrl is required" });
+      }
+
+      const cloudName = "qazdrpcx";
+      const uploadPreset = "images_soliman";
+      const cloudinaryEndpoint = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+      // If already a Cloudinary URL
+      if (imageUrl.includes("res.cloudinary.com") || imageUrl.includes("cloudinary.com")) {
+        return res.json({
+          secure_url: imageUrl,
+          status: "already_cloudinary"
+        });
+      }
+
+      // Send to Cloudinary using unsigned preset
+      let cloudRes: Response;
+      try {
+        const formData = new FormData();
+        formData.append("file", imageUrl);
+        formData.append("upload_preset", uploadPreset);
+
+        cloudRes = await fetch(cloudinaryEndpoint, {
+          method: "POST",
+          body: formData,
+        });
+      } catch (directErr) {
+        console.warn("Direct Cloudinary form POST failed, fetching image stream first:", directErr);
+        // Fallback: Fetch buffer and send to Cloudinary
+        const imgFetch = await fetch(imageUrl);
+        if (!imgFetch.ok) {
+          throw new Error(`Failed to fetch source image: ${imgFetch.statusText}`);
+        }
+        const arrayBuffer = await imgFetch.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const formData = new FormData();
+        formData.append("file", blob);
+        formData.append("upload_preset", uploadPreset);
+        cloudRes = await fetch(cloudinaryEndpoint, {
+          method: "POST",
+          body: formData,
+        });
+      }
+
+      if (!cloudRes.ok) {
+        // Try fallback: Fetch buffer and send as blob
+        try {
+          const imgFetch = await fetch(imageUrl);
+          if (imgFetch.ok) {
+            const arrayBuffer = await imgFetch.arrayBuffer();
+            const blob = new Blob([arrayBuffer]);
+            const formData = new FormData();
+            formData.append("file", blob);
+            formData.append("upload_preset", uploadPreset);
+            const retryRes = await fetch(cloudinaryEndpoint, {
+              method: "POST",
+              body: formData,
+            });
+            if (retryRes.ok) {
+              const retryData = await retryRes.json();
+              return res.json({
+                success: true,
+                secure_url: retryData.secure_url,
+                public_id: retryData.public_id,
+                format: retryData.format,
+                width: retryData.width,
+                height: retryData.height,
+                bytes: retryData.bytes,
+              });
+            }
+          }
+        } catch (retryErr) {
+          console.error("Binary fallback also failed:", retryErr);
+        }
+
+        const errBody = await cloudRes.text();
+        console.error("Cloudinary upload failed:", errBody);
+        return res.status(cloudRes.status).json({ error: `Cloudinary error: ${errBody}` });
+      }
+
+      const cloudData = await cloudRes.json();
+      return res.json({
+        success: true,
+        secure_url: cloudData.secure_url,
+        public_id: cloudData.public_id,
+        format: cloudData.format,
+        width: cloudData.width,
+        height: cloudData.height,
+        bytes: cloudData.bytes,
+      });
+    } catch (err: any) {
+      console.error("Server Cloudinary Migration Error:", err);
+      return res.status(500).json({ error: err?.message || "Internal server error during Cloudinary upload" });
+    }
+  });
+
   // Vite middleware or production static serving
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
