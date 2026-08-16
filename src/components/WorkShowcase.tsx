@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Info, ExternalLink, Play, Eye, X } from 'lucide-react';
 import { Project } from '../types';
 import { PROJECTS_DATA } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
@@ -268,7 +269,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                       className="px-4 py-3 font-mono-code text-xs uppercase rounded-xl border border-white/10 text-[#c7c6ca] hover:text-white hover:border-[#00daf3]/50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>DETAILS</span>
-                      <span className="material-symbols-outlined text-sm">info</span>
+                      <Info className="w-4 h-4" />
                     </button>
 
                     {project.category === 'web-app' && project.liveUrl && (
@@ -284,7 +285,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
                       >
                         <span>LAUNCH WEB APP</span>
-                        <span className="material-symbols-outlined text-sm">open_in_new</span>
+                        <ExternalLink className="w-4 h-4" />
                       </button>
                     )}
 
@@ -295,7 +296,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
                       >
                         <span>PLAY FULL VIDEO</span>
-                        <span className="material-symbols-outlined text-sm">play_arrow</span>
+                        <Play className="w-4 h-4 fill-current" />
                       </button>
                     )}
 
@@ -306,7 +307,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         className="btn-primary flex-1 py-3 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
                       >
                         <span>VIEW MEDIA KIT</span>
-                        <span className="material-symbols-outlined text-sm">visibility</span>
+                        <Eye className="w-4 h-4" />
                       </button>
                     )}
                   </div>
@@ -333,7 +334,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
             aria-label="Close"
             className="fixed top-3 right-3 sm:top-6 sm:right-6 z-[210] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#00daf3] text-[#001f24] hover:bg-white hover:text-black flex items-center justify-center shadow-[0_0_25px_rgba(0,218,243,0.9)] border-2 border-white transition-all transform hover:scale-110 active:scale-90 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-2xl font-black">close</span>
+            <X className="w-6 h-6 stroke-[3]" />
           </button>
 
           <div
@@ -352,7 +353,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                 onClick={() => setSelectedProject(null)}
                 className="px-3 py-1.5 rounded-lg bg-[#00daf3]/10 hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] font-mono-code text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-[#00daf3]/40"
               >
-                <span className="material-symbols-outlined text-sm font-bold">close</span>
+                <X className="w-4 h-4" />
                 <span>CLOSE</span>
               </button>
             </div>
@@ -482,7 +483,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                     className="btn-primary px-6 py-3 font-mono-code text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(0,227,253,0.3)] w-full sm:w-auto min-h-[44px]"
                   >
                     <span>OPEN LIVE APP</span>
-                    <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    <ExternalLink className="w-4 h-4" />
                   </a>
                 )}
                 <button
@@ -493,7 +494,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                   }}
                   className="w-full sm:w-auto px-8 py-3 font-mono-code text-xs font-black border border-[#00daf3] bg-[#00daf3] text-[#001f24] hover:bg-[#00c5dc] active:scale-95 transition-all rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,227,253,0.5)] cursor-pointer min-h-[44px]"
                 >
-                  <span className="material-symbols-outlined text-base font-bold">close</span>
+                  <X className="w-4 h-4 stroke-[3]" />
                   <span>CLOSE</span>
                 </button>
               </div>

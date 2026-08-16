@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Volume2, VolumeX, ArrowUpRight, Menu, X, ChevronRight } from 'lucide-react';
 
 interface NavbarProps {
   onTalkClick: () => void;
@@ -118,9 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) 
             title={soundEnabled ? 'Disable Audio FX' : 'Enable Audio FX'}
             className="p-2.5 rounded-xl border border-white/10 text-[#c7c6ca] hover:text-[#00daf3] hover:border-[#00daf3]/40 transition-all interactive flex items-center gap-1.5 font-mono-code text-xs"
           >
-            <span className="material-symbols-outlined text-sm">
-              {soundEnabled ? 'volume_up' : 'volume_off'}
-            </span>
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-[#00daf3]" /> : <VolumeX className="w-4 h-4 text-[#79797e]" />}
             <span className="hidden lg:inline">{soundEnabled ? 'FX ON' : 'FX OFF'}</span>
           </button>
 
@@ -135,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) 
             className="btn-primary px-6 py-2.5 font-mono-code text-xs uppercase rounded interactive scale-95 active:scale-90 transition-transform flex items-center gap-2 font-semibold"
           >
             <span>Let's Talk</span>
-            <span className="material-symbols-outlined text-sm">arrow_outward</span>
+            <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
 
@@ -145,12 +144,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) 
             setMobileMenuOpen(!mobileMenuOpen);
             playSound('click');
           }}
-          className="md:hidden text-[#e1e3e4] p-2 border border-white/10 rounded interactive"
+          className="md:hidden text-[#e1e3e4] p-2 border border-white/10 rounded interactive flex items-center justify-center"
           aria-label="Toggle Navigation"
         >
-          <span className="material-symbols-outlined">
-            {mobileMenuOpen ? 'close' : 'menu'}
-          </span>
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
@@ -174,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) 
               className="text-[#e1e3e4] hover:text-[#00daf3] flex items-center justify-between py-2 border-b border-white/5"
             >
               <span>{link.name}</span>
-              <span className="material-symbols-outlined text-sm text-[#00daf3]">chevron_right</span>
+              <ChevronRight className="w-4 h-4 text-[#00daf3]" />
             </a>
           ))}
 
@@ -186,9 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) 
               }}
               className="w-full py-3 rounded-xl border border-white/10 text-xs text-[#c7c6ca] flex items-center justify-center gap-2"
             >
-              <span className="material-symbols-outlined text-sm">
-                {soundEnabled ? 'volume_up' : 'volume_off'}
-              </span>
+              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#00daf3]" /> : <VolumeX className="w-4 h-4 text-[#79797e]" />}
               <span>AUDIO EFFECTS: {soundEnabled ? 'ENABLED' : 'DISABLED'}</span>
             </button>
 

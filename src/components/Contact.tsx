@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, ArrowUpRight, CheckCircle2, Send } from 'lucide-react';
 import { SocialIcon } from './SocialIcon';
 import { DEFAULT_SITE_SETTINGS, DEFAULT_BUDGET_OPTIONS, DEFAULT_SERVICE_OPTIONS } from '../data/portfolioData';
 import { SiteSettings, ContactMessage } from '../types';
@@ -89,19 +90,19 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
 
           <div className="space-y-4 pt-4 border-t border-white/10 font-mono-code text-xs">
             <div className="flex items-center gap-3 text-[#e1e3e4]">
-              <span className="material-symbols-outlined text-[#00daf3]">mail</span>
+              <Mail className="w-4 h-4 text-[#00daf3] shrink-0" />
               <span>EMAIL: <a href={`mailto:${siteSettings.contactEmail}`} className="text-[#00daf3] hover:underline font-bold">{siteSettings.contactEmail}</a></span>
             </div>
             <div className="flex items-center gap-3 text-[#e1e3e4]">
-              <span className="material-symbols-outlined text-green-400">call</span>
+              <Phone className="w-4 h-4 text-green-400 shrink-0" />
               <span>PHONE: <a href={`tel:${siteSettings.contactPhone.replace(/\s+/g, '')}`} className="text-[#e1e3e4] hover:text-[#00daf3] font-bold">{siteSettings.contactPhone}</a></span>
             </div>
             <div className="flex items-center gap-3 text-[#e1e3e4]">
-              <span className="material-symbols-outlined text-[#00daf3]">location_on</span>
+              <MapPin className="w-4 h-4 text-[#00daf3] shrink-0" />
               <span>LOCATION: {siteSettings.location}</span>
             </div>
             <div className="flex items-center gap-3 text-[#00daf3]">
-              <span className="material-symbols-outlined">schedule</span>
+              <Clock className="w-4 h-4 text-[#00daf3] shrink-0" />
               <span>RESPONSE TIME: Under 24 Hours</span>
             </div>
           </div>
@@ -126,9 +127,7 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
                       {platform.name}
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-xs text-[#79797e] group-hover:text-[#00daf3] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
-                    north_east
-                  </span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#79797e] group-hover:text-[#00daf3] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
               ))}
             </div>
@@ -140,7 +139,7 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
           {submitted ? (
             <div className="p-8 text-center flex flex-col items-center gap-4 animate-fadeIn">
               <div className="w-16 h-16 rounded-full bg-[#00daf3]/20 border border-[#00daf3] text-[#00daf3] flex items-center justify-center">
-                <span className="material-symbols-outlined text-3xl">check_circle</span>
+                <CheckCircle2 className="w-8 h-8 text-[#00daf3]" />
               </div>
               <h3 className="font-space text-2xl font-bold text-[#e1e3e4]">MESSAGE TRANSMITTED</h3>
               <p className="font-body text-sm text-[#c7c6ca] max-w-md">{responseMsg}</p>
@@ -248,7 +247,7 @@ export const Contact: React.FC<ContactProps> = ({ siteSettings = DEFAULT_SITE_SE
                 className="btn-primary w-full py-4 font-mono-code text-xs uppercase rounded-xl font-bold flex items-center justify-center gap-2 interactive cursor-pointer"
               >
                 <span>{submitting ? 'TRANSMITTING...' : 'TRANSMIT PROJECT INQUIRY'}</span>
-                <span className="material-symbols-outlined text-sm">send</span>
+                <Send className="w-4 h-4" />
               </button>
             </form>
           )}

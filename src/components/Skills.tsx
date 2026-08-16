@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
+import { Code2, Cpu, Megaphone, Palette, Layers } from 'lucide-react';
 import { SKILL_CATEGORIES } from '../data/portfolioData';
+
+const getSkillIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'code':
+      return <Code2 className="w-8 h-8 text-[#c7c6ca] group-hover:text-[#00daf3] transition-colors" />;
+    case 'memory':
+      return <Cpu className="w-8 h-8 text-[#c7c6ca] group-hover:text-[#00daf3] transition-colors" />;
+    case 'campaign':
+      return <Megaphone className="w-8 h-8 text-[#c7c6ca] group-hover:text-[#00daf3] transition-colors" />;
+    case 'palette':
+      return <Palette className="w-8 h-8 text-[#c7c6ca] group-hover:text-[#00daf3] transition-colors" />;
+    default:
+      return <Layers className="w-8 h-8 text-[#c7c6ca] group-hover:text-[#00daf3] transition-colors" />;
+  }
+};
 
 export const Skills: React.FC = () => {
   const [activeCard, setActiveCard] = useState<string | null>(null);
@@ -32,7 +48,7 @@ export const Skills: React.FC = () => {
               key={skill.number}
               onMouseEnter={() => setActiveCard(skill.number)}
               onMouseLeave={() => setActiveCard(null)}
-              className={`glass-card p-8 md:p-12 rounded-2xl transition-all duration-500 interactive border border-white/5 hover:border-[#00daf3]/40 ${
+              className={`glass-card p-8 md:p-12 rounded-2xl transition-all duration-500 interactive border border-white/5 hover:border-[#00daf3]/40 group ${
                 isActive ? 'bg-[#191c1d]/90 shadow-[0_0_30px_rgba(0,227,253,0.15)]' : ''
               }`}
             >
@@ -41,9 +57,7 @@ export const Skills: React.FC = () => {
                 <span className="font-mono-code text-sm font-bold text-[#00daf3] tracking-widest px-3 py-1 bg-[#00daf3]/10 rounded border border-[#00daf3]/30">
                   {skill.number}
                 </span>
-                <span className="material-symbols-outlined text-4xl text-[#c7c6ca] group-hover:text-[#00daf3] transition-colors">
-                  {skill.icon}
-                </span>
+                {getSkillIcon(skill.icon)}
               </div>
 
               {/* Title & Subtitle */}

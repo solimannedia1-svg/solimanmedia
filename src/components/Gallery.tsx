@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
+import { ArrowRight, Play, Camera, X, Award } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { getVideoSourceInfo, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 
@@ -237,7 +238,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                     </p>
                     <div className="pt-2 flex items-center gap-2 text-xs text-[#00daf3] font-mono-code font-bold">
                       <span>VIEW ALBUM</span>
-                      <span className="material-symbols-outlined text-sm">arrow_right</span>
+                      <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
                 </div>
@@ -288,11 +289,11 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   <div className="relative z-10 my-auto text-center space-y-4 py-8">
                     {itemCenter.mediaType === 'video' || itemCenter.videoUrl ? (
                       <div className="w-20 h-20 mx-auto rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center shadow-[0_0_35px_rgba(0,218,243,0.8)] group-hover:scale-110 group-active:scale-110 transition-transform">
-                        <span className="material-symbols-outlined text-4xl ml-1">play_arrow</span>
+                        <Play className="w-8 h-8 fill-current ml-1" />
                       </div>
                     ) : (
                       <div className="w-16 h-16 mx-auto rounded-full bg-white/10 border border-[#00daf3]/40 text-[#00daf3] flex items-center justify-center backdrop-blur-md group-hover:bg-[#00daf3] group-hover:text-[#001f24] group-active:bg-[#00daf3] group-active:text-[#001f24] transition-all">
-                        <span className="material-symbols-outlined text-2xl">photo_camera</span>
+                        <Camera className="w-6 h-6" />
                       </div>
                     )}
 
@@ -440,7 +441,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                     </span>
                     {(itemBottom2.mediaType === 'video' || itemBottom2.videoUrl) && (
                       <span className="w-8 h-8 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center font-bold shadow-[0_0_15px_rgba(0,218,243,0.6)]">
-                        <span className="material-symbols-outlined text-lg">play_arrow</span>
+                        <Play className="w-4 h-4 fill-current ml-0.5" />
                       </span>
                     )}
                   </div>
@@ -489,7 +490,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                         {(item.mediaType === 'video' || item.videoUrl) && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                             <div className="w-12 h-12 rounded-full bg-[#00daf3] text-[#001f24] flex items-center justify-center shadow-[0_0_15px_rgba(0,218,243,0.8)]">
-                              <span className="material-symbols-outlined text-2xl ml-0.5">play_arrow</span>
+                              <Play className="w-6 h-6 fill-current ml-0.5" />
                             </div>
                           </div>
                         )}
@@ -537,7 +538,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
             aria-label="Close"
             className="fixed top-3 right-3 sm:top-6 sm:right-6 z-[210] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#00daf3] text-[#001f24] hover:bg-white hover:text-black flex items-center justify-center shadow-[0_0_25px_rgba(0,218,243,0.9)] border-2 border-white transition-all transform hover:scale-110 active:scale-90 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-2xl font-black">close</span>
+            <X className="w-6 h-6 stroke-[3]" />
           </button>
 
           <div
@@ -557,7 +558,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                 onClick={() => setSelectedItem(null)}
                 className="px-3 py-1.5 rounded-lg bg-[#00daf3]/10 hover:bg-[#00daf3] hover:text-[#001f24] text-[#00daf3] font-mono-code text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-[#00daf3]/40"
               >
-                <span className="material-symbols-outlined text-sm font-bold">close</span>
+                <X className="w-4 h-4" />
                 <span>CLOSE</span>
               </button>
             </div>
@@ -644,7 +645,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
             <div className="p-6 sm:p-8 space-y-4 bg-[#121618]">
               {selectedItem.personName && (
                 <div className="flex items-center gap-3 pb-3 border-b border-white/10">
-                  <span className="material-symbols-outlined text-2xl text-[#00daf3]">workspace_premium</span>
+                  <Award className="w-6 h-6 text-[#00daf3]" />
                   <div>
                     <h4 className="text-lg font-bold text-[#00daf3]">{selectedItem.personName}</h4>
                     <p className="text-xs text-[#919094] font-mono-code">{selectedItem.personRole}</p>
@@ -673,7 +674,7 @@ export const Gallery: React.FC<GalleryProps> = ({ galleryItems = [] }) => {
                   }}
                   className="w-full sm:w-auto px-8 py-3 bg-[#00daf3] hover:bg-[#00c5dc] text-[#001f24] font-mono-code text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,218,243,0.5)] rounded-xl border border-[#00daf3] active:scale-95"
                 >
-                  <span className="material-symbols-outlined text-base font-bold">close</span>
+                  <X className="w-4 h-4 stroke-[3]" />
                   <span>CLOSE</span>
                 </button>
               </div>

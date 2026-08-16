@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Bot, ArrowRight, Send } from 'lucide-react';
 import { ChatMessage } from '../types';
 import { QUICK_PROMPTS } from '../data/portfolioData';
 
@@ -103,9 +104,7 @@ export const AIPersonaStudio: React.FC = () => {
                 className="w-full text-left p-3 rounded-xl bg-[#1d2021] border border-white/5 hover:border-[#00daf3]/40 text-xs font-mono-code text-[#c7c6ca] hover:text-[#00daf3] transition-all interactive flex items-center justify-between group"
               >
                 <span>"{prompt}"</span>
-                <span className="material-symbols-outlined text-sm text-[#00daf3] opacity-0 group-hover:opacity-100 transition-opacity">
-                  arrow_forward
-                </span>
+                <ArrowRight className="w-4 h-4 text-[#00daf3] opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
             ))}
           </div>
@@ -117,7 +116,7 @@ export const AIPersonaStudio: React.FC = () => {
           <div className="p-4 bg-[#111415]/90 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#00daf3]/20 border border-[#00daf3] flex items-center justify-center text-[#00daf3]">
-                <span className="material-symbols-outlined text-sm">smart_toy</span>
+                <Bot className="w-4 h-4 text-[#00daf3]" />
               </div>
               <div>
                 <div className="font-space text-sm font-bold text-[#e1e3e4]">AI Mohamed Soliman</div>
@@ -196,10 +195,10 @@ export const AIPersonaStudio: React.FC = () => {
             <button
               type="submit"
               disabled={isTyping || !input.trim()}
-              className="btn-primary px-6 py-3 rounded-xl font-mono-code text-xs uppercase font-bold flex items-center gap-1.5 disabled:opacity-50 interactive"
+              className="btn-primary px-6 py-3 rounded-xl font-mono-code text-xs uppercase font-bold flex items-center gap-1.5 disabled:opacity-50 interactive cursor-pointer"
             >
               <span>SEND</span>
-              <span className="material-symbols-outlined text-sm">send</span>
+              <Send className="w-4 h-4" />
             </button>
           </form>
         </div>

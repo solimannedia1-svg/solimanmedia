@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Mail, Phone, ArrowUpRight, ArrowRight, Bot, CheckCircle2, Copy, Check } from 'lucide-react';
 import { TechEcosystem3D } from './TechEcosystem3D';
 import { SocialIcon } from './SocialIcon';
 import { PORTRAIT_IMAGE_URL, DEFAULT_SITE_SETTINGS } from '../data/portfolioData';
@@ -52,7 +53,7 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
           {/* Quick Direct Contact Cards (Email & Phone) */}
           <div className="flex flex-wrap items-center gap-3 py-2">
             <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#1d2021] border border-[#00daf3]/30 text-xs font-mono-code shadow-md hover:border-[#00daf3] transition-all">
-              <span className="material-symbols-outlined text-[#00daf3] text-base">mail</span>
+              <Mail className="w-4 h-4 text-[#00daf3] shrink-0" />
               <a href={`mailto:${siteSettings.contactEmail}`} className="text-[#e1e3e4] hover:text-[#00daf3] transition-colors font-semibold">
                 {siteSettings.contactEmail}
               </a>
@@ -66,7 +67,7 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
             </div>
 
             <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#1d2021] border border-[#00daf3]/30 text-xs font-mono-code shadow-md hover:border-[#00daf3] transition-all">
-              <span className="material-symbols-outlined text-green-400 text-base">call</span>
+              <Phone className="w-4 h-4 text-green-400 shrink-0" />
               <a href={`tel:${siteSettings.contactPhone.replace(/\s+/g, '')}`} className="text-[#e1e3e4] hover:text-[#00daf3] transition-colors font-semibold">
                 {siteSettings.contactPhone}
               </a>
@@ -94,9 +95,7 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
               >
                 <SocialIcon platform={platform} className="w-4 h-4 flex-shrink-0" />
                 <span className="font-bold">{platform.name}</span>
-                <span className="material-symbols-outlined text-[12px] opacity-0 group-hover:opacity-100 transition-opacity">
-                  north_east
-                </span>
+                <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </a>
             ))}
           </div>
@@ -108,18 +107,14 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
               className="btn-primary px-8 py-4 font-mono-code text-xs tracking-wider uppercase rounded interactive font-bold flex items-center gap-2 group"
             >
               <span>VIEW MY WORK</span>
-              <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
-                arrow_forward
-              </span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
 
             <button
               onClick={onAiTalkClick}
               className="px-8 py-4 font-mono-code text-xs tracking-wider text-[#00daf3] border border-[#00daf3]/50 hover:bg-[#00daf3]/10 transition-colors rounded uppercase interactive flex items-center gap-2 font-bold glass-card"
             >
-              <span className="material-symbols-outlined text-sm animate-pulse text-[#00daf3]">
-                smart_toy
-              </span>
+              <Bot className="w-4 h-4 animate-pulse text-[#00daf3]" />
               <span>TALK TO AI MOHAMED</span>
             </button>
 
@@ -179,7 +174,7 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
                 <div className="font-mono-code text-[11px] text-[#00daf3]">Digital Creator • Developer</div>
               </div>
               <div className="w-8 h-8 rounded-full bg-[#00daf3]/10 border border-[#00daf3]/40 flex items-center justify-center text-[#00daf3]">
-                <span className="material-symbols-outlined text-sm">verified</span>
+                <CheckCircle2 className="w-4 h-4 text-[#00daf3]" />
               </div>
             </div>
           </div>
