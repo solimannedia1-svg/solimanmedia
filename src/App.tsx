@@ -17,11 +17,26 @@ import { AdminDashboardModal } from './components/AdminDashboardModal';
 import { DEFAULT_SITE_SETTINGS, PROJECTS_DATA, DEFAULT_GALLERY_ITEMS } from './data/portfolioData';
 import { Project, SiteSettings, ContactMessage } from './types';
 import { db } from './lib/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 
-const SETTINGS_CACHE_KEY = 'mohamed_soliman_site_settings_v3';
-const PROJECTS_CACHE_KEY = 'mohamed_soliman_projects_v3';
-const MESSAGES_CACHE_KEY = 'mohamed_soliman_messages_v1';
+const SETTINGS_CACHE_KEY = 'mohamed_soliman_site_settings_v5';
+const PROJECTS_CACHE_KEY = 'mohamed_soliman_projects_v5';
+const MESSAGES_CACHE_KEY = 'mohamed_soliman_messages_v2';
+
+// Purge legacy cache keys from previous versions to prevent showing outdated projects
+try {
+  const legacyKeys = [
+    'mohamed_soliman_projects_v1',
+    'mohamed_soliman_projects_v2',
+    'mohamed_soliman_projects_v3',
+    'mohamed_soliman_projects_v4',
+    'mohamed_soliman_site_settings_v1',
+    'mohamed_soliman_site_settings_v2',
+    'mohamed_soliman_site_settings_v3',
+    'mohamed_soliman_site_settings_v4'
+  ];
+  legacyKeys.forEach((key) => localStorage.removeItem(key));
+} catch {}
 
 // Helper to safely store objects/arrays in localStorage without quota crashes
 function safeSaveToLocalStorage<T>(key: string, value: T): void {
@@ -80,6 +95,18 @@ export default function App() {
     }
   });
 
+  // Controls the instant real-time synchronization barrier
+  const [isInitialSyncing, setIsInitialSyncing] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    // Do not block admin dashboard routes
+    if (path === '/admin' || path === '/admin/' || hash === '#admin') {
+      return false;
+    }
+    return true;
+  });
+
   // Ensure site always loads at the top on page open/refresh
   useEffect(() => {
     if ('scrollRestoration' in history) {
@@ -88,23 +115,73 @@ export default function App() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Subscribe to real-time Firestore updates
+  // Aggressive parallel fetch + real-time Firestore listeners for immediate, flawless data
   useEffect(() => {
-    const unsubSettings = onSnapshot(doc(db, 'portfolio', 'settings'), (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data() as SiteSettings;
+    let isMounted = true;
+    let syncSettled = false;
+
+    // Safety timeout: Unlock UI within 1.2s max if user is offline or on slow network
+    const safetyTimeout = setTimeout(() => {
+      if (isMounted && !syncSettled) {
+        syncSettled = true;
+        setIsInitialSyncing(false);
+      }
+    }, 1200);
+
+    const markSyncComplete = () => {
+      if (!syncSettled && isMounted) {
+        syncSettled = true;
+        clearTimeout(safetyTimeout);
+        // Small buffer ensuring React DOM updates are committed before fading splash
+        setTimeout(() => {
+          if (isMounted) setIsInitialSyncing(false);
+        }, 120);
+      }
+    };
+
+    // 1. Fast direct parallel getDoc calls for instant cloud data fetch
+    Promise.allSettled([
+      getDoc(doc(db, 'portfolio', 'settings')),
+      getDoc(doc(db, 'portfolio', 'projects'))
+    ]).then(([settingsSnap, projectsSnap]) => {
+      if (!isMounted) return;
+
+      if (settingsSnap.status === 'fulfilled' && settingsSnap.value.exists()) {
+        const data = settingsSnap.value.data() as SiteSettings;
         setSiteSettings(data);
         safeSaveToLocalStorage(SETTINGS_CACHE_KEY, data);
       }
+
+      if (projectsSnap.status === 'fulfilled' && projectsSnap.value.exists()) {
+        const data = projectsSnap.value.data();
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          setProjects(data.items);
+          safeSaveToLocalStorage(PROJECTS_CACHE_KEY, data.items);
+        }
+      }
+
+      markSyncComplete();
+    }).catch(() => {
+      markSyncComplete();
+    });
+
+    // 2. Real-time onSnapshot listeners for ongoing live updates
+    const unsubSettings = onSnapshot(doc(db, 'portfolio', 'settings'), (snapshot) => {
+      if (snapshot.exists() && isMounted) {
+        const data = snapshot.data() as SiteSettings;
+        setSiteSettings(data);
+        safeSaveToLocalStorage(SETTINGS_CACHE_KEY, data);
+        markSyncComplete();
+      }
     }, (err) => {
       console.warn('Firestore settings listener info:', err);
+      markSyncComplete();
     });
 
     const unsubProjects = onSnapshot(doc(db, 'portfolio', 'projects'), (snapshot) => {
-      if (snapshot.exists()) {
+      if (snapshot.exists() && isMounted) {
         const data = snapshot.data();
-        if (data && Array.isArray(data.items)) {
-          // Retrieve local projects to preserve local base64 video files if Firestore item is truncated
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
           const localStored = localStorage.getItem(PROJECTS_CACHE_KEY);
           let localProjects: Project[] = [];
           if (localStored) {
@@ -126,14 +203,16 @@ export default function App() {
 
           setProjects(mergedProjects);
           safeSaveToLocalStorage(PROJECTS_CACHE_KEY, mergedProjects);
+          markSyncComplete();
         }
       }
     }, (err) => {
       console.warn('Firestore projects listener info:', err);
+      markSyncComplete();
     });
 
     const unsubMessages = onSnapshot(doc(db, 'portfolio', 'messages'), (snapshot) => {
-      if (snapshot.exists()) {
+      if (snapshot.exists() && isMounted) {
         const data = snapshot.data();
         if (data && Array.isArray(data.items)) {
           setMessages(data.items);
@@ -145,6 +224,8 @@ export default function App() {
     });
 
     return () => {
+      isMounted = false;
+      clearTimeout(safetyTimeout);
       unsubSettings();
       unsubProjects();
       unsubMessages();
@@ -274,6 +355,42 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-[#111415] text-[#e1e3e4] font-body selection:bg-[#00e3fd] selection:text-[#001f24] overflow-x-hidden">
+      {/* Real-Time Cloud Sync Preloader to ensure zero stale data or project pop-in */}
+      <div
+        className={`fixed inset-0 z-[9999] bg-[#0c0e0f] flex flex-col items-center justify-center transition-all duration-300 ease-out ${
+          isInitialSyncing
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden={!isInitialSyncing}
+      >
+        <div className="flex flex-col items-center space-y-5 max-w-xs px-4 text-center select-none">
+          {/* Glowing Monogram Logo */}
+          <div className="relative w-16 h-16 rounded-2xl bg-[#131719] border border-[#00daf3]/50 flex items-center justify-center shadow-[0_0_35px_rgba(0,218,243,0.3)]">
+            <span className="font-space font-black text-xl text-[#00daf3] tracking-widest">
+              MS
+            </span>
+            <div className="absolute -inset-1 rounded-2xl border border-[#00daf3]/30 animate-pulse pointer-events-none" />
+          </div>
+
+          {/* Identity & Status */}
+          <div className="space-y-1.5">
+            <div className="font-space text-xs sm:text-sm font-bold tracking-[0.25em] text-[#e1e3e4] uppercase">
+              MOHAMED SOLIMAN
+            </div>
+            <div className="font-mono-code text-[10px] tracking-wider text-[#00daf3] uppercase flex items-center justify-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00daf3] animate-ping" />
+              <span>SYNCING REAL-TIME SYSTEM</span>
+            </div>
+          </div>
+
+          {/* Progress Shimmer */}
+          <div className="w-40 h-1 bg-white/10 rounded-full overflow-hidden relative">
+            <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-transparent via-[#00daf3] to-transparent w-full rounded-full animate-shimmer" />
+          </div>
+        </div>
+      </div>
+
       {/* Custom Lag Ring Cursor */}
       <CustomCursor />
 

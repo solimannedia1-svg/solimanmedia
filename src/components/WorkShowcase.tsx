@@ -5,8 +5,6 @@ import { PROJECTS_DATA } from '../data/portfolioData';
 import { getVideoSourceInfo } from '../utils/videoUtils';
 import { getOptimizedCloudinaryUrl } from '../utils/cloudinary';
 
-const LOCAL_STORAGE_KEY = 'mohamed_soliman_projects_v2';
-
 interface WorkShowcaseProps {
   projects?: Project[];
   onSaveProjects?: (projects: Project[]) => void;
@@ -18,22 +16,7 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
   onSaveProjects: propsSaveProjects,
   onResetDefaults: propsResetDefaults,
 }) => {
-  const [internalProjects, setInternalProjects] = useState<Project[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to load saved portfolio projects', e);
-    }
-    return PROJECTS_DATA;
-  });
-
-  const projects = propsProjects || internalProjects;
+  const projects = propsProjects && propsProjects.length > 0 ? propsProjects : PROJECTS_DATA;
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);

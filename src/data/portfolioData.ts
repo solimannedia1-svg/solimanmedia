@@ -1,57 +1,59 @@
 import { Project, SkillCategory, JourneyMilestone, SystemMetric, SiteSettings, GalleryItem } from '../types';
 
-export const PORTRAIT_IMAGE_URL = "https://lh3.googleusercontent.com/aida-public/AB6AXuC0VKUCVZPv-ajubaAy4cV7l2zeUL2bDaLwd8YCyDhtSmMKZwZxL7xvQyHtDbUMQgZHAMPIURkEcysSTYj71PHcXiCSspB9d7T39ALUO60C04v9AIt9rJ6Fsr7yuRFEphGs8KOJz4x1qmK0R7wG9nS8cJqWXKKGR55mSTCirmHW_ltMl010XqMHpqggOMfChrjtS57zrpL9nMyMPuDHUS838HcPboOZvtvpQ8vEud5zbwMkqoEzs3pm6zh2CyTJQ_eHdl0";
+export const PORTRAIT_IMAGE_URL = "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786134/hymqmoufv5bf1vtpp6lo.png";
 
 export const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
   {
-    id: 'gal_1',
-    title: 'Exclusive Strategic Summit with Tech Leaders',
-    personName: 'Dr. Ahmed El-Awady',
-    personRole: 'Digital Transformation & AI Strategy Consultant',
-    category: 'celebrity',
-    mediaType: 'image',
-    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
-    description: 'An executive roundtable discussing cutting-edge Generative AI workflows, user interface innovation, and scaling digital tech brands.',
-    date: '2025',
-    featured: true
+    "description": "A memorable meeting with Egyptian actor Mohamed Kilany in 2025. An inspiring encounter filled with positive energy, meaningful conversations, and creative exchange — a moment to remember and a great opportunity to connect with one of Egypt’s talented public figures.",
+    "id": "gal_1786227698980",
+    "date": "2025",
+    "title": "An Inspiring Meeting with Mohamed Kilany",
+    "featured": false,
+    "videoUrl": "",
+    "category": "celebrity",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786144/nrmmphvn1pwzngfoxbmd.png",
+    "mediaType": "image",
+    "personName": "MOHAMED KELANY",
+    "personRole": "Actor"
   },
   {
-    id: 'gal_2',
-    title: 'Executive Video Testimonial from CELESTE Group',
-    personName: 'Eng. Karim El-Shazly',
-    personRole: 'Founder & CEO — CELESTE Group',
-    category: 'testimonial',
-    mediaType: 'video',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
-    videoUrl: 'https://youtube.com/shorts/RQEN_d4-tTQ',
-    description: 'A message of gratitude and appreciation following the launch of CELESTE visual identity and AI-driven marketing campaigns with outstanding results.',
-    date: '2025',
-    featured: true
+    "image": "https://youtu.be/RSi2NAPv4qo",
+    "mediaType": "video",
+    "date": "2024",
+    "personRole": " Professional Football Player",
+    "featured": false,
+    "id": "gal_1786228465272",
+    "personName": "Mahmoud abdelhakim",
+    "category": "testimonial",
+    "videoUrl": "https://youtu.be/RSi2NAPv4qo",
+    "description": " A memorable moment featuring Egyptian footballer Mahmoud Abdel Hakim expressing his appreciation and thanks on television. A meaningful recognition that reflects the value of our professional relationship and the impact of our work together.",
+    "title": "A Special Appreciation from Mahmoud Abdel Hakim"
   },
   {
-    id: 'gal_3',
-    title: 'VIP Keynote Honor at Middle East Tech Summit',
-    personName: 'Middle East Tech Summit',
-    personRole: 'Honoring Top Smart Digital Experience Creator',
-    category: 'celebrity',
-    mediaType: 'image',
-    image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80',
-    description: 'Honored with the Excellence Award for designing and building AI-powered interactive web applications and digital interfaces.',
-    date: '2024',
-    featured: true
+    "mediaType": "video",
+    "videoUrl": "https://youtube.com/shorts/AnEHT2tA7ZM?feature=share",
+    "category": "testimonial",
+    "featured": false,
+    "personName": "Ahmed El Shenawy",
+    "date": "2026",
+    "personRole": "Egyptian National Team & Pyramids FC Goalkeeper",
+    "title": "A Special Appreciation from Ahmed El Shenawy",
+    "image": "https://youtube.com/shorts/AnEHT2tA7ZM?feature=share",
+    "id": "gal_1786229352449",
+    "description": "A memorable moment featuring Ahmed El Shenawy, goalkeeper of Pyramids FC and the Egyptian National Team, expressing his appreciation and thanks on television. A proud and meaningful recognition that reflects the value of our professional connection and the impact of our work together."
   },
   {
-    id: 'gal_4',
-    title: 'Media Broadcast Interview & Client Gratitude',
-    personName: 'Sara Mansour',
-    personRole: 'Host — Future Tech Pioneers Show',
-    category: 'testimonial',
-    mediaType: 'video',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80',
-    videoUrl: 'https://youtube.com/shorts/RQEN_d4-tTQ',
-    description: 'Special media coverage highlighting client success stories, pioneering web projects, and modern brand architectures.',
-    date: '2024',
-    featured: false
+    "mediaType": "video",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786158/cc26zypbaj36jq3dvbm5.jpg",
+    "description": "A memorable moment featuring Omar Gaber, captain of Zamalek SC and a distinguished Egyptian international footballer, expressing his appreciation and thanks. A meaningful recognition that reflects a valued professional connection and a memorable moment of mutual respect.",
+    "personRole": "Zamalek SC Captain & Egyptian National Team Player",
+    "date": "2025",
+    "featured": true,
+    "title": "A Special Appreciation from Omar Gaber",
+    "category": "testimonial",
+    "videoUrl": "https://youtube.com/shorts/dONHA0v4svQ?feature=share",
+    "id": "gal_1786230635064",
+    "personName": "Omar Gaber"
   }
 ];
 
@@ -70,131 +72,432 @@ export const DEFAULT_SERVICE_OPTIONS = [
 ];
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  name: 'MOHAMED SOLIMAN',
-  title: 'FULL-STACK ENGINEER & AI CREATIVE STRATEGIST',
-  tagline: 'I Build Digital Experiences Where Code, AI & Creativity Meet.',
-  bio: 'Bridging the gap between engineering, generative AI, and high-converting social media architecture.',
-  portraitUrl: PORTRAIT_IMAGE_URL,
-  location: 'Portsaid, Egypt / Remote Worldwide',
-  availability: 'AVAILABLE FOR SELECT PROJECTS',
-  contactEmail: 'soliman@solimanmedia.site',
-  contactPhone: '+201099313523',
-  budgetOptions: DEFAULT_BUDGET_OPTIONS,
-  serviceOptions: DEFAULT_SERVICE_OPTIONS,
-  adminPassword: '!@#12Bad', // Default secure password, editable in Admin Panel Settings
-  aboutHeading: 'ARCHITECTING NEXT-GEN DIGITAL EXPERIENCES',
-  aboutBio: 'With 5+ years specializing in full-stack engineering, WebGL GLSL shader systems, Gemini AI integration, and digital brand scaling, I engineer platforms that captivate audiences and drive exponential social growth.',
-  yearsExp: '5+',
-  projectsCount: '40+',
-  impressions: '3.5M+',
-  clientSatisfaction: '100%',
-  socialPlatforms: [
-    { id: 'facebook', name: 'Facebook', url: 'https://facebook.com/solimanmediaofficial', icon: 'facebook', color: '#1877F2' },
-    { id: 'instagram', name: 'Instagram', url: 'https://instagram.com/solimanmedia', icon: 'instagram', color: '#E1306C' }
+  "name": "MOHAMED SOLIMAN",
+  "title": "FULL-STACK ENGINEER & AI CREATIVE STRATEGIST",
+  "tagline": "I Build Digital Experiences Where Code, AI & Creativity Meet.",
+  "bio": "Bridging the gap between engineering, generative AI, and high-converting social media architecture.",
+  "portraitUrl": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786134/hymqmoufv5bf1vtpp6lo.png",
+  "location": "Portsaid, Egypt / Remote Worldwide",
+  "availability": "AVAILABLE FOR SELECT PROJECTS",
+  "contactEmail": "soliman@solimanmedia.site",
+  "contactPhone": "+201099313523",
+  "budgetOptions": [
+    "< $5,000",
+    "$5,000 - $10,000",
+    "$10,000 - $25,000",
+    "$25,000+"
   ],
-  galleryItems: DEFAULT_GALLERY_ITEMS
+  "serviceOptions": [
+    "Web & AI Architecture",
+    "3D WebGL / Interactive Experience",
+    "Social Media & Audience Strategy",
+    "Full Creative Direction & Consulting"
+  ],
+  "adminPassword": "!@#12Bad",
+  "aboutHeading": "ARCHITECTING NEXT-GEN DIGITAL EXPERIENCES",
+  "aboutBio": "With 5+ years specializing in full-stack engineering, WebGL GLSL shader systems, Gemini AI integration, and digital brand scaling, I engineer platforms that captivate audiences and drive exponential social growth.",
+  "yearsExp": "5+",
+  "projectsCount": "45+",
+  "impressions": "3.5M+",
+  "clientSatisfaction": "100%",
+  "socialPlatforms": [
+    {
+      "icon": "facebook",
+      "color": "#1877F2",
+      "id": "facebook",
+      "name": "Facebook",
+      "url": "https://facebook.com/solimanmediaofficial"
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "url": "https://instagram.com/solimanmedia",
+      "color": "#E1306C",
+      "icon": "instagram"
+    }
+  ],
+  "galleryItems": [
+    {
+      "description": "A memorable meeting with Egyptian actor Mohamed Kilany in 2025. An inspiring encounter filled with positive energy, meaningful conversations, and creative exchange — a moment to remember and a great opportunity to connect with one of Egypt’s talented public figures.",
+      "id": "gal_1786227698980",
+      "date": "2025",
+      "title": "An Inspiring Meeting with Mohamed Kilany",
+      "featured": false,
+      "videoUrl": "",
+      "category": "celebrity",
+      "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786144/nrmmphvn1pwzngfoxbmd.png",
+      "mediaType": "image",
+      "personName": "MOHAMED KELANY",
+      "personRole": "Actor"
+    },
+    {
+      "image": "https://youtu.be/RSi2NAPv4qo",
+      "mediaType": "video",
+      "date": "2024",
+      "personRole": " Professional Football Player",
+      "featured": false,
+      "id": "gal_1786228465272",
+      "personName": "Mahmoud abdelhakim",
+      "category": "testimonial",
+      "videoUrl": "https://youtu.be/RSi2NAPv4qo",
+      "description": " A memorable moment featuring Egyptian footballer Mahmoud Abdel Hakim expressing his appreciation and thanks on television. A meaningful recognition that reflects the value of our professional relationship and the impact of our work together.",
+      "title": "A Special Appreciation from Mahmoud Abdel Hakim"
+    },
+    {
+      "mediaType": "video",
+      "videoUrl": "https://youtube.com/shorts/AnEHT2tA7ZM?feature=share",
+      "category": "testimonial",
+      "featured": false,
+      "personName": "Ahmed El Shenawy",
+      "date": "2026",
+      "personRole": "Egyptian National Team & Pyramids FC Goalkeeper",
+      "title": "A Special Appreciation from Ahmed El Shenawy",
+      "image": "https://youtube.com/shorts/AnEHT2tA7ZM?feature=share",
+      "id": "gal_1786229352449",
+      "description": "A memorable moment featuring Ahmed El Shenawy, goalkeeper of Pyramids FC and the Egyptian National Team, expressing his appreciation and thanks on television. A proud and meaningful recognition that reflects the value of our professional connection and the impact of our work together."
+    },
+    {
+      "mediaType": "video",
+      "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786158/cc26zypbaj36jq3dvbm5.jpg",
+      "description": "A memorable moment featuring Omar Gaber, captain of Zamalek SC and a distinguished Egyptian international footballer, expressing his appreciation and thanks. A meaningful recognition that reflects a valued professional connection and a memorable moment of mutual respect.",
+      "personRole": "Zamalek SC Captain & Egyptian National Team Player",
+      "date": "2025",
+      "featured": true,
+      "title": "A Special Appreciation from Omar Gaber",
+      "category": "testimonial",
+      "videoUrl": "https://youtube.com/shorts/dONHA0v4svQ?feature=share",
+      "id": "gal_1786230635064",
+      "personName": "Omar Gaber"
+    }
+  ]
 };
 
 export const PROJECTS_DATA: Project[] = [
   {
-    id: 'proj_1786176852784',
-    title: 'CELESTE — Social Media Creative Design',
-    subtitle: 'Premium Social Media Visuals for a Modern Café & Restaurant.',
-    category: 'brand-media',
-    mediaType: 'image',
-    aspectRatio: 'landscape',
-    description: 'I developed a premium social media design direction for CELESTE, a modern café and restaurant brand. The project focused on creating visually engaging content that reflects the brand’s atmosphere, elevates its digital presence, and maintains a consistent visual language across social media platforms.\n\nThe designs combine elegant typography, refined compositions, carefully selected color palettes, and high-quality visual elements to create a sophisticated and memorable brand presence. Each design was crafted to capture attention, communicate the brand’s offerings clearly, and create a cohesive experience across the entire social media feed.\n',
-    image: 'https://i.ibb.co/qYxqGLbz/image.png',
-    videoUrl: '',
-    tags: ['React', 'AI', 'WebGL'],
-    featured: true,
-    liveUrl: '#',
-    codeSnippet: '',
-    metrics: [
-      { label: 'Status', value: 'Live' },
-      { label: 'Quality', value: 'High Definition' }
+    "description": "🚀 A Next-Level Digital Portfolio for Osama Azab.\n\nWhere football legacy meets premium digital experience. ⚽✨\nDesigned with a modern, powerful, and fully responsive vision.\n",
+    "aspectRatio": "landscape",
+    "featured": true,
+    "mediaType": "image",
+    "subtitle": "Profile",
+    "title": "Osama Azab - Digital Portfolio",
+    "category": "web-app",
+    "videoUrl": "",
+    "codeSnippet": "",
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "id": "proj_1788602329816",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1788602413/kubmq4gc5l8aj9rwx22k.jpg",
+    "liveUrl": "https://osamaazab.site",
+    "metrics": [
+      {
+        "value": "120 FPS",
+        "label": "FPS TARGET"
+      },
+      {
+        "value": "100 / 100",
+        "label": "PERFORMANCE"
+      },
+      {
+        "value": "AES-256",
+        "label": "SECURITY"
+      }
     ]
   },
   {
-    id: 'proj_1786142543936',
-    title: 'MOLOTO — AI-Powered Digital Experience',
-    subtitle: 'AI',
-    category: 'ai-videos',
-    mediaType: 'video',
-    aspectRatio: 'reel',
-    description: 'A modern digital project created with the power of Artificial Intelligence, combining creative direction, intelligent development, and a refined user experience.\n\nThe project explores how AI can accelerate the creative and development process while maintaining a premium visual identity, intuitive UX, responsive layouts, smooth interactions, and engaging animations.\n\nFrom concept and visual direction to implementation and optimization, MOLOTO was built around a modern AI-first workflow, transforming ideas into a polished and interactive digital experience.\n\nKey Highlights:• AI-Assisted Design & Development• Modern UI/UX• Responsive Experience• Smooth Animations & Transitions• Interactive Micro-Interactions• Creative Visual Direction• AI-Powered Workflow• Performance & Usability Optimization• Desktop & Mobile Experience',
-    image: 'https://i.ibb.co/4Z7xY6fx/image.png',
-    videoUrl: 'https://youtube.com/shorts/RQEN_d4-tTQ',
-    tags: ['React', 'AI', 'WebGL'],
-    featured: true,
-    liveUrl: '#',
-    codeSnippet: '',
-    metrics: [
-      { label: 'Status', value: 'Live' },
-      { label: 'Quality', value: 'High Definition' }
+    "codeSnippet": "",
+    "title": "DIGITAL PASSPORT — One QR. Everything connected. ✦",
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "id": "proj_1788602208025",
+    "aspectRatio": "landscape",
+    "description": "A smart digital passport designed to bring everything together in one seamless experience.\n\nWith a single QR code, users can instantly access essential information, social media profiles, contact details, and digital links — all from one beautifully designed and easy-to-use platform.\n\nA modern solution that transforms a simple QR code into a complete digital identity.\n",
+    "mediaType": "image",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1788602294/dg6mvyxtylvw7y9xpy2p.jpg",
+    "liveUrl": "https://daby-psi.vercel.app/",
+    "videoUrl": "",
+    "category": "brand-media",
+    "featured": true,
+    "metrics": [
+      {
+        "value": "120 FPS",
+        "label": "FPS TARGET"
+      },
+      {
+        "value": "100 / 100",
+        "label": "PERFORMANCE"
+      },
+      {
+        "value": "AES-256",
+        "label": "SECURITY"
+      }
+    ],
+    "subtitle": "one QrCode"
+  },
+  {
+    "codeSnippet": "",
+    "category": "web-app",
+    "videoUrl": "",
+    "featured": true,
+    "subtitle": "A Modern Digital Experience, Crafted with Precision",
+    "id": "proj_1788602033133",
+    "aspectRatio": "landscape",
+    "description": "A professionally designed and developed digital experience, crafted from scratch with a strong focus on modern UI/UX, performance, responsiveness, and a seamless user experience across all devices.\n\nThe project combines a clean visual identity with practical functionality, creating a polished and engaging online presence tailored to the brand's needs.\n\nDesigned & Developed by Soliman Media.\n",
+    "title": "DABY SHOES - WEBSITE",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1788602155/qshttzdblke51gpzx3m0.jpg",
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "liveUrl": "https://daby.shop",
+    "metrics": [
+      {
+        "value": "120 FPS",
+        "label": "FPS TARGET"
+      },
+      {
+        "value": "100 / 100",
+        "label": "PERFORMANCE"
+      },
+      {
+        "value": "AES-256",
+        "label": "SECURITY"
+      }
+    ],
+    "mediaType": "image"
+  },
+  {
+    "featured": true,
+    "subtitle": "",
+    "category": "web-app",
+    "videoUrl": "",
+    "liveUrl": "https://touza.shop",
+    "title": "TOUZA STORE - WEBSITE",
+    "metrics": [
+      {
+        "value": "120 FPS",
+        "label": "FPS TARGET"
+      },
+      {
+        "value": "100 / 100",
+        "label": "PERFORMANCE"
+      },
+      {
+        "value": "AES-256",
+        "label": "SECURITY"
+      }
+    ],
+    "codeSnippet": "",
+    "id": "proj_1787047088837",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1787047217/jwppvtuwznxrpadzyjrp.jpg",
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "aspectRatio": "landscape",
+    "description": "TOUZA — E-Commerce Website\n\nA complete e-commerce experience built for TOUZA Men’s Wear, combining premium aesthetics with a smooth, modern shopping experience.\nFrom a powerful visual identity to a fully responsive shopping interface, every detail was designed to make the brand feel premium, confident, and built to sell.\n\nWhat’s included:\n•⁠  ⁠Modern & responsive design\n•⁠  ⁠Arabic & English experience\n•⁠  ⁠Product catalog & categories\n•⁠  ⁠Smart navigation & filtering\n•⁠  ⁠Secure checkout experience\n•⁠  ⁠Order management & tracking\n•⁠  ⁠Mobile-first shopping experience\n•⁠  ⁠Professional admin dashboard\n",
+    "mediaType": "image"
+  },
+  {
+    "featured": true,
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "subtitle": "Creative Video Content for a Modern Café & Restaurant",
+    "id": "proj_1786227330673",
+    "codeSnippet": "",
+    "category": "ai-videos",
+    "videoUrl": "https://www.youtube.com/shorts/4lICZTAv6zU",
+    "description": "A creative social media video project developed for BOKHAREST, focusing on creating engaging visual content that reflects the brand’s bold and premium identity.\n\nThe video was designed to capture attention, showcase the café and restaurant experience, and communicate the brand’s atmosphere through dynamic visuals, creative editing, typography, motion, and carefully crafted visual storytelling.\n\nThe project combines creative direction, cinematic visuals, smooth transitions, motion graphics, and social-media-focused editing to create a compelling digital experience that strengthens BOKHAREST’s presence across social platforms.\n",
+    "aspectRatio": "reel",
+    "mediaType": "video",
+    "title": "BOKHAREST — Social Media Video",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786136/zi8jt9mbswp7elpg5d8t.jpg",
+    "liveUrl": "#",
+    "metrics": [
+      {
+        "label": "FPS TARGET",
+        "value": "120 FPS"
+      },
+      {
+        "value": "100 / 100",
+        "label": "PERFORMANCE"
+      },
+      {
+        "label": "SECURITY",
+        "value": "AES-256"
+      }
     ]
   },
   {
-    id: 'aura-mind',
-    title: 'DODO DESIGN - WEBSITE',
-    subtitle: 'Custom Web Design & Development',
-    category: 'web-app',
-    mediaType: 'image',
-    aspectRatio: 'landscape',
-    description: 'A fully custom website designed and developed from the ground up with a strong focus on UI/UX, modern interactions, and performance.\n\nThe project features a clean and intuitive user experience, responsive layouts, smooth page transitions, interactive elements, hover effects, scroll-based animations, micro-interactions, and dynamic visual components.\n\nEvery detail was carefully designed to create a seamless experience across desktop, tablet, and mobile devices, combining **creative design, advanced frontend development, smooth animations, and strong visual storytelling**.\n\n**Key Highlights:**\n• Custom UI/UX Design\n• Responsive Web Development\n• Smooth Scroll Animations\n• Interactive Hover Effects\n• Micro-Interactions\n• Page Transitions\n• Dynamic Visual Elements\n• Mobile & Desktop Optimization\n• Performance-Focused Development\n• Modern & Clean Interface\n',
-    image: 'https://scontent.fcai11-1.fna.fbcdn.net/v/t39.30808-6/759849901_122113594689379413_5411630161315505762_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x2048&ctp=s2048x2048&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEbpPx7Xf6D8qdBsJG1tcI-Z-31sD0RDkNn7fWwPREOQ21qSPKyZGSAb5SeCfuEBTF6CXH2Jpr37r9dyIqhwJYw&_nc_ohc=4pYxeTK6GCEQ7kNvwFRR9oI&_nc_oc=Adpv37Kyh4upZqJm-pQfu-ifY-dqpoAglP9IeBF7Zy81kV0msqoBI6nMU2o_G4q31g44cawvcAzTjbbfwNQggNmV&_nc_zt=23&_nc_ht=scontent.fcai11-1.fna&_nc_gid=PbAt7qpJN78aZCbDt6WdMw&_nc_ss=782a8&oh=00_AQHuB_RenXtOJKV4QK8EUhVwvBLIk7_ciqSg03d7GNZsMg&oe=6A7C25C0',
-    videoUrl: '',
-    tags: ['React 19', 'Gemini 3.6 API', 'Three.js', 'Tailwind v4', 'Web App'],
-    featured: true,
-    liveUrl: 'https://dododesign.shop',
-    codeSnippet: `// Gemini 3.6 Multimodal Visual Stream Initialization
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-async function analyzeCanvasFrame(imageBuffer: ArrayBuffer) {
-  const result = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
-    contents: [
-      "Analyze spatial arrangement & suggest cinematic color palettes:",
-      { inlineData: { data: Buffer.from(imageBuffer).toString("base64"), mimeType: "image/png" } }
-    ]
-  });
-  return result.text;
-}`,
-    metrics: [
-      { label: 'Latency', value: '< 120ms' },
-      { label: 'Active Users', value: '45,000+' },
-      { label: 'AI Engine', value: 'Gemini Multimodal' }
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786137/ouglcebbzx797ob6bwdb.png",
+    "featured": true,
+    "subtitle": "Premium Social Media Visuals for a Modern Café & Restaurant",
+    "id": "proj_1786227099263",
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "category": "brand-media",
+    "videoUrl": "",
+    "liveUrl": "#",
+    "codeSnippet": "",
+    "metrics": [
+      {
+        "label": "FPS TARGET",
+        "value": "120 FPS"
+      },
+      {
+        "value": "100 / 100",
+        "label": "PERFORMANCE"
+      },
+      {
+        "label": "SECURITY",
+        "value": "AES-256"
+      }
+    ],
+    "title": "BOKHAREST — Social Media Design",
+    "aspectRatio": "landscape",
+    "description": "A complete social media design project created for BOKHAREST, focusing on building a bold, premium, and visually consistent digital presence for the café and restaurant.\nThe project includes creative social media visuals designed to showcase the brand’s atmosphere, products, offers, and special occasions while maintaining a strong and recognizable visual identity across the content.\nThe designs combine creative art direction, sophisticated compositions, typography, color treatment, and high-quality visual elements to create engaging content that captures attention and strengthens the brand’s presence across social media platforms.",
+    "mediaType": "image"
+  },
+  {
+    "aspectRatio": "landscape",
+    "description": "I developed a premium social media design direction for CELESTE, a modern café and restaurant brand. The project focused on creating visually engaging content that reflects the brand’s atmosphere, elevates its digital presence, and maintains a consistent visual language across social media platforms.\n\nThe designs combine elegant typography, refined compositions, carefully selected color palettes, and high-quality visual elements to create a sophisticated and memorable brand presence. Each design was crafted to capture attention, communicate the brand’s offerings clearly, and create a cohesive experience across the entire social media feed.\n",
+    "mediaType": "image",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786138/jdkp7znqi7hs4ivol5u8.png",
+    "codeSnippet": "",
+    "category": "brand-media",
+    "videoUrl": "",
+    "subtitle": "Premium Social Media Visuals for a Modern Café & Restaurant.",
+    "featured": true,
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
+    ],
+    "title": "CELESTE — Social Media Creative Design",
+    "id": "proj_1786176852784",
+    "metrics": [
+      {
+        "value": "Live",
+        "label": "Status"
+      },
+      {
+        "label": "Quality",
+        "value": "High Definition"
+      }
+    ],
+    "liveUrl": "#"
+  },
+  {
+    "id": "proj_1786142543936",
+    "aspectRatio": "reel",
+    "description": "A modern digital project created with the power of Artificial Intelligence, combining creative direction, intelligent development, and a refined user experience.\n\nThe project explores how AI can accelerate the creative and development process while maintaining a premium visual identity, intuitive UX, responsive layouts, smooth interactions, and engaging animations.\n\nFrom concept and visual direction to implementation and optimization, MOLOTO was built around a modern AI-first workflow, transforming ideas into a polished and interactive digital experience.\n\nKey Highlights:• AI-Assisted Design & Development• Modern UI/UX• Responsive Experience• Smooth Animations & Transitions• Interactive Micro-Interactions• Creative Visual Direction• AI-Powered Workflow• Performance & Usability Optimization• Desktop & Mobile Experience",
+    "featured": true,
+    "liveUrl": "#",
+    "subtitle": "AI",
+    "metrics": [
+      {
+        "label": "Status",
+        "value": "Live"
+      },
+      {
+        "value": "High Definition",
+        "label": "Quality"
+      }
+    ],
+    "videoUrl": "https://youtube.com/shorts/RQEN_d4-tTQ",
+    "category": "ai-videos",
+    "title": "MOLOTO — AI-Powered Digital Experience",
+    "mediaType": "video",
+    "codeSnippet": "",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786139/kr8cde9vmc9n3nq5qoyl.png",
+    "tags": [
+      "React",
+      "AI",
+      "WebGL"
     ]
   },
   {
-    id: 'cybernoir-app',
-    title: 'GLOW PRETTY - WEBSITE',
-    subtitle: 'High-Performance WebGL & Fullstack Dashboard',
-    category: 'web-app',
-    mediaType: 'image',
-    aspectRatio: 'landscape',
-    description: 'A full-stack WebGL web application with custom GLSL shaders, telemetry real-time monitoring, and modular dark mode React components.',
-    image: 'https://scontent.fcai11-1.fna.fbcdn.net/v/t39.30808-6/761597576_122114110821379413_5963439306426916378_n.jpg?stp=dst-jpg_tt6&cstp=mx1024x1024&ctp=s1024x1024&_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeG01_iymdmnnD96DSu-EXR1uYpSQVM7PEm5ilJBUzs8SYhIBHo-V-_DBCAOgt96wghivXRpGSQr62rSz41SrTPS&_nc_ohc=trllpfql-SMQ7kNvwG17mIi&_nc_oc=AdrFigqsvN0DKNWrhqAW0QpwsZ54gMrYoknnF6cqt9ajpdjfdEcfFkd7jPO_R2udBOqz_l-rjdobtrFHDHd35x-7&_nc_zt=23&_nc_ht=scontent.fcai11-1.fna&_nc_gid=5gkIF8YwuulK-zJM-faYiQ&_nc_ss=782a8&oh=00_AQFlDe4OJjUS2gf_2okJA-jIHcwp7HumcKedv_MVKgRiSA&oe=6A7C2E63',
-    videoUrl: '',
-    tags: ['React 19', 'TypeScript', 'WebGL GLSL', 'Express.js', 'Tailwind v4'],
-    featured: true,
-    liveUrl: 'https://glowpretty.site',
-    codeSnippet: `precision highp float;
-uniform float u_time;
-uniform vec2 u_resolution;
-
-void main() {
-    vec2 uv = gl_FragCoord.xy / u_resolution;
-    vec3 black = vec3(0.01, 0.01, 0.02);
-    vec3 accent = vec3(0.0, 0.88, 0.99); // Cyan Glow
-    float flow = sin(uv.x * 5.0 + u_time * 0.5) * 0.5 + 0.5;
-    gl_FragColor = vec4(mix(black, accent, flow * 0.25), 1.0);
-}`,
-    metrics: [
-      { label: 'FPS Target', value: '120 FPS' },
-      { label: 'Performance', value: '100 / 100' },
-      { label: 'Security', value: 'AES-256' }
-    ]
+    "liveUrl": "https://dododesign.shop",
+    "metrics": [
+      {
+        "label": "Latency",
+        "value": "< 120ms"
+      },
+      {
+        "label": "Active Users",
+        "value": "45,000+"
+      },
+      {
+        "label": "AI Engine",
+        "value": "Multimodal"
+      }
+    ],
+    "codeSnippet": "// Gemini 3.6 Multimodal Visual Stream Initialization\nconst ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });\n\nasync function analyzeCanvasFrame(imageBuffer: ArrayBuffer) {\n  const result = await ai.models.generateContent({\n    model: \"gemini-3.6-flash\",\n    contents: [\n      \"Analyze spatial arrangement & suggest cinematic color palettes:\",\n      { inlineData: { data: Buffer.from(imageBuffer).toString(\"base64\"), mimeType: \"image/png\" } }\n    ]\n  });\n  return result.text;\n}",
+    "mediaType": "image",
+    "category": "web-app",
+    "videoUrl": "",
+    "featured": true,
+    "title": "DODO DESIGN - WEBSITE",
+    "description": "A fully custom website designed and developed from the ground up with a strong focus on UI/UX, modern interactions, and performance.\n\nThe project features a clean and intuitive user experience, responsive layouts, smooth page transitions, interactive elements, hover effects, scroll-based animations, micro-interactions, and dynamic visual components.\n\nEvery detail was carefully designed to create a seamless experience across desktop, tablet, and mobile devices, combining **creative design, advanced frontend development, smooth animations, and strong visual storytelling**.\n\n**Key Highlights:**\n• Custom UI/UX Design\n• Responsive Web Development\n• Smooth Scroll Animations\n• Interactive Hover Effects\n• Micro-Interactions\n• Page Transitions\n• Dynamic Visual Elements\n• Mobile & Desktop Optimization\n• Performance-Focused Development\n• Modern & Clean Interface\n",
+    "aspectRatio": "landscape",
+    "subtitle": "Custom Web Design & Development",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786143/t0fl4q39nkxk7hlhpaeb.jpg",
+    "tags": [
+      "React 19",
+      "Gemini 3.6 API",
+      "Three.js",
+      "Tailwind v4",
+      "Web App"
+    ],
+    "id": "aura-mind"
+  },
+  {
+    "title": "GLOW PRETTY - WEBSITE",
+    "description": "A full-stack WebGL web application with custom GLSL shaders, telemetry real-time monitoring, and modular dark mode React components.",
+    "aspectRatio": "landscape",
+    "subtitle": "High-Performance WebGL & Fullstack Dashboard",
+    "codeSnippet": "precision highp float;\nuniform float u_time;\nuniform vec2 u_resolution;\n\nvoid main() {\n    vec2 uv = gl_FragCoord.xy / u_resolution;\n    vec3 black = vec3(0.01, 0.01, 0.02);\n    vec3 accent = vec3(0.0, 0.88, 0.99); // Cyan Glow\n    float flow = sin(uv.x * 5.0 + u_time * 0.5) * 0.5 + 0.5;\n    gl_FragColor = vec4(mix(black, accent, flow * 0.25), 1.0);\n}",
+    "tags": [
+      "React 19",
+      "TypeScript",
+      "WebGL GLSL",
+      "Express.js",
+      "Tailwind v4"
+    ],
+    "featured": true,
+    "category": "web-app",
+    "videoUrl": "",
+    "id": "cybernoir-app",
+    "mediaType": "image",
+    "metrics": [
+      {
+        "value": "120 FPS",
+        "label": "FPS Target"
+      },
+      {
+        "label": "Performance",
+        "value": "100 / 100"
+      },
+      {
+        "value": "AES-256",
+        "label": "Security"
+      }
+    ],
+    "liveUrl": "https://glowpretty.site",
+    "image": "https://res.cloudinary.com/qazdrpcx/image/upload/v1786786141/l2ltu9eirc5fb4wpfly0.jpg"
   }
 ];
 
