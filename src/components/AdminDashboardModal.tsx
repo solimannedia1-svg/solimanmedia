@@ -4,7 +4,7 @@ import { SKILL_CATEGORIES, JOURNEY_MILESTONES, SYSTEM_METRICS, QUICK_PROMPTS, DE
 import { getVideoSourceInfo, getYouTubeThumbnail, getItemDisplayImage, DEFAULT_FALLBACK_IMAGE, isReelVideo } from '../utils/videoUtils';
 import { SocialIcon } from './SocialIcon';
 import { CloudinaryMigrationManager } from './CloudinaryMigrationManager';
-import { uploadFileToCloudinary, isCloudinaryUrl } from '../utils/cloudinary';
+import { uploadFileToCloudinary, isCloudinaryUrl, getOptimizedCloudinaryUrl } from '../utils/cloudinary';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
@@ -172,34 +172,46 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Immediate preview for visual responsiveness
+    const previewUrl = URL.createObjectURL(file);
+    const previousImage = editingProject?.image || '';
+    setEditingProject((prev) => ({
+      ...prev,
+      image: previewUrl
+    }));
+
     setIsUploadingMedia('project');
     setUploadPercent(0);
 
     try {
+      // Direct browser-to-Cloudinary upload using new ccnaucox / solimanmedia_img preset
       const res = await uploadFileToCloudinary(file, (pct) => setUploadPercent(pct));
       if (res.secure_url) {
+        const optimizedUrl = getOptimizedCloudinaryUrl(res.secure_url);
         setEditingProject((prev) => ({
           ...prev,
-          image: res.secure_url
+          image: optimizedUrl
         }));
-        setSaveNotice('✓ Image uploaded directly to Cloudinary!');
-        setTimeout(() => setSaveNotice(''), 3000);
+        setSaveNotice('✓ Image uploaded to Cloudinary (f_auto, q_auto activated)!');
+        setTimeout(() => setSaveNotice(''), 3500);
+      } else {
+        throw new Error('No secure_url returned by Cloudinary');
       }
     } catch (err: any) {
-      console.warn('Direct Cloudinary file upload failed, using local reader fallback:', err);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setEditingProject((prev) => ({
-            ...prev,
-            image: event.target!.result as string
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
+      console.error('Direct Cloudinary file upload failed:', err);
+      // Revert to previous image - strictly avoid Base64 storage
+      setEditingProject((prev) => ({
+        ...prev,
+        image: previousImage
+      }));
+      setSaveNotice(`✗ Cloudinary upload failed: ${err?.message || 'Network error'}`);
+      setTimeout(() => setSaveNotice(''), 5000);
     } finally {
       setIsUploadingMedia(null);
       setUploadPercent(0);
+      try {
+        URL.revokeObjectURL(previewUrl);
+      } catch {}
     }
   };
 
@@ -207,34 +219,45 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Immediate preview
+    const previewUrl = URL.createObjectURL(file);
+    const previousPortrait = settingsForm.portraitUrl || '';
+    setSettingsForm((prev) => ({
+      ...prev,
+      portraitUrl: previewUrl
+    }));
+
     setIsUploadingMedia('portrait');
     setUploadPercent(0);
 
     try {
+      // Direct browser-to-Cloudinary upload
       const res = await uploadFileToCloudinary(file, (pct) => setUploadPercent(pct));
       if (res.secure_url) {
+        const optimizedUrl = getOptimizedCloudinaryUrl(res.secure_url);
         setSettingsForm((prev) => ({
           ...prev,
-          portraitUrl: res.secure_url
+          portraitUrl: optimizedUrl
         }));
-        setSaveNotice('✓ Hero Portrait uploaded directly to Cloudinary!');
-        setTimeout(() => setSaveNotice(''), 3000);
+        setSaveNotice('✓ Hero Portrait uploaded to Cloudinary (f_auto, q_auto activated)!');
+        setTimeout(() => setSaveNotice(''), 3500);
+      } else {
+        throw new Error('No secure_url returned by Cloudinary');
       }
     } catch (err: any) {
-      console.warn('Direct Cloudinary portrait upload failed, using local reader fallback:', err);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setSettingsForm((prev) => ({
-            ...prev,
-            portraitUrl: event.target!.result as string
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
+      console.error('Direct Cloudinary portrait upload failed:', err);
+      setSettingsForm((prev) => ({
+        ...prev,
+        portraitUrl: previousPortrait
+      }));
+      setSaveNotice(`✗ Cloudinary portrait upload failed: ${err?.message || 'Network error'}`);
+      setTimeout(() => setSaveNotice(''), 5000);
     } finally {
       setIsUploadingMedia(null);
       setUploadPercent(0);
+      try {
+        URL.revokeObjectURL(previewUrl);
+      } catch {}
     }
   };
 
@@ -242,34 +265,45 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Immediate preview
+    const previewUrl = URL.createObjectURL(file);
+    const previousImage = editingGalleryItem?.image || '';
+    setEditingGalleryItem((prev) => ({
+      ...prev,
+      image: previewUrl
+    }));
+
     setIsUploadingMedia('gallery');
     setUploadPercent(0);
 
     try {
+      // Direct browser-to-Cloudinary upload
       const res = await uploadFileToCloudinary(file, (pct) => setUploadPercent(pct));
       if (res.secure_url) {
+        const optimizedUrl = getOptimizedCloudinaryUrl(res.secure_url);
         setEditingGalleryItem((prev) => ({
           ...prev,
-          image: res.secure_url
+          image: optimizedUrl
         }));
-        setSaveNotice('✓ Gallery image uploaded directly to Cloudinary!');
-        setTimeout(() => setSaveNotice(''), 3000);
+        setSaveNotice('✓ Gallery image uploaded to Cloudinary (f_auto, q_auto activated)!');
+        setTimeout(() => setSaveNotice(''), 3500);
+      } else {
+        throw new Error('No secure_url returned by Cloudinary');
       }
     } catch (err: any) {
-      console.warn('Direct Cloudinary gallery upload failed, using local reader fallback:', err);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setEditingGalleryItem((prev) => ({
-            ...prev,
-            image: event.target!.result as string
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
+      console.error('Direct Cloudinary gallery upload failed:', err);
+      setEditingGalleryItem((prev) => ({
+        ...prev,
+        image: previousImage
+      }));
+      setSaveNotice(`✗ Cloudinary gallery upload failed: ${err?.message || 'Network error'}`);
+      setTimeout(() => setSaveNotice(''), 5000);
     } finally {
       setIsUploadingMedia(null);
       setUploadPercent(0);
+      try {
+        URL.revokeObjectURL(previewUrl);
+      } catch {}
     }
   };
 
@@ -1235,6 +1269,12 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           type="text"
                           value={settingsForm.portraitUrl}
                           onChange={(e) => setSettingsForm({ ...settingsForm, portraitUrl: e.target.value })}
+                          onBlur={(e) => {
+                            const val = e.target.value.trim();
+                            if (isCloudinaryUrl(val)) {
+                              setSettingsForm((prev) => ({ ...prev, portraitUrl: getOptimizedCloudinaryUrl(val) }));
+                            }
+                          }}
                           placeholder="https://..."
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3] mb-2"
                         />
@@ -1242,8 +1282,15 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           type="file"
                           accept="image/*"
                           onChange={handlePortraitFileUpload}
-                          className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer"
+                          disabled={isUploadingMedia === 'portrait'}
+                          className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer disabled:opacity-50"
                         />
+                        {isUploadingMedia === 'portrait' && (
+                          <span className="text-[10px] text-[#00daf3] block mt-1.5 animate-pulse font-bold flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                            <span>Uploading to Cloudinary {uploadPercent > 0 ? `(${uploadPercent}%)` : ''}...</span>
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-3 bg-[#0c0f10] p-3 rounded-xl border border-white/5">
@@ -1252,9 +1299,16 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           alt="Portrait Preview"
                           className="w-20 h-24 object-cover rounded-lg border border-white/10 shrink-0"
                         />
-                        <div className="font-mono-code text-xs text-[#919094]">
-                          <span className="text-[#00daf3] block font-bold">PORTRAIT PREVIEW</span>
-                          <span>Will render in Hero 3D Card</span>
+                        <div className="font-mono-code text-xs text-[#919094] overflow-hidden">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[#00daf3] block font-bold">PORTRAIT PREVIEW</span>
+                            {settingsForm.portraitUrl?.includes('f_auto') && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#00daf3]/15 text-[#00daf3] border border-[#00daf3]/30 font-bold">
+                                f_auto, q_auto
+                              </span>
+                            )}
+                          </div>
+                          <span className="block text-[11px] text-[#79797e]">Will render in Hero 3D Card</span>
                         </div>
                       </div>
                     </div>
@@ -1643,6 +1697,12 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                           onChange={(e) =>
                             setEditingProject((prev) => ({ ...prev, image: e.target.value }))
                           }
+                          onBlur={(e) => {
+                            const val = e.target.value.trim();
+                            if (isCloudinaryUrl(val)) {
+                              setEditingProject((prev) => ({ ...prev, image: getOptimizedCloudinaryUrl(val) }));
+                            }
+                          }}
                           placeholder="https://..."
                           className="w-full bg-[#0c0f10] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                         />
@@ -1650,16 +1710,44 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
 
                       <div>
                         <label className="block font-mono-code text-[11px] text-[#79797e] mb-1">
-                          Option B: Upload Image File
+                          Option B: Upload Image File (Cloudinary)
                         </label>
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handleImageFileUpload}
-                          className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer"
+                          disabled={isUploadingMedia === 'project'}
+                          className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer disabled:opacity-50"
                         />
+                        {isUploadingMedia === 'project' && (
+                          <span className="text-[10px] text-[#00daf3] block mt-1.5 animate-pulse font-bold flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                            <span>Uploading to Cloudinary {uploadPercent > 0 ? `(${uploadPercent}%)` : ''}...</span>
+                          </span>
+                        )}
                       </div>
                     </div>
+
+                    {editingProject?.image && editingProject.image.trim() !== '' && (
+                      <div className="flex items-center gap-3 bg-[#0c0f10] p-3 rounded-xl border border-white/5 mt-2">
+                        <img
+                          src={editingProject.image}
+                          alt="Cover Preview"
+                          className="w-20 h-16 object-cover rounded-lg border border-white/10 shrink-0"
+                        />
+                        <div className="font-mono-code text-xs text-[#919094] overflow-hidden">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[#00daf3] block font-bold">COVER IMAGE PREVIEW</span>
+                            {editingProject.image.includes('f_auto') && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#00daf3]/15 text-[#00daf3] border border-[#00daf3]/30 font-bold">
+                                f_auto, q_auto
+                              </span>
+                            )}
+                          </div>
+                          <span className="truncate block text-[11px] text-[#79797e]">{editingProject.image}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-4 rounded-xl bg-[#1d2021] border border-[#00daf3]/30 space-y-4">
@@ -2130,6 +2218,12 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                             onChange={(e) =>
                               setEditingGalleryItem((prev) => ({ ...prev, image: e.target.value }))
                             }
+                            onBlur={(e) => {
+                              const val = e.target.value.trim();
+                              if (isCloudinaryUrl(val)) {
+                                setEditingGalleryItem((prev) => ({ ...prev, image: getOptimizedCloudinaryUrl(val) }));
+                              }
+                            }}
                             placeholder="https://res.cloudinary.com/..."
                             className="w-full bg-[#1d2021] border border-white/10 rounded-lg px-3 py-2 text-xs text-[#e1e3e4] focus:outline-none focus:border-[#00daf3]"
                           />
@@ -2143,15 +2237,38 @@ export const QUICK_PROMPTS = ${JSON.stringify(QUICK_PROMPTS, null, 2)};
                             type="file"
                             accept="image/*"
                             onChange={handleGalleryImageFileUpload}
-                            className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer"
+                            disabled={isUploadingMedia === 'gallery'}
+                            className="w-full text-xs font-mono-code text-[#c7c6ca] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#00daf3] file:text-[#001f24] file:font-bold cursor-pointer disabled:opacity-50"
                           />
                           {isUploadingMedia === 'gallery' && (
-                            <span className="text-[10px] text-[#00daf3] block mt-1 animate-pulse font-bold">
-                              Uploading to Cloudinary {uploadPercent > 0 ? `(${uploadPercent}%)` : ''}...
+                            <span className="text-[10px] text-[#00daf3] block mt-1 animate-pulse font-bold flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#00daf3] animate-ping" />
+                              <span>Uploading to Cloudinary {uploadPercent > 0 ? `(${uploadPercent}%)` : ''}...</span>
                             </span>
                           )}
                         </div>
                       </div>
+
+                      {editingGalleryItem?.image && editingGalleryItem.image.trim() !== '' && (
+                        <div className="flex items-center gap-3 bg-[#1d2021] p-3 rounded-xl border border-white/5 mt-2">
+                          <img
+                            src={editingGalleryItem.image}
+                            alt="Gallery Preview"
+                            className="w-20 h-16 object-cover rounded-lg border border-white/10 shrink-0"
+                          />
+                          <div className="font-mono-code text-xs text-[#919094] overflow-hidden">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-[#00daf3] block font-bold">IMAGE PREVIEW</span>
+                              {editingGalleryItem.image.includes('f_auto') && (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#00daf3]/15 text-[#00daf3] border border-[#00daf3]/30 font-bold">
+                                  f_auto, q_auto
+                                </span>
+                              )}
+                            </div>
+                            <span className="truncate block text-[11px] text-[#79797e]">{editingGalleryItem.image}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {editingGalleryItem.mediaType === 'video' && (

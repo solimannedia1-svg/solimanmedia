@@ -1,15 +1,15 @@
 /**
  * Cloudinary Integration & Image Optimization Utility
  * 
- * Cloud Name: qazdrpcx
- * Upload Preset: images_soliman
+ * Cloud Name: ccnaucox
+ * Upload Preset: solimanmedia_img
  * Mode: Unsigned Client Uploads
  */
 
 export const CLOUDINARY_CONFIG = {
-  cloudName: 'qazdrpcx',
-  uploadPreset: 'images_soliman',
-  uploadUrl: 'https://api.cloudinary.com/v1_1/qazdrpcx/image/upload',
+  cloudName: 'ccnaucox',
+  uploadPreset: 'solimanmedia_img',
+  uploadUrl: 'https://api.cloudinary.com/v1_1/ccnaucox/image/upload',
 };
 
 export interface CloudinaryUploadResponse {
@@ -142,6 +142,11 @@ export async function uploadFileToCloudinary(
         try {
           const data = JSON.parse(xhr.responseText) as CloudinaryUploadResponse;
           if (data.secure_url) {
+            // Automatically activate auto format (f_auto) and auto quality (q_auto)
+            data.secure_url = getOptimizedCloudinaryUrl(data.secure_url);
+            if (data.url) {
+              data.url = getOptimizedCloudinaryUrl(data.url);
+            }
             resolve(data);
           } else {
             reject(new Error(xhr.responseText || 'Missing secure_url in Cloudinary response'));
@@ -180,10 +185,11 @@ export async function uploadUrlOrBase64ToCloudinary(
 
   const trimmed = urlOrBase64.trim();
 
-  // If it's already a Cloudinary URL, don't re-upload
+  // If it's already a Cloudinary URL, ensure f_auto,q_auto is applied and return
   if (isCloudinaryUrl(trimmed)) {
+    const optimized = getOptimizedCloudinaryUrl(trimmed);
     return {
-      secure_url: trimmed,
+      secure_url: optimized,
       public_id: trimmed.split('/').pop() || 'existing_cloudinary',
     };
   }
@@ -205,6 +211,12 @@ export async function uploadUrlOrBase64ToCloudinary(
     }
 
     const data = await res.json();
+    if (data.secure_url) {
+      data.secure_url = getOptimizedCloudinaryUrl(data.secure_url);
+      if (data.url) {
+        data.url = getOptimizedCloudinaryUrl(data.url);
+      }
+    }
     return data;
   }
 
@@ -223,6 +235,10 @@ export async function uploadUrlOrBase64ToCloudinary(
     if (res.ok) {
       const data = await res.json();
       if (data.secure_url) {
+        data.secure_url = getOptimizedCloudinaryUrl(data.secure_url);
+        if (data.url) {
+          data.url = getOptimizedCloudinaryUrl(data.url);
+        }
         return data;
       }
     }
@@ -252,6 +268,7 @@ export async function uploadUrlOrBase64ToCloudinary(
     if (proxyRes.ok) {
       const proxyData = await proxyRes.json();
       if (proxyData.secure_url) {
+        proxyData.secure_url = getOptimizedCloudinaryUrl(proxyData.secure_url);
         return proxyData;
       }
     }

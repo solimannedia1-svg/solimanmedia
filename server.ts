@@ -6,6 +6,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+function optimizeCloudinaryUrl(url: string): string {
+  if (!url || typeof url !== 'string') return url;
+  const uploadIdx = url.indexOf('/upload/');
+  if (uploadIdx === -1) return url;
+  const prefix = url.substring(0, uploadIdx + 8);
+  const rest = url.substring(uploadIdx + 8);
+  if (rest.startsWith('f_auto') || rest.includes('/f_auto') || rest.includes('f_auto,q_auto')) {
+    return url;
+  }
+  return `${prefix}f_auto,q_auto/${rest}`;
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -90,8 +102,8 @@ Respond as Mohamed himself — direct, articulate, enthusiastic about high-end d
         return res.status(400).json({ error: "imageUrl is required" });
       }
 
-      const cloudName = "qazdrpcx";
-      const uploadPreset = "images_soliman";
+      const cloudName = "ccnaucox";
+      const uploadPreset = "solimanmedia_img";
       const cloudinaryEndpoint = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
       // If already a Cloudinary URL
@@ -149,7 +161,7 @@ Respond as Mohamed himself — direct, articulate, enthusiastic about high-end d
               const retryData = await retryRes.json();
               return res.json({
                 success: true,
-                secure_url: retryData.secure_url,
+                secure_url: optimizeCloudinaryUrl(retryData.secure_url),
                 public_id: retryData.public_id,
                 format: retryData.format,
                 width: retryData.width,
@@ -170,7 +182,7 @@ Respond as Mohamed himself — direct, articulate, enthusiastic about high-end d
       const cloudData = await cloudRes.json();
       return res.json({
         success: true,
-        secure_url: cloudData.secure_url,
+        secure_url: optimizeCloudinaryUrl(cloudData.secure_url),
         public_id: cloudData.public_id,
         format: cloudData.format,
         width: cloudData.width,
