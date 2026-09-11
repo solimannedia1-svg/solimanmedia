@@ -9,12 +9,14 @@ interface WorkShowcaseProps {
   projects?: Project[];
   onSaveProjects?: (projects: Project[]) => void;
   onResetDefaults?: () => void;
+  onOpenAdmin?: () => void;
 }
 
 export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
   projects: propsProjects,
   onSaveProjects: propsSaveProjects,
   onResetDefaults: propsResetDefaults,
+  onOpenAdmin: propsOpenAdmin,
 }) => {
   const projects = propsProjects && propsProjects.length > 0 ? propsProjects : PROJECTS_DATA;
 
@@ -65,7 +67,11 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
   }, [selectedProject]);
 
   const handleOpenAdmin = () => {
-    window.dispatchEvent(new CustomEvent('open-admin'));
+    if (propsOpenAdmin) {
+      propsOpenAdmin();
+    } else {
+      window.dispatchEvent(new CustomEvent('open-admin'));
+    }
   };
 
   const filteredProjects = projects.filter((project) => {
@@ -122,8 +128,15 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
       {/* Projects Grid */}
       <div className="grid md:grid-cols-2 gap-8">
         {filteredProjects.length === 0 ? (
-          <div className="col-span-2 text-center py-16 bg-[#1d2021]/50 rounded-2xl border border-white/5 font-mono-code text-[#79797e]">
-            No projects found in this category. Click "ADMIN PANEL" to add projects.
+          <div className="col-span-2 text-center py-16 bg-[#1d2021]/50 rounded-2xl border border-white/5 font-mono-code text-[#79797e] flex flex-col items-center justify-center gap-3">
+            <p>No projects found in this category.</p>
+            <button
+              onClick={handleOpenAdmin}
+              className="px-4 py-2 rounded-xl bg-[#00daf3] text-[#001f24] font-mono-code text-xs font-bold hover:brightness-110 transition-all cursor-pointer flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-sm">add_circle</span>
+              <span>ADD PROJECTS IN ADMIN PANEL / فتح لوحة التحكم</span>
+            </button>
           </div>
         ) : (
           filteredProjects.map((project) => {
@@ -183,6 +196,9 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                         alt={project.title}
                         loading="lazy"
                         decoding="async"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+                        }}
                         className="w-full h-full object-cover max-sm:grayscale-0 max-sm:opacity-100 sm:grayscale sm:opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-active:grayscale-0 group-active:opacity-100 group-focus:grayscale-0 group-focus:opacity-100 group-hover:scale-105 group-active:scale-105 transition-all duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#111415] via-[#111415]/20 to-transparent" />
@@ -387,6 +403,9 @@ export const WorkShowcase: React.FC<WorkShowcaseProps> = ({
                     alt={selectedProject.title}
                     loading="lazy"
                     decoding="async"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+                    }}
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </div>

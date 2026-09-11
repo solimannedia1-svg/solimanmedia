@@ -4,9 +4,10 @@ import { Volume2, VolumeX, ArrowUpRight, Menu, X, ChevronRight } from 'lucide-re
 interface NavbarProps {
   onTalkClick: () => void;
   onAiStudioClick: () => void;
+  onOpenAdmin?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onTalkClick, onAiStudioClick, onOpenAdmin }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);

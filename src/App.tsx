@@ -14,7 +14,7 @@ import { StatusDashboard } from './components/StatusDashboard';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { AdminDashboardModal } from './components/AdminDashboardModal';
-import { DEFAULT_SITE_SETTINGS, PROJECTS_DATA, DEFAULT_GALLERY_ITEMS } from './data/portfolioData';
+import { DEFAULT_SITE_SETTINGS, PROJECTS_DATA, DEFAULT_GALLERY_ITEMS, PORTRAIT_IMAGE_URL } from './data/portfolioData';
 import { Project, SiteSettings, ContactMessage } from './types';
 import { db } from './lib/firebase';
 import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
@@ -67,11 +67,56 @@ function safeSaveToLocalStorage<T>(key: string, value: T): void {
   }
 }
 
+// Helper to ensure all image URLs use the active Cloudinary account (ccnaucox) and no broken blobs
+function sanitizeLoadedProjects(rawProjects: Project[]): Project[] {
+  if (!Array.isArray(rawProjects) || rawProjects.length === 0) return PROJECTS_DATA;
+  return rawProjects.map((p) => {
+    let img = p.image || '';
+    if (img.includes('qazdrpcx')) {
+      img = img.replace(/qazdrpcx/g, 'ccnaucox');
+    }
+    if (img.startsWith('blob:')) {
+      const match = PROJECTS_DATA.find((def) => def.id === p.id);
+      img = match?.image || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+    }
+    return { ...p, image: img };
+  });
+}
+
+function sanitizeLoadedSettings(rawSettings: SiteSettings): SiteSettings {
+  if (!rawSettings) return DEFAULT_SITE_SETTINGS;
+  const settings = { ...DEFAULT_SITE_SETTINGS, ...rawSettings };
+  if (settings.portraitUrl) {
+    if (settings.portraitUrl.includes('qazdrpcx')) {
+      settings.portraitUrl = settings.portraitUrl.replace(/qazdrpcx/g, 'ccnaucox');
+    }
+    if (settings.portraitUrl.startsWith('blob:')) {
+      settings.portraitUrl = PORTRAIT_IMAGE_URL;
+    }
+  }
+  if (Array.isArray(settings.galleryItems) && settings.galleryItems.length > 0) {
+    settings.galleryItems = settings.galleryItems.map((g) => {
+      let gImg = g.image || '';
+      if (gImg.includes('qazdrpcx')) {
+        gImg = gImg.replace(/qazdrpcx/g, 'ccnaucox');
+      }
+      if (gImg.startsWith('blob:')) {
+        const defItem = DEFAULT_SITE_SETTINGS.galleryItems?.find((d) => d.id === g.id);
+        gImg = defItem?.image || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+      }
+      return { ...g, image: gImg };
+    });
+  } else {
+    settings.galleryItems = DEFAULT_GALLERY_ITEMS;
+  }
+  return settings;
+}
+
 export default function App() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => {
     try {
       const saved = localStorage.getItem(SETTINGS_CACHE_KEY);
-      return saved ? JSON.parse(saved) : DEFAULT_SITE_SETTINGS;
+      return saved ? sanitizeLoadedSettings(JSON.parse(saved)) : DEFAULT_SITE_SETTINGS;
     } catch {
       return DEFAULT_SITE_SETTINGS;
     }
@@ -80,7 +125,7 @@ export default function App() {
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
       const saved = localStorage.getItem(PROJECTS_CACHE_KEY);
-      return saved ? JSON.parse(saved) : PROJECTS_DATA;
+      return saved ? sanitizeLoadedProjects(JSON.parse(saved)) : PROJECTS_DATA;
     } catch {
       return PROJECTS_DATA;
     }
@@ -147,16 +192,26 @@ export default function App() {
       if (!isMounted) return;
 
       if (settingsSnap.status === 'fulfilled' && settingsSnap.value.exists()) {
-        const data = settingsSnap.value.data() as SiteSettings;
-        setSiteSettings(data);
-        safeSaveToLocalStorage(SETTINGS_CACHE_KEY, data);
+        const rawData = settingsSnap.value.data();
+        const settingsData = (rawData?.settings || rawData) as SiteSettings;
+        if (settingsData && (settingsData.name || settingsData.title)) {
+          const sanitized = sanitizeLoadedSettings(settingsData);
+          setSiteSettings(sanitized);
+          safeSaveToLocalStorage(SETTINGS_CACHE_KEY, sanitized);
+        }
       }
 
       if (projectsSnap.status === 'fulfilled' && projectsSnap.value.exists()) {
-        const data = projectsSnap.value.data();
-        if (data && Array.isArray(data.items) && data.items.length > 0) {
-          setProjects(data.items);
-          safeSaveToLocalStorage(PROJECTS_CACHE_KEY, data.items);
+        const rawData = projectsSnap.value.data();
+        const items = Array.isArray(rawData?.items)
+          ? rawData.items
+          : Array.isArray(rawData?.projects)
+          ? rawData.projects
+          : null;
+        if (items && items.length > 0) {
+          const sanitized = sanitizeLoadedProjects(items);
+          setProjects(sanitized);
+          safeSaveToLocalStorage(PROJECTS_CACHE_KEY, sanitized);
         }
       }
 
@@ -168,10 +223,14 @@ export default function App() {
     // 2. Real-time onSnapshot listeners for ongoing live updates
     const unsubSettings = onSnapshot(doc(db, 'portfolio', 'settings'), (snapshot) => {
       if (snapshot.exists() && isMounted) {
-        const data = snapshot.data() as SiteSettings;
-        setSiteSettings(data);
-        safeSaveToLocalStorage(SETTINGS_CACHE_KEY, data);
-        markSyncComplete();
+        const rawData = snapshot.data();
+        const settingsData = (rawData?.settings || rawData) as SiteSettings;
+        if (settingsData && (settingsData.name || settingsData.title)) {
+          const sanitized = sanitizeLoadedSettings(settingsData);
+          setSiteSettings(sanitized);
+          safeSaveToLocalStorage(SETTINGS_CACHE_KEY, sanitized);
+          markSyncComplete();
+        }
       }
     }, (err) => {
       console.warn('Firestore settings listener info:', err);
@@ -180,15 +239,20 @@ export default function App() {
 
     const unsubProjects = onSnapshot(doc(db, 'portfolio', 'projects'), (snapshot) => {
       if (snapshot.exists() && isMounted) {
-        const data = snapshot.data();
-        if (data && Array.isArray(data.items) && data.items.length > 0) {
+        const rawData = snapshot.data();
+        const items = Array.isArray(rawData?.items)
+          ? rawData.items
+          : Array.isArray(rawData?.projects)
+          ? rawData.projects
+          : null;
+        if (items && items.length > 0) {
           const localStored = localStorage.getItem(PROJECTS_CACHE_KEY);
           let localProjects: Project[] = [];
           if (localStored) {
             try { localProjects = JSON.parse(localStored); } catch {}
           }
 
-          const mergedProjects = data.items.map((remoteProj: Project) => {
+          const mergedProjects = items.map((remoteProj: Project) => {
             const localMatch = localProjects.find((lp) => lp.id === remoteProj.id);
             if (
               localMatch &&
@@ -201,8 +265,9 @@ export default function App() {
             return remoteProj;
           });
 
-          setProjects(mergedProjects);
-          safeSaveToLocalStorage(PROJECTS_CACHE_KEY, mergedProjects);
+          const sanitized = sanitizeLoadedProjects(mergedProjects);
+          setProjects(sanitized);
+          safeSaveToLocalStorage(PROJECTS_CACHE_KEY, sanitized);
           markSyncComplete();
         }
       }
@@ -240,18 +305,35 @@ export default function App() {
     return window.location.hash.toLowerCase();
   });
 
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
+
   useEffect(() => {
     const handleLocationChange = () => {
       setCurrentRoute(window.location.pathname.toLowerCase());
       setCurrentHash(window.location.hash.toLowerCase());
     };
 
+    const handleOpenAdminEvent = () => {
+      setIsAdminModalOpen(true);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') || (e.altKey && e.key.toLowerCase() === 'a')) {
+        e.preventDefault();
+        setIsAdminModalOpen((prev) => !prev);
+      }
+    };
+
     window.addEventListener('popstate', handleLocationChange);
     window.addEventListener('hashchange', handleLocationChange);
+    window.addEventListener('open-admin', handleOpenAdminEvent);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
       window.removeEventListener('hashchange', handleLocationChange);
+      window.removeEventListener('open-admin', handleOpenAdminEvent);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -339,7 +421,12 @@ export default function App() {
           isOpen={true}
           isStandalonePage={true}
           onClose={() => {
-            window.location.href = '/';
+            if (window.location.hash === '#admin') {
+              window.location.hash = '';
+              setCurrentHash('');
+            } else {
+              window.location.href = '/';
+            }
           }}
           projects={projects}
           onSaveProjects={handleSaveProjects}
@@ -398,7 +485,11 @@ export default function App() {
       <BackgroundShader />
 
       {/* Main Glassmorphic Navigation */}
-      <Navbar onTalkClick={scrollToContact} onAiStudioClick={scrollToAiStudio} />
+      <Navbar
+        onTalkClick={scrollToContact}
+        onAiStudioClick={scrollToAiStudio}
+        onOpenAdmin={() => setIsAdminModalOpen(true)}
+      />
 
       {/* Content Stack */}
       <main className="relative z-10">
@@ -406,7 +497,12 @@ export default function App() {
         <About siteSettings={siteSettings} />
         <Marquee />
         <Skills />
-        <WorkShowcase projects={projects} onSaveProjects={handleSaveProjects} onResetDefaults={handleResetDefaults} />
+        <WorkShowcase
+          projects={projects}
+          onSaveProjects={handleSaveProjects}
+          onResetDefaults={handleResetDefaults}
+          onOpenAdmin={() => setIsAdminModalOpen(true)}
+        />
         <Gallery galleryItems={Array.isArray(siteSettings.galleryItems) ? siteSettings.galleryItems : DEFAULT_GALLERY_ITEMS} />
         <AIPersonaStudio />
         <Journey />
@@ -415,7 +511,24 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer siteSettings={siteSettings} />
+      <Footer
+        siteSettings={siteSettings}
+        onOpenAdmin={() => setIsAdminModalOpen(true)}
+      />
+
+      {/* Admin Dashboard Modal (accessible directly via Admin button anywhere on site) */}
+      <AdminDashboardModal
+        isOpen={isAdminModalOpen}
+        isStandalonePage={false}
+        onClose={() => setIsAdminModalOpen(false)}
+        projects={projects}
+        onSaveProjects={handleSaveProjects}
+        onResetDefaults={handleResetDefaults}
+        siteSettings={siteSettings}
+        onSaveSiteSettings={handleSaveSiteSettings}
+        messages={messages}
+        onSaveMessages={handleSaveMessages}
+      />
     </div>
   );
 }

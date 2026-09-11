@@ -5,9 +5,13 @@ import { SiteSettings } from '../types';
 
 interface FooterProps {
   siteSettings?: SiteSettings;
+  onOpenAdmin?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ siteSettings = DEFAULT_SITE_SETTINGS }) => {
+export const Footer: React.FC<FooterProps> = ({
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  onOpenAdmin,
+}) => {
   return (
     <footer className="w-full py-16 bg-[#111415] border-t border-white/10 relative z-20 before:absolute before:top-0 before:left-0 before:w-1/3 before:h-[1px] before:bg-[#00daf3] before:animate-pulse">
       <div className="flex flex-col md:flex-row justify-between items-center px-6 md:px-16 gap-8 max-w-[1440px] mx-auto">
@@ -16,9 +20,11 @@ export const Footer: React.FC<FooterProps> = ({ siteSettings = DEFAULT_SITE_SETT
           MS.
         </a>
 
-        <p className="font-mono-code text-xs text-[#79797e] text-center md:text-left tracking-wider">
-          © {new Date().getFullYear()} MOHAMED SOLIMAN. ENGINEERED FOR EXCELLENCE.
-        </p>
+        <div className="text-center md:text-left">
+          <p className="font-mono-code text-xs text-[#79797e] tracking-wider">
+            © {new Date().getFullYear()} MOHAMED SOLIMAN. ENGINEERED FOR EXCELLENCE.
+          </p>
+        </div>
 
         <div className="flex flex-wrap items-center justify-center gap-4 font-mono-code text-xs uppercase tracking-wider">
           {siteSettings.socialPlatforms.map((platform) => (

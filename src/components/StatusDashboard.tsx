@@ -17,8 +17,10 @@ export const StatusDashboard: React.FC = () => {
             SYSTEM STATUS &amp; ENGINE
           </h2>
         </div>
-        <div className="font-mono-code text-xs text-[#79797e]">
-          LIVE CONTAINER STATUS: <span className="text-[#00daf3]">OPTIMAL (0 ERRORS)</span>
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="font-mono-code text-xs text-[#79797e]">
+            LIVE CONTAINER STATUS: <span className="text-[#00daf3]">OPTIMAL (0 ERRORS)</span>
+          </div>
         </div>
       </div>
 

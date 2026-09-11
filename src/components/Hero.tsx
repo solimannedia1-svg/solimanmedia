@@ -161,6 +161,9 @@ export const Hero: React.FC<HeroProps> = ({ onAiTalkClick, siteSettings = DEFAUL
               alt={`${siteSettings.name} Portrait`}
               loading="eager"
               decoding="async"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = 'https://res.cloudinary.com/ccnaucox/image/upload/f_auto,q_auto/v1789135345/d84d0vsrlhhrlpczs5ih.jpg';
+              }}
               className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-active:grayscale-0 group-active:opacity-100 group-focus:grayscale-0 group-focus:opacity-100 scale-100 group-hover:scale-105 transition-all duration-700"
             />
 
